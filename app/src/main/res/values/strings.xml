@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PlastProd App</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="action_search">Rechercher</string>
+    <string name="edit_message">Entrer un message</string>
+    <string name="button_send">Valider</string>
+    <string name="title_activity_afficher_message">Message</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_menu">MenuActivity</string>
+    <string name="nom_utilisateur">Nom d\'utilisateur</string>
+    <string name="mdp">Mot de passe</string>
+    <string name="afficher_mdp">Montrer le mot de passe</string>
+</resources>

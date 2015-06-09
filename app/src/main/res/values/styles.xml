@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/PlastProdBar</item>
+        <item name="android:actionBarTabTextStyle">@style/Onglet</item>
+        <item name="android:actionMenuTextColor">@color/blanc</item>
+
+        <item name="actionBarStyle">@style/PlastProdBar</item>
+        <item name="actionBarTabTextStyle">@style/Onglet</item>
+        <item name="actionMenuTextColor">@color/blanc</item>
+    </style>
+
+
+    <!-- general styles for the action bar -->
+    <style name="PlastProdBar" parent="@style/Widget.AppCompat.ActionBar">
+        <item name="android:titleTextStyle">@style/PlastProdText</item>
+        <item name="android:background">@color/orange</item>
+
+        <!-- Support library compatibility -->
+        <item name="titleTextStyle">@style/PlastProdText</item>
+        <item name="background">@color/orange</item>
+    </style>
+
+    <!-- action bar title text -->
+    <style name="PlastProdText" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/blanc</item>
+    </style>
+
+    <!-- action bar tab text -->
+    <style name="Onglet" parent="@style/Widget.AppCompat.ActionBar.TabText">
+        <item name="android:textColor">@color/blanc</item>
+    </style>
+
+</resources>

@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient"
+    tools:context="com.plastprod.plastprodapp.AccueilActivity"
+    android:focusable="true">
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:ems="15"
+        android:id="@+id/edt_nomutilisateur"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
+        android:width="300dp"
+        android:background="@android:color/white"
+        android:editable="false"
+        android:hint="@string/nom_utilisateur"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/ic_person_black_48dp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="15"
+        android:id="@+id/edt_motdepasse"
+        android:layout_below="@+id/edt_nomutilisateur"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:width="300dp"
+        android:background="@android:color/white"
+        android:editable="false"
+        android:hint="@string/mdp"
+        android:textAlignment="center"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/ic_lock_black_48dp"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/afficher_mdp"
+        android:id="@+id/checkBox"
+        android:textColor="@color/blanc"
+        android:layout_below="@+id/edt_motdepasse"
+        android:layout_alignStart="@+id/edt_motdepasse"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connexion"
+        android:id="@+id/btn_connexion"
+        android:layout_below="@+id/checkBox"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/button"
+        android:clickable="true"
+        android:textColor="@color/blanc"
+        android:width="180dp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:textSize="20dp"
+        android:drawableRight="@drawable/ic_chevron_right_white_48dp" />
+</RelativeLayout>
