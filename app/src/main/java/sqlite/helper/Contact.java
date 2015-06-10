@@ -8,6 +8,8 @@ import java.util.Date;
 public class Contact {
 
     int id;
+    int id_societe;
+    int id_compte;
     String nom;
     String prenom;
     String poste;
@@ -158,5 +160,21 @@ public class Contact {
 
     public int getId() {
         return id;
+    }
+
+    public int getId_societe() {
+        return id_societe;
+    }
+
+    public void setId_societe(int id_societe) {
+        this.id_societe = id_societe;
+    }
+
+    public int getId_compte() {
+        return id_compte;
+    }
+
+    public void setId_compte(int id_compte) {
+        this.id_compte = id_compte;
     }
 }

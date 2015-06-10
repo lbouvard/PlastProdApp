@@ -8,6 +8,7 @@ import java.util.Date;
 public class Satisfaction {
 
     int id;
+    int id_societe;
     String nom;
     Date date_envoi;
     Date date_recu;
@@ -46,5 +47,13 @@ public class Satisfaction {
 
     public void setDate_recu(Date date_recu) {
         this.date_recu = date_recu;
+    }
+
+    public int getId_societe() {
+        return id_societe;
+    }
+
+    public void setId_societe(int id_societe) {
+        this.id_societe = id_societe;
     }
 }

@@ -6,6 +6,7 @@ package sqlite.helper;
 public class Produit {
 
     int id;
+    int id_entree;
     String nom;
     String description;
     String categorie;
@@ -65,5 +66,13 @@ public class Produit {
 
     public void setPrix(Double prix) {
         this.prix = prix;
+    }
+
+    public int getId_entree() {
+        return id_entree;
+    }
+
+    public void setId_entree(int id_entree) {
+        this.id_entree = id_entree;
     }
 }

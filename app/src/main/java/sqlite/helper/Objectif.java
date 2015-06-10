@@ -6,6 +6,7 @@ package sqlite.helper;
 public class Objectif {
 
     int id;
+    int id_compte;
     String annee;
     String type;
     String libelle;
@@ -55,5 +56,13 @@ public class Objectif {
 
     public int getId() {
         return id;
+    }
+
+    public int getId_compte() {
+        return id_compte;
+    }
+
+    public void setId_compte(int id_compte) {
+        this.id_compte = id_compte;
     }
 }

@@ -8,6 +8,8 @@ import java.util.Date;
 public class Bon {
 
     int id;
+    int id_societe;
+    int id_contact;
     Date date_commande;
     String etat_commande;
     String type;
@@ -83,5 +85,21 @@ public class Bon {
 
     public void setChange(Boolean change) {
         this.change = change;
+    }
+
+    public int getId_societe() {
+        return id_societe;
+    }
+
+    public void setId_societe(int id_societe) {
+        this.id_societe = id_societe;
+    }
+
+    public int getId_contact() {
+        return id_contact;
+    }
+
+    public void setId_contact(int id_contact) {
+        this.id_contact = id_contact;
     }
 }

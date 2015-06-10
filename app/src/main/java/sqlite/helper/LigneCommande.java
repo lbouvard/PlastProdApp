@@ -6,6 +6,8 @@ package sqlite.helper;
 public class LigneCommande {
 
     int id;
+    int id_produit;
+    int id_bon;
     int quantite;
     String code;
     String nom;
@@ -75,5 +77,21 @@ public class LigneCommande {
 
     public void setPrix_total(Double prix_total) {
         this.prix_total = prix_total;
+    }
+
+    public int getId_produit() {
+        return id_produit;
+    }
+
+    public void setId_produit(int id_produit) {
+        this.id_produit = id_produit;
+    }
+
+    public int getId_bon() {
+        return id_bon;
+    }
+
+    public void setId_bon(int id_bon) {
+        this.id_bon = id_bon;
     }
 }

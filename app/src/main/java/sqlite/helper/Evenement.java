@@ -8,6 +8,7 @@ import java.util.Date;
 public class Evenement {
 
     int id;
+    int id_compte;
     Date date_debut;
     Date date_fin;
     String reccurent;
@@ -107,5 +108,13 @@ public class Evenement {
 
     public void setEst_prive(Boolean est_prive) {
         this.est_prive = est_prive;
+    }
+
+    public int getId_compte() {
+        return id_compte;
+    }
+
+    public void setId_compte(int id_compte) {
+        this.id_compte = id_compte;
     }
 }

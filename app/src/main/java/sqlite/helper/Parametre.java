@@ -6,6 +6,7 @@ package sqlite.helper;
 public class Parametre {
 
     int id;
+    int id_compte;
     String nom;
     String type;
     String libelle;
@@ -56,5 +57,13 @@ public class Parametre {
 
     public int getId() {
         return id;
+    }
+
+    public int getId_compte() {
+        return id_compte;
+    }
+
+    public void setId_compte(int id_compte) {
+        this.id_compte = id_compte;
     }
 }
