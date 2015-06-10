@@ -66,4 +66,15 @@
         android:textAllCaps="false"
         android:textSize="20dp"
         android:drawableRight="@drawable/ic_chevron_right_white_48dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgLogo"
+        android:contentDescription="@string/logo"
+        android:src="@drawable/ic_logo"
+        android:layout_below="@+id/btn_connexion"
+        android:layout_marginTop="40dp"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

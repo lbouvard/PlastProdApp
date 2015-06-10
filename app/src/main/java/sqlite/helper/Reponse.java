@@ -1,0 +1,49 @@
+package sqlite.helper;
+
+/**
+ * Created by Laurent on 10/06/2015.
+ */
+public class Reponse {
+
+    int id;
+    String question;
+    String reponse;
+    String categorie;
+
+    public Reponse() {
+    }
+
+    public Reponse(String question, String reponse, String categorie) {
+        this.question = question;
+        this.reponse = reponse;
+        this.categorie = categorie;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public String getReponse() {
+        return reponse;
+    }
+
+    public String getCategorie() {
+        return categorie;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public void setReponse(String reponse) {
+        this.reponse = reponse;
+    }
+
+    public void setCategorie(String categorie) {
+        this.categorie = categorie;
+    }
+}
