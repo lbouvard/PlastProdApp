@@ -15,7 +15,7 @@ public class Societe {
     String ville;
     String pays;
     String commentaire;
-    Date date_modif;
+    String date_modif;
     Boolean bit_modif;
 
     //Constructeurs
@@ -23,7 +23,7 @@ public class Societe {
 
     }
 
-    public Societe(String nom, String adresse1, String adresse2, String code_postal, String ville, String pays, String commentaire, Date date_modif, Boolean modif) {
+    public Societe(String nom, String adresse1, String adresse2, String code_postal, String ville, String pays, String commentaire) {
         this.nom = nom;
         this.adresse1 = adresse1;
         this.adresse2 = adresse2;
@@ -31,8 +31,6 @@ public class Societe {
         this.ville = ville;
         this.pays = pays;
         this.commentaire = commentaire;
-        this.date_modif = date_modif;
-        this.bit_modif = modif;
     }
 
 
@@ -92,11 +90,11 @@ public class Societe {
         this.commentaire = commentaire;
     }
 
-    public Date getDate_modif() {
+    public String getDate_modif() {
         return date_modif;
     }
 
-    public void setDate_modif(Date date_modif) {
+    public void setDate_modif(String date_modif) {
         this.date_modif = date_modif;
     }
 

@@ -74,7 +74,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //table Contact
     private static final String KEY_PRENOM = "prenom";
     private static final String KEY_POSTE = "poste";
-    private static final String KEY_FIXE_ = "tel_fixe";
+    private static final String KEY_FIXE = "tel_fixe";
     private static final String KEY_MOBILE = "tel_mobile";
     private static final String KEY_FAX = "fax";
     private static final String KEY_ADDR = "adresse";
@@ -225,7 +225,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      ***********************/
 
     //Ajouter un devis
-    public long ajouterDevis(Bon devis){
+    public long ajouterDevis(Bon devis, long[] ligne_ids){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
@@ -237,7 +237,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put(KEY_DATE_CHG, "");
         valeurs.put(KEY_BIT, 0);
 
+        //insertion du devis
         long devis_id = db.insert(TABLE_BON, null, valeurs);
+
+        //ajout des articles du devis
+        for(long ligne_id : ligne_ids){
+            ajouterLigne(devis_id, ligne_id);
+        }
 
         return devis_id;
     }
@@ -260,8 +266,92 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return bon_id;
     }
 
+    //Ajouter une ligne d'article
+    public long ajouterLigne(long bon_id, long article_id){
+
+        return 0;
+    }
+
+    //Ajouter un client
+    public long ajouterClient(Societe client) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put(KEY_NOM, client.getNom());
+        valeurs.put(KEY_ADDR1, client.getAdresse1());
+        valeurs.put(KEY_ADDR2, client.getAdresse2());
+        valeurs.put(KEY_CP, client.getCode_postal());
+        valeurs.put(KEY_VILLE, client.getVille());
+        valeurs.put(KEY_PAYS, client.getPays());
+        valeurs.put(KEY_COM, client.getCommentaire());
+        valeurs.put(KEY_DATE, "");
+        valeurs.put(KEY_BIT, 0);
+
+        long client_id = db.insert(TABLE_SOCIETE, null, valeurs);
+
+        return client_id;
+    }
+
     //Ajouter un contact
     public long ajouterContact(Contact contact){
-        return 0;
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put(KEY_NOM, contact.getNom());
+        valeurs.put(KEY_PRENOM, contact.getPrenom());
+        valeurs.put(KEY_POSTE, contact.getPoste());
+        valeurs.put(KEY_FIXE, contact.getTel_fixe());
+        valeurs.put(KEY_FAX, contact.getFax());
+        valeurs.put(KEY_MOBILE, contact.getTel_mobile());
+        valeurs.put(KEY_MAIL, contact.getEmail());
+        valeurs.put(KEY_ADDR, contact.getAdresse());
+        valeurs.put(KEY_CP, contact.getCode_postal());
+        valeurs.put(KEY_VILLE, contact.getVille());
+        valeurs.put(KEY_PAYS, contact.getPays());
+        valeurs.put(KEY_COM, contact.getCommentaire());
+        valeurs.put(KEY_DATE, "");
+        valeurs.put(KEY_BIT, 0);
+        valeurs.put(KEY_SOCIETE_ID, contact.getId_societe());
+
+        long contact_id = db.insert(TABLE_CONTACT, null, valeurs);
+
+        return contact_id;
+    }
+
+    //Ajouter un parametre
+    public long ajouterParametre(Parametre param){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put(KEY_NOM, param.getNom());
+        valeurs.put(KEY_TYPE, param.getType());
+        valeurs.put(KEY_LIBELLE, param.getLibelle());
+        valeurs.put(KEY_VALEUR, param.getValeur());
+        valeurs.put(KEY_COMPTE_ID, param.getId_compte());
+
+        long param_id = db.insert(TABLE_PARAM, null, valeurs);
+
+        return param_id;
+    }
+
+    //Ajouter un événement
+    public long ajouterEvenement(Evenement e) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put(KEY_DATE_DEB, e.getDate_debut().toString());
+        valeurs.put(KEY_DATE_FIN, e.getDate_fin().toString());
+        valeurs.put(KEY_RECC, e.getReccurent());
+        valeurs.put(KEY_FREQ, e.getFrequence());
+        valeurs.put(KEY_TITRE, e.getTitre());
+        valeurs.put(KEY_PLACE, e.getEmplacement());
+        valeurs.put(KEY_COM, e.getCommentaire());
+        valeurs.put(KEY_DISPO, e.getDisponibilite());
+        valeurs.put(KEY_IS_PRIVE, e.getEst_prive());
+        valeurs.put(KEY_COMPTE_ID, e.getId_compte());
+
+        long event_id = db.insert(TABLE_EVENT, null, valeurs);
+
+        return event_id;
     }
 }
