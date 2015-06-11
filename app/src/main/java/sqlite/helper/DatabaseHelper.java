@@ -358,7 +358,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return param_id;
     }
 
-    //Ajouter un événement
+    //Ajouter un Ã©vÃ©nement
     public long ajouterEvenement(Evenement e) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -396,7 +396,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
-        //On parcours toutes les commandes pour récupérer les articles liés.
+        //On parcours toutes les commandes pour rÃ©cupÃ©rer les articles liÃ©s.
         if (c.moveToFirst()) {
             do {
                 Bon ligne = new Bon(type);
