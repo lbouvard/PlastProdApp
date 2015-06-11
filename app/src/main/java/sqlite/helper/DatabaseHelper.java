@@ -2,8 +2,13 @@ package sqlite.helper;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Laurent on 10/06/2015.
@@ -92,8 +97,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //table LigneCommande
     private static final String KEY_PRODUIT_ID = "id_produit";
     private static final String KEY_BON_ID = "id_bon";
-    private static final String KEY_PRIX_U = "prix_unitaire";
-    private static final String KEY_PRIX_T = "prix_total";
+    private static final String KEY_REMISE = "remise";
+    private static final String KEY_PRIX_U = "prixUnitaire";
 
     //table Objectif
     private static final String KEY_ANNEE = "annee";
@@ -221,11 +226,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /***********************
-     * AJOUT DE DONNEES
+     * AJOUTER
      ***********************/
 
     //Ajouter un devis
-    public long ajouterDevis(Bon devis, long[] ligne_ids){
+    public long ajouterDevis(Bon devis, LigneCommande[] lignes){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
@@ -241,15 +246,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long devis_id = db.insert(TABLE_BON, null, valeurs);
 
         //ajout des articles du devis
-        for(long ligne_id : ligne_ids){
-            ajouterLigne(devis_id, ligne_id);
+        for(LigneCommande ligne : lignes){
+            ajouterLigne(ligne, devis_id);
         }
 
         return devis_id;
     }
 
     //Ajouter un bon de commande
-    public long ajouterBonCommande(Bon bon){
+    public long ajouterBonCommande(Bon bon, LigneCommande[] lignes){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
@@ -261,15 +266,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put(KEY_DATE_CHG, "");
         valeurs.put(KEY_BIT, 0);
 
+        //insertion du bon de commande
         long bon_id = db.insert(TABLE_BON, null, valeurs);
+
+        //ajout des articles du bon de commande
+        for(LigneCommande ligne : lignes){
+            ajouterLigne(ligne, bon_id);
+        }
 
         return bon_id;
     }
 
     //Ajouter une ligne d'article
-    public long ajouterLigne(long bon_id, long article_id){
+    public long ajouterLigne(LigneCommande ligne, long bon_id){
+        SQLiteDatabase db = this.getWritableDatabase();
 
-        return 0;
+        ContentValues valeurs = new ContentValues();
+        valeurs.put(KEY_QUANTITE, ligne.getQuantite());
+        valeurs.put(KEY_CODE, ligne.getCode() );
+        valeurs.put(KEY_NOM, ligne.getNom() );
+        valeurs.put(KEY_DESC, ligne.getDescription() );
+        valeurs.put(KEY_REMISE, ligne.getRemise() );
+        valeurs.put(KEY_PRIX_U, ligne.getPrixUnitaire().doubleValue() );
+        valeurs.put(KEY_PRODUIT_ID, ligne.getId_produit() );
+        valeurs.put(KEY_BON_ID, ligne.getId_bon() );
+
+        long ligne_id = db.insert(TABLE_LIGNE, null, valeurs);
+
+        return ligne_id;
     }
 
     //Ajouter un client
@@ -354,4 +378,51 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return event_id;
     }
+
+    /***********************
+     * LIRE
+     ***********************/
+    /*public List<Bon> getBons(String type, String clauseWhere) {
+
+        List<Bon> bons = new ArrayList<Bon>();
+
+        String requete = "SELECT id, date_commande, etat_commande, suivi, transporteur"
+                        + "FROM " + TABLE_BON
+                        + "WHERE " + clauseWhere;
+
+        Log.e("LOG", requete);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        //On parcours toutes les commandes pour récupérer les articles liés.
+        if (c.moveToFirst()) {
+            do {
+                Bon ligne = new Bon(type);
+                ligne.setDate_commande(); //setId(c.getInt((c.getColumnIndex(KEY_ID))));
+                ligne.setEtat_commande();                    //setNote((c.getString(c.getColumnIndex(KEY_TODO))));
+                ligne.setSuivi();
+                ligne.setTransporteur(); //setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
+                ligne.setId_contact();
+                // adding to todo list
+                todos.add(td);
+            } while (c.moveToNext());
+        }
+    }*/
+
+    /*public List<LigneCommande> getLignesCommande(long id_bon){
+
+        List<LigneCommande> lignes = new ArrayList<LigneCommande>();
+        String selectQuery = "SELECT  * FROM ";
+    }*/
+
+    /***********************
+     * METTRE A JOUR
+     ***********************/
+
+
+    /***********************
+     * SUPPRIMER
+     ***********************/
+
 }

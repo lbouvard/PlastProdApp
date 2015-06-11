@@ -1,30 +1,35 @@
 package sqlite.helper;
 
+import java.math.BigDecimal;
+
 /**
  * Created by Laurent on 10/06/2015.
  */
 public class LigneCommande {
 
-    int id;
-    int id_produit;
-    int id_bon;
-    int quantite;
-    String code;
-    String nom;
-    String description;
-    Double prix_unitaire;
-    Double prix_total;
+    private int id;
+    private int id_produit;
+    private int id_bon;
+    private int quantite;
+    private String code;
+    private String nom;
+    private String description;
+    private Double remise;
+    private BigDecimal prixUnitaire;
+    private BigDecimal prixRemise;
+    private BigDecimal prixTotal;
 
     public LigneCommande() {
     }
 
-    public LigneCommande(int quantite, String code, String nom, String description, Double prix_unitaire, Double prix_total) {
+    public LigneCommande(int quantite, String code, String nom, String description, Double prix_unitaire) {
         this.quantite = quantite;
         this.code = code;
         this.nom = nom;
         this.description = description;
-        this.prix_unitaire = prix_unitaire;
-        this.prix_total = prix_total;
+        this.remise = 0.0;
+        this.prixUnitaire = new BigDecimal(prix_unitaire.doubleValue());
+        calculerPrixTotal();
     }
 
     public int getId() {
@@ -47,14 +52,6 @@ public class LigneCommande {
         return description;
     }
 
-    public Double getPrix_unitaire() {
-        return prix_unitaire;
-    }
-
-    public Double getPrix_total() {
-        return prix_total;
-    }
-
     public void setQuantite(int quantite) {
         this.quantite = quantite;
     }
@@ -71,14 +68,6 @@ public class LigneCommande {
         this.description = description;
     }
 
-    public void setPrix_unitaire(Double prix_unitaire) {
-        this.prix_unitaire = prix_unitaire;
-    }
-
-    public void setPrix_total(Double prix_total) {
-        this.prix_total = prix_total;
-    }
-
     public int getId_produit() {
         return id_produit;
     }
@@ -93,5 +82,52 @@ public class LigneCommande {
 
     public void setId_bon(int id_bon) {
         this.id_bon = id_bon;
+    }
+
+    public Double getRemise() {
+        return remise;
+    }
+
+    public void setRemise(Double remise) {
+        this.remise = remise;
+    }
+
+    public BigDecimal getPrixUnitaire() {
+        return prixUnitaire;
+    }
+
+    public void setPrixUnitaire(BigDecimal prixUnitaire) {
+        this.prixUnitaire = prixUnitaire;
+    }
+
+    public BigDecimal getPrixRemise() {
+        return prixRemise;
+    }
+
+    public void setPrixRemise(BigDecimal prixRemise) {
+        this.prixRemise = prixRemise;
+    }
+
+    public BigDecimal getPrixTotal() {
+        return prixTotal;
+    }
+
+    public void setPrixTotal(BigDecimal prixTotal) {
+        this.prixTotal = prixTotal;
+    }
+
+    public void calculerPrixRemise(){
+        this.prixRemise = this.prixUnitaire.multiply(new BigDecimal(this.remise.doubleValue()));
+        this.prixRemise = this.prixRemise.setScale(2, BigDecimal.ROUND_HALF_UP);
+    }
+
+    public void calculerPrixTotal(){
+
+        if( remise != 0.0 ){
+            calculerPrixRemise();
+        }
+
+        this.prixTotal = this.prixRemise.multiply(new BigDecimal(quantite));
+        this.prixTotal = this.prixTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 }

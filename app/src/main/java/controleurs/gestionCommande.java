@@ -5,5 +5,4 @@ package controleurs;
  */
 public class gestionCommande {
 
-    //classe des gestions des lignes d'articles
 }

@@ -1,24 +1,29 @@
 package sqlite.helper;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Laurent on 10/06/2015.
  */
 public class Bon {
 
-    int id;
-    int id_societe;
-    int id_contact;
-    String date_commande;
-    String etat_commande;
-    String type;
-    String suivi;
-    String transporteur;
-    String date_changement;
-    Boolean change;
+    private int id;
+    private int id_societe;
+    private int id_contact;
+    private String date_commande;
+    private String etat_commande;
+    private String type;
+    private String suivi;
+    private String transporteur;
+    private String date_changement;
+    private Boolean change;
+    private List<LigneCommande> lignesBon;
 
-    public Bon() {
+    public Bon(String type) {
+        this.type = type;
+        this.lignesBon = new ArrayList<LigneCommande>();
     }
 
     public Bon(String date_commande, String etat_commande, String type) {
@@ -101,5 +106,13 @@ public class Bon {
 
     public void setId_contact(int id_contact) {
         this.id_contact = id_contact;
+    }
+
+    public List<LigneCommande> getLignesBon() {
+        return lignesBon;
+    }
+
+    public void setLignesBon(List<LigneCommande> lignesBon) {
+        this.lignesBon = lignesBon;
     }
 }
