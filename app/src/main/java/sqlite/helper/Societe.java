@@ -7,32 +7,21 @@ import java.util.Date;
  */
 public class Societe {
 
-    int id;
-    String nom;
-    String adresse1;
-    String adresse2;
-    String code_postal;
-    String ville;
-    String pays;
-    String commentaire;
-    String date_modif;
-    Boolean bit_modif;
+    private int id;
+    private String nom;
+    private String adresse1;
+    private String adresse2;
+    private String code_postal;
+    private String ville;
+    private String pays;
+    private String commentaire;
+    private String date_modif;
+    private Boolean bit_modif;
 
     //Constructeurs
     public Societe() {
 
     }
-
-    public Societe(String nom, String adresse1, String adresse2, String code_postal, String ville, String pays, String commentaire) {
-        this.nom = nom;
-        this.adresse1 = adresse1;
-        this.adresse2 = adresse2;
-        this.code_postal = code_postal;
-        this.ville = ville;
-        this.pays = pays;
-        this.commentaire = commentaire;
-    }
-
 
     public String getNom() {
         return nom;

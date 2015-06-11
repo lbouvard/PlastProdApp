@@ -5,23 +5,19 @@ package sqlite.helper;
  */
 public class Compte {
 
-    int id;
-    String nom;
-    String mdp;
-    String email;
-    String salt;
-    Boolean actif;
+    private int id;
+    private String nom;
+    private String mdp;
+    private String email;
+    private String salt;
+    private Boolean actif;
 
     //Constructeurs
     public Compte(){
     }
 
-    public Compte(String nom, String mdp, String email, String salt, Boolean actif) {
-        this.nom = nom;
-        this.mdp = mdp;
-        this.email = email;
-        this.salt = salt;
-        this.actif = actif;
+    public int getId() {
+        return id;
     }
 
     public String getNom() {
@@ -62,9 +58,5 @@ public class Compte {
 
     public void setActif(Boolean actif) {
         this.actif = actif;
-    }
-
-    public int getId() {
-        return id;
     }
 }

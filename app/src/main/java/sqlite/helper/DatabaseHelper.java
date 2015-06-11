@@ -177,7 +177,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_LIGNE = "CREATE TABLE Ligne_commande(Idt INTEGER PRIMARY KEY autoincrement NOT NULL, Quantite INTEGER NOT NULL,"
-            + "Code TEXT, Nom TEXT NOT NULL, Description TEXT, PrixUnitaire REAL NOT NULL, PrixTotal REAL NOT NULL, IdtProduit  INTEGER NOT NULL,"
+            + "Code TEXT, Nom TEXT NOT NULL, Description TEXT, PrixUnitaire REAL NOT NULL, Remise REAL NOT NULL, IdtProduit  INTEGER NOT NULL,"
             + "IdtBon INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtProduit) REFERENCES Produit(IdtProduit), FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
 
@@ -289,7 +289,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put(KEY_REMISE, ligne.getRemise() );
         valeurs.put(KEY_PRIX_U, ligne.getPrixUnitaire().doubleValue() );
         valeurs.put(KEY_PRODUIT_ID, ligne.getId_produit() );
-        valeurs.put(KEY_BON_ID, ligne.getId_bon() );
+        valeurs.put(KEY_BON_ID, bon_id );
 
         long ligne_id = db.insert(TABLE_LIGNE, null, valeurs);
 
@@ -335,7 +335,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put(KEY_COM, contact.getCommentaire());
         valeurs.put(KEY_DATE, "");
         valeurs.put(KEY_BIT, 0);
-        valeurs.put(KEY_SOCIETE_ID, contact.getId_societe());
+        //valeurs.put(KEY_SOCIETE_ID, contact.getI());
 
         long contact_id = db.insert(TABLE_CONTACT, null, valeurs);
 
@@ -351,7 +351,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put(KEY_TYPE, param.getType());
         valeurs.put(KEY_LIBELLE, param.getLibelle());
         valeurs.put(KEY_VALEUR, param.getValeur());
-        valeurs.put(KEY_COMPTE_ID, param.getId_compte());
+        //valeurs.put(KEY_COMPTE_ID, param.getId_compte());
 
         long param_id = db.insert(TABLE_PARAM, null, valeurs);
 
@@ -372,7 +372,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put(KEY_COM, e.getCommentaire());
         valeurs.put(KEY_DISPO, e.getDisponibilite());
         valeurs.put(KEY_IS_PRIVE, e.getEst_prive());
-        valeurs.put(KEY_COMPTE_ID, e.getId_compte());
+        //valeurs.put(KEY_COMPTE_ID, e.getId_compte());
 
         long event_id = db.insert(TABLE_EVENT, null, valeurs);
 
@@ -382,11 +382,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /***********************
      * LIRE
      ***********************/
-    /*public List<Bon> getBons(String type, String clauseWhere) {
+
+    public List<Bon> getBons(String type, String clauseWhere) {
 
         List<Bon> bons = new ArrayList<Bon>();
 
-        String requete = "SELECT id, date_commande, etat_commande, suivi, transporteur"
+        String requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, IdtContact, IdtSociete"
                         + "FROM " + TABLE_BON
                         + "WHERE " + clauseWhere;
 
@@ -399,22 +400,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 Bon ligne = new Bon(type);
-                ligne.setDate_commande(); //setId(c.getInt((c.getColumnIndex(KEY_ID))));
-                ligne.setEtat_commande();                    //setNote((c.getString(c.getColumnIndex(KEY_TODO))));
-                ligne.setSuivi();
-                ligne.setTransporteur(); //setCreatedAt(c.getString(c.getColumnIndex(KEY_CREATED_AT)));
-                ligne.setId_contact();
-                // adding to todo list
-                todos.add(td);
+                ligne.setDate_commande(c.getString(c.getColumnIndex(KEY_DATE_BON)));
+                ligne.setEtat_commande(c.getString(c.getColumnIndex(KEY_ETAT_BON)));
+                ligne.setSuivi(c.getString(c.getColumnIndex(KEY_SUIVI)));
+                ligne.setTransporteur(c.getString(c.getColumnIndex(KEY_TRANSP)));
+                //ligne.setCommercial(getContact(c.getInt(c.getColumnIndex(KEY_CONTACT_ID)));
+                //ligne.setClient(getSociete(c.getInt(c.getColumnIndex(KEY_SOCIETE)));
+                ligne.setLignesBon(getLignesCommande(c.getInt(c.getColumnIndex(KEY_ID))));
+
+                //On ajoute la commande
+                bons.add(ligne);
+
             } while (c.moveToNext());
         }
-    }*/
 
-    /*public List<LigneCommande> getLignesCommande(long id_bon){
+        return bons;
+    }
+
+    public List<LigneCommande> getLignesCommande(long id_bon){
 
         List<LigneCommande> lignes = new ArrayList<LigneCommande>();
-        String selectQuery = "SELECT  * FROM ";
-    }*/
+        String requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, IdtBon, IdtProduit, Remise FROM Ligne_commande"
+                            + "WHERE IdtBon = " + id_bon ;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        //On parcours toutes les lignes d'articles.
+        if (c.moveToFirst()){
+            do {
+                LigneCommande ligne = new LigneCommande();
+                ligne.setCode(c.getString(c.getColumnIndex(KEY_CODE)));
+                ligne.setDescription(c.getString(c.getColumnIndex(KEY_DESC)));
+                ligne.setId_bon(c.getInt(c.getColumnIndex(KEY_BON_ID)));
+                ligne.setId_produit(c.getInt(c.getColumnIndex(KEY_PRODUIT_ID)));
+                ligne.setNom(c.getString(c.getColumnIndex(KEY_NOM)));
+                ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex(KEY_PRIX_U)));
+                ligne.setQuantite(c.getInt(c.getColumnIndex(KEY_QUANTITE)));
+                ligne.setRemise(c.getDouble(c.getColumnIndex(KEY_REMISE)));
+
+                ligne.calculerPrixRemise();
+                ligne.calculerPrixTotal();
+
+                lignes.add(ligne);
+
+            } while (c.moveToNext());
+        }
+
+        return lignes;
+    }
 
     /***********************
      * METTRE A JOUR

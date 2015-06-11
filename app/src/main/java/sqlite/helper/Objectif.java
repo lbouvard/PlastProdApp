@@ -5,21 +5,18 @@ package sqlite.helper;
  */
 public class Objectif {
 
-    int id;
-    int id_compte;
-    String annee;
-    String type;
-    String libelle;
-    String valeur;
+    private int id;
+    private String annee;
+    private String type;
+    private String libelle;
+    private String valeur;
+    private Compte compte;
 
     public Objectif(){
     }
 
-    public Objectif(String annee, String type, String libelle, String valeur) {
-        this.annee = annee;
-        this.type = type;
-        this.libelle = libelle;
-        this.valeur = valeur;
+    public int getId() {
+        return id;
     }
 
     public String getAnnee() {
@@ -54,15 +51,11 @@ public class Objectif {
         this.valeur = valeur;
     }
 
-    public int getId() {
-        return id;
+    public Compte getCompte() {
+        return compte;
     }
 
-    public int getId_compte() {
-        return id_compte;
-    }
-
-    public void setId_compte(int id_compte) {
-        this.id_compte = id_compte;
+    public void setCompte(Compte compte) {
+        this.compte = compte;
     }
 }

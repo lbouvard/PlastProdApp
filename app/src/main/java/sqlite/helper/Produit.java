@@ -5,23 +5,15 @@ package sqlite.helper;
  */
 public class Produit {
 
-    int id;
-    int id_entree;
-    String nom;
-    String description;
-    String categorie;
-    String code;
-    Double prix;
+    private int id;
+    private String nom;
+    private String description;
+    private String categorie;
+    private String code;
+    private Double prix;
+    private Stock entree;
 
     public Produit() {
-    }
-
-    public Produit(String nom, String description, String categorie, String code, Double prix) {
-        this.nom = nom;
-        this.description = description;
-        this.categorie = categorie;
-        this.code = code;
-        this.prix = prix;
     }
 
     public int getId() {
@@ -68,11 +60,11 @@ public class Produit {
         this.prix = prix;
     }
 
-    public int getId_entree() {
-        return id_entree;
+    public Stock getEntree() {
+        return entree;
     }
 
-    public void setId_entree(int id_entree) {
-        this.id_entree = id_entree;
+    public void setEntree(Stock entree) {
+        this.entree = entree;
     }
 }

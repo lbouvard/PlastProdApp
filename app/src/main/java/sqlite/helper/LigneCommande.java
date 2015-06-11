@@ -15,7 +15,7 @@ public class LigneCommande {
     private String nom;
     private String description;
     private Double remise;
-    private BigDecimal prixUnitaire;
+    private Double prixUnitaire;
     private BigDecimal prixRemise;
     private BigDecimal prixTotal;
 
@@ -28,7 +28,7 @@ public class LigneCommande {
         this.nom = nom;
         this.description = description;
         this.remise = 0.0;
-        this.prixUnitaire = new BigDecimal(prix_unitaire.doubleValue());
+        this.prixUnitaire = prix_unitaire;
         calculerPrixTotal();
     }
 
@@ -92,11 +92,11 @@ public class LigneCommande {
         this.remise = remise;
     }
 
-    public BigDecimal getPrixUnitaire() {
+    public Double getPrixUnitaire() {
         return prixUnitaire;
     }
 
-    public void setPrixUnitaire(BigDecimal prixUnitaire) {
+    public void setPrixUnitaire(Double prixUnitaire) {
         this.prixUnitaire = prixUnitaire;
     }
 
@@ -117,7 +117,10 @@ public class LigneCommande {
     }
 
     public void calculerPrixRemise(){
-        this.prixRemise = this.prixUnitaire.multiply(new BigDecimal(this.remise.doubleValue()));
+
+        Double prix = this.prixUnitaire * this.remise;
+
+        this.prixRemise = new BigDecimal(prix.doubleValue());
         this.prixRemise = this.prixRemise.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
 

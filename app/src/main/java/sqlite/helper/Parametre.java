@@ -5,22 +5,18 @@ package sqlite.helper;
  */
 public class Parametre {
 
-    int id;
-    int id_compte;
-    String nom;
-    String type;
-    String libelle;
-    String valeur;
+    private int id;
+    private String nom;
+    private String type;
+    private String libelle;
+    private String valeur;
+    private Compte compte;
 
     public Parametre(){
-
     }
 
-    public Parametre(String nom, String type, String libelle, String valeur) {
-        this.nom = nom;
-        this.type = type;
-        this.libelle = libelle;
-        this.valeur = valeur;
+    public int getId() {
+        return id;
     }
 
     public String getNom() {
@@ -55,15 +51,11 @@ public class Parametre {
         this.valeur = valeur;
     }
 
-    public int getId() {
-        return id;
+    public Compte getCompte() {
+        return compte;
     }
 
-    public int getId_compte() {
-        return id_compte;
-    }
-
-    public void setId_compte(int id_compte) {
-        this.id_compte = id_compte;
+    public void setCompte(Compte compte) {
+        this.compte = compte;
     }
 }

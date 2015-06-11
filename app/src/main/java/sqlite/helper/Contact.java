@@ -7,43 +7,30 @@ import java.util.Date;
  */
 public class Contact {
 
-    int id;
-    int id_societe;
-    int id_compte;
-    String nom;
-    String prenom;
-    String poste;
-    String tel_fixe;
-    String tel_mobile;
-    String fax;
-    String email;
-    String adresse;
-    String code_postal;
-    String ville;
-    String pays;
-    String commentaire;
-    Date date_modif;
-    Boolean bit_modif;
+    private int id;
+    private String nom;
+    private String prenom;
+    private String poste;
+    private String tel_fixe;
+    private String tel_mobile;
+    private String fax;
+    private String email;
+    private String adresse;
+    private String code_postal;
+    private String ville;
+    private String pays;
+    private String commentaire;
+    private Date date_modif;
+    private Boolean bit_modif;
+    private Societe societe;
+    private Compte compte;
 
     //Constructeurs
     public Contact(){
     }
 
-    public Contact(String nom, String prenom, String poste, String tel_fixe, String tel_mobile, String fax, String email, String adresse, String code_postal, String ville, String pays, String commentaire, Date date_modif, Boolean bit_modif) {
-        this.nom = nom;
-        this.prenom = prenom;
-        this.poste = poste;
-        this.tel_fixe = tel_fixe;
-        this.tel_mobile = tel_mobile;
-        this.fax = fax;
-        this.email = email;
-        this.adresse = adresse;
-        this.code_postal = code_postal;
-        this.ville = ville;
-        this.pays = pays;
-        this.commentaire = commentaire;
-        this.date_modif = date_modif;
-        this.bit_modif = bit_modif;
+    public int getId() {
+        return id;
     }
 
     public String getNom() {
@@ -158,23 +145,19 @@ public class Contact {
         this.bit_modif = bit_modif;
     }
 
-    public int getId() {
-        return id;
+    public Societe getSociete() {
+        return societe;
     }
 
-    public int getId_societe() {
-        return id_societe;
+    public void setSociete(Societe societe) {
+        this.societe = societe;
     }
 
-    public void setId_societe(int id_societe) {
-        this.id_societe = id_societe;
+    public Compte getCompte() {
+        return compte;
     }
 
-    public int getId_compte() {
-        return id_compte;
-    }
-
-    public void setId_compte(int id_compte) {
-        this.id_compte = id_compte;
+    public void setCompte(Compte compte) {
+        this.compte = compte;
     }
 }

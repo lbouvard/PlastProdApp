@@ -7,31 +7,19 @@ import java.util.Date;
  */
 public class Evenement {
 
-    int id;
-    int id_compte;
-    Date date_debut;
-    Date date_fin;
-    String reccurent;
-    String frequence;
-    String titre;
-    String emplacement;
-    String disponibilite;
-    String commentaire;
-    Boolean est_prive;
+    private int id;
+    private Date date_debut;
+    private Date date_fin;
+    private String reccurent;
+    private String frequence;
+    private String titre;
+    private String emplacement;
+    private String disponibilite;
+    private String commentaire;
+    private Boolean est_prive;
+    private Compte compte;
 
     public Evenement() {
-    }
-
-    public Evenement(Date date_debut, Date date_fin, String reccurent, String frequence, String titre, String emplacement, String disponibilite, String commentaire, Boolean est_prive) {
-        this.date_debut = date_debut;
-        this.date_fin = date_fin;
-        this.reccurent = reccurent;
-        this.frequence = frequence;
-        this.titre = titre;
-        this.emplacement = emplacement;
-        this.disponibilite = disponibilite;
-        this.commentaire = commentaire;
-        this.est_prive = est_prive;
     }
 
     public int getId() {
@@ -110,11 +98,11 @@ public class Evenement {
         this.est_prive = est_prive;
     }
 
-    public int getId_compte() {
-        return id_compte;
+    public Compte getCompte() {
+        return compte;
     }
 
-    public void setId_compte(int id_compte) {
-        this.id_compte = id_compte;
+    public void setCompte(Compte compte) {
+        this.compte = compte;
     }
 }

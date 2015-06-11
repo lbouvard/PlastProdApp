@@ -7,17 +7,12 @@ import java.util.Date;
  */
 public class Stock {
 
-    int id;
-    int quantite;
-    Date date_entree;
-    Date date_sortie;
+    private int id;
+    private int quantite;
+    private Date date_entree;
+    private Date date_sortie;
 
     public Stock() {
-    }
-
-    public Stock(int quantite, Date date_entree) {
-        this.quantite = quantite;
-        this.date_entree = date_entree;
     }
 
     public int getId() {
