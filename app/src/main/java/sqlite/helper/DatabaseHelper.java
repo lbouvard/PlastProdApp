@@ -1,5 +1,6 @@
 package sqlite.helper;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -217,5 +218,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // create new tables
         onCreate(db);
+    }
+
+    /***********************
+     * AJOUT DE DONNEES
+     ***********************/
+
+    //Ajouter un devis
+    public long ajouterDevis(Bon devis){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put(KEY_DATE_BON, devis.getDate_commande());
+        valeurs.put(KEY_ETAT_BON, devis.getEtat_commande());
+        valeurs.put(KEY_TYPE, "DE");
+        valeurs.put(KEY_SUIVI, "");
+        valeurs.put(KEY_TRANSP, "");
+        valeurs.put(KEY_DATE_CHG, "");
+        valeurs.put(KEY_BIT, 0);
+
+        long devis_id = db.insert(TABLE_BON, null, valeurs);
+
+        return devis_id;
+    }
+
+    //Ajouter un bon de commande
+    public long ajouterBonCommande(Bon bon){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put(KEY_DATE_BON, bon.getDate_commande());
+        valeurs.put(KEY_ETAT_BON, bon.getEtat_commande());
+        valeurs.put(KEY_TYPE, "CD");
+        valeurs.put(KEY_SUIVI, "");
+        valeurs.put(KEY_TRANSP, "");
+        valeurs.put(KEY_DATE_CHG, "");
+        valeurs.put(KEY_BIT, 0);
+
+        long bon_id = db.insert(TABLE_BON, null, valeurs);
+
+        return bon_id;
+    }
+
+    //Ajouter un contact
+    public long ajouterContact(Contact contact){
+        return 0;
     }
 }

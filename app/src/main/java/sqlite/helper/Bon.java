@@ -10,18 +10,18 @@ public class Bon {
     int id;
     int id_societe;
     int id_contact;
-    Date date_commande;
+    String date_commande;
     String etat_commande;
     String type;
     String suivi;
     String transporteur;
-    Date date_changement;
+    String date_changement;
     Boolean change;
 
     public Bon() {
     }
 
-    public Bon(Date date_commande, String etat_commande, String type) {
+    public Bon(String date_commande, String etat_commande, String type) {
         this.date_commande = date_commande;
         this.etat_commande = etat_commande;
         this.type = type;
@@ -31,7 +31,7 @@ public class Bon {
         return id;
     }
 
-    public Date getDate_commande() {
+    public String getDate_commande() {
         return date_commande;
     }
 
@@ -51,7 +51,7 @@ public class Bon {
         return transporteur;
     }
 
-    public Date getDate_changement() {
+    public String getDate_changement() {
         return date_changement;
     }
 
@@ -59,7 +59,7 @@ public class Bon {
         return change;
     }
 
-    public void setDate_commande(Date date_commande) {
+    public void setDate_commande(String date_commande) {
         this.date_commande = date_commande;
     }
 
@@ -79,7 +79,7 @@ public class Bon {
         this.transporteur = transporteur;
     }
 
-    public void setDate_changement(Date date_changement) {
+    public void setDate_changement(String date_changement) {
         this.date_changement = date_changement;
     }
 
