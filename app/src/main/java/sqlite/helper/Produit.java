@@ -67,4 +67,8 @@ public class Produit {
     public void setEntree(Stock entree) {
         this.entree = entree;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

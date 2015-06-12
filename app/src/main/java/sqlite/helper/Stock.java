@@ -9,8 +9,8 @@ public class Stock {
 
     private int id;
     private int quantite;
-    private Date date_entree;
-    private Date date_sortie;
+    private int delaisMoy;
+    private int delais;
 
     public Stock() {
     }
@@ -19,27 +19,31 @@ public class Stock {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getQuantite() {
         return quantite;
-    }
-
-    public Date getDate_entree() {
-        return date_entree;
-    }
-
-    public Date getDate_sortie() {
-        return date_sortie;
     }
 
     public void setQuantite(int quantite) {
         this.quantite = quantite;
     }
 
-    public void setDate_entree(Date date_entree) {
-        this.date_entree = date_entree;
+    public int getDelaisMoy() {
+        return delaisMoy;
     }
 
-    public void setDate_sortie(Date date_sortie) {
-        this.date_sortie = date_sortie;
+    public void setDelaisMoy(int delaisMoy) {
+        this.delaisMoy = delaisMoy;
+    }
+
+    public int getDelais() {
+        return delais;
+    }
+
+    public void setDelais(int delais) {
+        this.delais = delais;
     }
 }

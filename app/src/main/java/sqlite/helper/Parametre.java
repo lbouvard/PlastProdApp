@@ -13,6 +13,7 @@ public class Parametre {
     private Compte compte;
 
     public Parametre(){
+        this.compte = null;
     }
 
     public int getId() {
@@ -57,5 +58,9 @@ public class Parametre {
 
     public void setCompte(Compte compte) {
         this.compte = compte;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

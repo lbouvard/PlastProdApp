@@ -58,4 +58,8 @@ public class Objectif {
     public void setCompte(Compte compte) {
         this.compte = compte;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

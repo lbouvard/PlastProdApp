@@ -22,7 +22,6 @@ public class Contact {
     private String commentaire;
     private String auteur;
     private Societe societe;
-    private Compte compte;
 
     //Constructeurs
     public Contact(){
@@ -134,14 +133,6 @@ public class Contact {
 
     public void setSociete(Societe societe) {
         this.societe = societe;
-    }
-
-    public Compte getCompte() {
-        return compte;
-    }
-
-    public void setCompte(Compte compte) {
-        this.compte = compte;
     }
 
     public String getAuteur() {

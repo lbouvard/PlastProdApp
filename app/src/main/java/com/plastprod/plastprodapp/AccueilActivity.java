@@ -3,11 +3,19 @@ package com.plastprod.plastprodapp;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.List;
+
+import sqlite.helper.DatabaseHelper;
+import sqlite.helper.Societe;
+
 
 public class AccueilActivity extends ActionBarActivity {
+
+    DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,8 +24,30 @@ public class AccueilActivity extends ActionBarActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
-    }
 
+        db = new DatabaseHelper(getApplicationContext());
+
+        Societe nouveau = new Societe();
+        nouveau.setNom("Bouvard");
+        nouveau.setAdresse1("1 rue du bac");
+        nouveau.setAdresse2("ZA du bornant");
+        nouveau.setCode_postal("54600");
+        nouveau.setVille("Villers-lès-nancy");
+        nouveau.setPays("France");
+        nouveau.setCommentaire("Ceci est un commentaire");
+        nouveau.setAuteur("LB");
+
+        db.ajouterClient(nouveau, "C");
+
+        Log.d("Lecture", "Récupération des clients");
+        List<Societe> clients = db.getSocietes("WHERE Type = 'C'");
+
+        for (Societe client : clients) {
+            String log = "Id: " + client.getId() + " ,Name: " + client.getNom();
+            // Writing Contacts to log
+            Log.d("Info: ", log);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -9,6 +9,10 @@ import java.util.List;
  */
 public class Bon {
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private int id;
     private String date_commande;
     private String etat_commande;
