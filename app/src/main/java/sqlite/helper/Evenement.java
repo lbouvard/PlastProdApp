@@ -8,8 +8,8 @@ import java.util.Date;
 public class Evenement {
 
     private int id;
-    private Date date_debut;
-    private Date date_fin;
+    private String date_debut;
+    private String date_fin;
     private String reccurent;
     private String frequence;
     private String titre;
@@ -26,11 +26,11 @@ public class Evenement {
         return id;
     }
 
-    public Date getDate_debut() {
+    public String getDate_debut() {
         return date_debut;
     }
 
-    public Date getDate_fin() {
+    public String getDate_fin() {
         return date_fin;
     }
 
@@ -62,11 +62,11 @@ public class Evenement {
         return est_prive;
     }
 
-    public void setDate_debut(Date date_debut) {
+    public void setDate_debut(String date_debut) {
         this.date_debut = date_debut;
     }
 
-    public void setDate_fin(Date date_fin) {
+    public void setDate_fin(String date_fin) {
         this.date_fin = date_fin;
     }
 

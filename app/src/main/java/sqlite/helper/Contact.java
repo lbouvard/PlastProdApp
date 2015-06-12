@@ -20,8 +20,7 @@ public class Contact {
     private String ville;
     private String pays;
     private String commentaire;
-    private Date date_modif;
-    private Boolean bit_modif;
+    private String auteur;
     private Societe societe;
     private Compte compte;
 
@@ -129,22 +128,6 @@ public class Contact {
         this.commentaire = commentaire;
     }
 
-    public Date getDate_modif() {
-        return date_modif;
-    }
-
-    public void setDate_modif(Date date_modif) {
-        this.date_modif = date_modif;
-    }
-
-    public Boolean getBit_modif() {
-        return bit_modif;
-    }
-
-    public void setBit_modif(Boolean bit_modif) {
-        this.bit_modif = bit_modif;
-    }
-
     public Societe getSociete() {
         return societe;
     }
@@ -159,5 +142,17 @@ public class Contact {
 
     public void setCompte(Compte compte) {
         this.compte = compte;
+    }
+
+    public String getAuteur() {
+        return auteur;
+    }
+
+    public void setAuteur(String auteur) {
+        this.auteur = auteur;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

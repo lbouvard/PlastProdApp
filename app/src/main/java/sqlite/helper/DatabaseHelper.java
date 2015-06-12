@@ -7,7 +7,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,107 +41,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_SOCIETE = "Societe";
     private static final String TABLE_STOCK = "Stock";
 
-    //nom des colonnes communes
-    private static final String KEY_ID = "id";
-    private static final String KEY_DATE = "date_modif";
-    private static final String KEY_BIT = "bit_modif";
-    private static final String KEY_NOM = "nom";
-    private static final String KEY_TYPE = "type";
-    private static final String KEY_MAIL = "email";
-    private static final String KEY_CP = "code_postal";
-    private static final String KEY_VILLE = "ville";
-    private static final String KEY_PAYS = "pays";
-    private static final String KEY_COM = "commentaire";
-    private static final String KEY_DESC = "description";
-    private static final String KEY_CAT = "categorie";
-    private static final String KEY_LIBELLE = "libelle";
-    private static final String KEY_QUANTITE = "quantite";
-    private static final String KEY_VALEUR = "valeur";
-    private static final String KEY_SOCIETE_ID = "id_societe";
-    private static final String KEY_CONTACT_ID = "id_contact";
-    private static final String KEY_COMPTE_ID = "id_compte";
-    private static final String KEY_CODE = "code";
-
-    //table Bon
-    private static final String KEY_DATE_BON = "date_commande";
-    private static final String KEY_ETAT_BON = "etat_commande";
-    private static final String KEY_SUIVI = "suivi";
-    private static final String KEY_TRANSP = "transporteur";
-    private static final String KEY_DATE_CHG = "date_changement";
-    private static final String KEY_CHANGE = "change";
-
-    //table Commentaire
-    private static final String KEY_TEXT = "texte";
-
-    //table Compte
-    private static final String KEY_MDP = "mdp";
-    private static final String KEY_SALT = "salt";
-    private static final String KEY_ACTIF = "actif";
-
-    //table Contact
-    private static final String KEY_PRENOM = "prenom";
-    private static final String KEY_POSTE = "poste";
-    private static final String KEY_FIXE = "tel_fixe";
-    private static final String KEY_MOBILE = "tel_mobile";
-    private static final String KEY_FAX = "fax";
-    private static final String KEY_ADDR = "adresse";
-
-    //table Evenement
-    private static final String KEY_DATE_DEB = "date_debut";
-    private static final String KEY_DATE_FIN = "date_fin";
-    private static final String KEY_RECC = "reccurent";
-    private static final String KEY_FREQ = "frequence";
-    private static final String KEY_TITRE = "titre";
-    private static final String KEY_PLACE = "emplacement";
-    private static final String KEY_DISPO = "disponibilite";
-    private static final String KEY_IS_PRIVE = "est_prive";
-
-    //table LigneCommande
-    private static final String KEY_PRODUIT_ID = "id_produit";
-    private static final String KEY_BON_ID = "id_bon";
-    private static final String KEY_REMISE = "remise";
-    private static final String KEY_PRIX_U = "prixUnitaire";
-
-    //table Objectif
-    private static final String KEY_ANNEE = "annee";
-
-    //table Produit
-    private static final String KEY_PRIX = "prix";
-    private static final String KEY_ENTREE_ID = "id_entree";
-
-    //table Reponse
-    private static final String KEY_SATISF = "id_satisfaction";
-    private static final String KEY_QUESTION = "question";
-    private static final String KEY_REPONSE = "reponse";
-
-    //table Satisfaction
-    private static final String KEY_DATE_ENVOI = "date_envoi";
-    private static final String KEY_DATE_RECU = "date_recu";
-
-    //table Societe
-    private static final String KEY_ADDR1 = "adresse1";
-    private static final String KEY_ADDR2 = "adresse2";
-
-    //table Stock
-    private static final String KEY_DATE_IN = "date_entree";
-    private static final String KEY_DATE_OUT = "date_sortie";
-
     private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY_KEY autoincrement NOT NULL, Nom TEXT NOT NULL,"
-            + "Adresse1 TEXT NOT NULL, Adresse2 TEXT, CodePostal TEXT NOT NULL, Ville TEXT NOT NULL , Pays TEXT NOT NULL, Commentaire  TEXT,"
-            + "DateModif TEXT, BitModif INTEGER NOT NULL)";
+            + "Adresse1 TEXT NOT NULL, Adresse2 TEXT, CodePostal TEXT NOT NULL, Ville TEXT NOT NULL , Pays TEXT NOT NULL, Type TEXT NOT NULL, Commentaire  TEXT,"
+            + "Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL)";
 
-    private static final String CREATE_TABLE_CONTACT = "CREATE TABLE Contact(IdtContact INTEGER PRIMARY KEY autoincrement NOT NULL, NomContact TEXT NOT NULL,"
-            + "PrenomContact TEXT NOT NULL, Poste TEXT, TelFixe TEXT, Fax TEXT, TelMobile TEXT, Mail  TEXT, Adresse TEXT, CP  TEXT, Ville TEXT, Pays  TEXT,"
-            + "Commentaire TEXT, DateModif TEXT, BitModif INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtCompte INTEGER NOT NULL,"
+    private static final String CREATE_TABLE_CONTACT = "CREATE TABLE Contact(IdtContact INTEGER PRIMARY KEY autoincrement NOT NULL, Nom TEXT NOT NULL,"
+            + "Prenom TEXT NOT NULL, Poste TEXT, TelFixe TEXT, Fax TEXT, TelMobile TEXT, Mail  TEXT, Adresse TEXT, CodePostal  TEXT, Ville TEXT, Pays  TEXT,"
+            + "Commentaire TEXT, Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtCompte INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete),"
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte) )";
 
     private static final String CREATE_TABLE_COMPTE= "CREATE TABLE Compte(IdtCompte INTEGER PRIMARY KEY autoincrement NOT NULL, Nom TEXT NOT NULL,"
-            + "MotDePasse  TEXT NOT NULL, Mail TEXT NOT NULL, Salt TEXT NOT NULL, DateModif TEXT, BitModif INTEGER NOT NULL)";
+            + "MotDePasse  TEXT NOT NULL, Mail TEXT NOT NULL, Salt TEXT NOT NULL, Actif INTEGER NOT NULL)";
 
     private static final String CREATE_TABLE_BON = "CREATE TABLE Bon(IdtBon INTEGER PRIMARY KEY autoincrement NOT NULL, DateCommande TEXT NOT NULL,"
-            + "EtatCommande TEXT, Type TEXT, Suivi TEXT NOT NULL, Transporteur TEXT NOT NULL, DateChg TEXT, BitChg  INTEGER NOT NULL,"
-            + "IdtSociete INTEGER NOT NULL, IdtContact INTEGER NOT NULL,"
+            + "EtatCommande TEXT, Type TEXT, Suivi TEXT NOT NULL, Transporteur TEXT NOT NULL, Auteur TEXT NOT NULL, DateChg TEXT, BitChg  INTEGER NOT NULL,"
+            + "BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtContact INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete),"
             + "FOREIGN KEY (IdtContact) REFERENCES Contact(IdtContact))";
 
@@ -152,11 +69,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY(IdtEntree) REFERENCES Stock(IdtEntree))";
 
     private static final String CREATE_TABLE_OBJ = "CREATE TABLE Objectif(IdtObjectif INTEGER PRIMARY KEY autoincrement NOT NULL,"
-            + "Annee TEXT NOT NULL, Type  TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, IdtCompte INTEGER NOT NULL,"
+            + "Annee TEXT NOT NULL, Type  TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, BitAjout INTEGER NOT NULL,"
+            + "BitModif INTEGER NOT NULL, IdtCompte INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_PARAM = "CREATE TABLE Parametre(IdtParam INTEGER PRIMARY KEY autoincrement NOT NULL,"
-            + "Nom TEXT NOT NULL, Type TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, IdtCompte  INTEGER NOT NULL,"
+            + "Nom TEXT NOT NULL, Type TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, BitAjout INTEGER NOT NULL,"
+            + "BitModif INTEGER NOT NULL, IdtCompte INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_COM = "CREATE TABLE Commentaire(IdtCommentaire INTEGER PRIMARY KEY autoincrement NOT NULL,"
@@ -173,7 +92,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_EVENT = "CREATE TABLE Evenement(IdtEvent INTEGER PRIMARY KEY autoincrement NOT NULL, DateDeb TEXT NOT NULL,"
             + "DateFin TEXT NOT NULL, Recurrent TEXT, Frequence TEXT, Titre TEXT NOT NULL, Emplacement TEXT NOT NULL, Commentaire TEXT NOT NULL,"
-            + "Disponibilite TEXT NOT NULL, EstPrive INTEGER NOT NULL, IdtCompte  INTEGER NOT NULL,"
+            + "Disponibilite TEXT NOT NULL, EstPrive INTEGER NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, IdtCompte  INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_LIGNE = "CREATE TABLE Ligne_commande(Idt INTEGER PRIMARY KEY autoincrement NOT NULL, Quantite INTEGER NOT NULL,"
@@ -234,13 +153,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put(KEY_DATE_BON, devis.getDate_commande());
-        valeurs.put(KEY_ETAT_BON, devis.getEtat_commande());
-        valeurs.put(KEY_TYPE, "DE");
-        valeurs.put(KEY_SUIVI, "");
-        valeurs.put(KEY_TRANSP, "");
-        valeurs.put(KEY_DATE_CHG, "");
-        valeurs.put(KEY_BIT, 0);
+        valeurs.put("DateCommande", devis.getDate_commande());
+        valeurs.put("EtatCommande", devis.getEtat_commande());
+        valeurs.put("Type", "DE");
+        valeurs.put("Suivi", "");
+        valeurs.put("Transporteur", "");
+        valeurs.put("Auteur", devis.getAuteur());
+        valeurs.put("DateChg", DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date()));
+        valeurs.put("BitChg", 0);
+        valeurs.put("BitAjout", 1);
+        valeurs.put("BitModif", 0);
+        valeurs.put("IdtSociete", devis.getClient().getId());
+        valeurs.put("IdtContact", devis.getCommercial().getId());
 
         //insertion du devis
         long devis_id = db.insert(TABLE_BON, null, valeurs);
@@ -258,13 +182,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put(KEY_DATE_BON, bon.getDate_commande());
-        valeurs.put(KEY_ETAT_BON, bon.getEtat_commande());
-        valeurs.put(KEY_TYPE, "CD");
-        valeurs.put(KEY_SUIVI, "");
-        valeurs.put(KEY_TRANSP, "");
-        valeurs.put(KEY_DATE_CHG, "");
-        valeurs.put(KEY_BIT, 0);
+        valeurs.put("DateCommande", bon.getDate_commande());
+        valeurs.put("EtatCommande", bon.getEtat_commande());
+        valeurs.put("Type", "DE");
+        valeurs.put("Suivi", "");
+        valeurs.put("Transporteur", "");
+        valeurs.put("Auteur", bon.getAuteur());
+        valeurs.put("DateChg", DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date()));
+        valeurs.put("BitChg", 0);
+        valeurs.put("BitAjout", 1);
+        valeurs.put("BitModif", 0);
+        valeurs.put("IdtSociete", bon.getClient().getId());
+        valeurs.put("IdtContact", bon.getCommercial().getId());
 
         //insertion du bon de commande
         long bon_id = db.insert(TABLE_BON, null, valeurs);
@@ -282,14 +211,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put(KEY_QUANTITE, ligne.getQuantite());
-        valeurs.put(KEY_CODE, ligne.getCode() );
-        valeurs.put(KEY_NOM, ligne.getNom() );
-        valeurs.put(KEY_DESC, ligne.getDescription() );
-        valeurs.put(KEY_REMISE, ligne.getRemise() );
-        valeurs.put(KEY_PRIX_U, ligne.getPrixUnitaire().doubleValue() );
-        valeurs.put(KEY_PRODUIT_ID, ligne.getId_produit() );
-        valeurs.put(KEY_BON_ID, bon_id );
+        valeurs.put("Quantite", ligne.getQuantite());
+        valeurs.put("Code", ligne.getCode() );
+        valeurs.put("Nom", ligne.getNom() );
+        valeurs.put("Description", ligne.getDescription() );
+        valeurs.put("Remise", ligne.getRemise() );
+        valeurs.put("PrixUnitaire", ligne.getPrixUnitaire().doubleValue() );
+        valeurs.put("IdtProduit", ligne.getId_produit() );
+        valeurs.put("IdtBon", bon_id );
 
         long ligne_id = db.insert(TABLE_LIGNE, null, valeurs);
 
@@ -301,15 +230,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put(KEY_NOM, client.getNom());
-        valeurs.put(KEY_ADDR1, client.getAdresse1());
-        valeurs.put(KEY_ADDR2, client.getAdresse2());
-        valeurs.put(KEY_CP, client.getCode_postal());
-        valeurs.put(KEY_VILLE, client.getVille());
-        valeurs.put(KEY_PAYS, client.getPays());
-        valeurs.put(KEY_COM, client.getCommentaire());
-        valeurs.put(KEY_DATE, "");
-        valeurs.put(KEY_BIT, 0);
+        valeurs.put("Nom", client.getNom());
+        valeurs.put("Adresse1", client.getAdresse1());
+        valeurs.put("Adresse2", client.getAdresse2());
+        valeurs.put("CodePostal", client.getCode_postal());
+        valeurs.put("Ville", client.getVille());
+        valeurs.put("Pays", client.getPays());
+        valeurs.put("Type", client.getType());
+        valeurs.put("Commentaire", client.getCommentaire());
+        valeurs.put("Auteur", client.getAuteur());
+        valeurs.put("BitAjout", 1);
+        valeurs.put("BitModif", 0);
 
         long client_id = db.insert(TABLE_SOCIETE, null, valeurs);
 
@@ -317,25 +248,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //Ajouter un contact
-    public long ajouterContact(Contact contact){
+    public long ajouterContact(Contact contact, Societe client){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put(KEY_NOM, contact.getNom());
-        valeurs.put(KEY_PRENOM, contact.getPrenom());
-        valeurs.put(KEY_POSTE, contact.getPoste());
-        valeurs.put(KEY_FIXE, contact.getTel_fixe());
-        valeurs.put(KEY_FAX, contact.getFax());
-        valeurs.put(KEY_MOBILE, contact.getTel_mobile());
-        valeurs.put(KEY_MAIL, contact.getEmail());
-        valeurs.put(KEY_ADDR, contact.getAdresse());
-        valeurs.put(KEY_CP, contact.getCode_postal());
-        valeurs.put(KEY_VILLE, contact.getVille());
-        valeurs.put(KEY_PAYS, contact.getPays());
-        valeurs.put(KEY_COM, contact.getCommentaire());
-        valeurs.put(KEY_DATE, "");
-        valeurs.put(KEY_BIT, 0);
-        //valeurs.put(KEY_SOCIETE_ID, contact.getI());
+        valeurs.put("Nom", contact.getNom());
+        valeurs.put("Prenom", contact.getPrenom());
+        valeurs.put("Poste", contact.getPoste());
+        valeurs.put("TelFixe", contact.getTel_fixe());
+        valeurs.put("Fax", contact.getFax());
+        valeurs.put("TelMobile", contact.getTel_mobile());
+        valeurs.put("Mail", contact.getEmail());
+        valeurs.put("Adresse", contact.getAdresse());
+        valeurs.put("CodePostal", contact.getCode_postal());
+        valeurs.put("Ville", contact.getVille());
+        valeurs.put("Pays", contact.getPays());
+        valeurs.put("Commentaire", contact.getCommentaire());
+        valeurs.put("Auteur", client.getAuteur());
+        valeurs.put("BitAjout", 1);
+        valeurs.put("BitModif", 0);
+        valeurs.put("IdtSociete", contact.getSociete().getId());
+        valeurs.put("IdtCompte", contact.getCompte().getId());
 
         long contact_id = db.insert(TABLE_CONTACT, null, valeurs);
 
@@ -347,32 +280,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put(KEY_NOM, param.getNom());
-        valeurs.put(KEY_TYPE, param.getType());
-        valeurs.put(KEY_LIBELLE, param.getLibelle());
-        valeurs.put(KEY_VALEUR, param.getValeur());
-        //valeurs.put(KEY_COMPTE_ID, param.getId_compte());
+        valeurs.put("Nom", param.getNom());
+        valeurs.put("Type", param.getType());
+        valeurs.put("Libelle", param.getLibelle());
+        valeurs.put("Valeur", param.getValeur());
+        valeurs.put("BitAjout", 1);
+        valeurs.put("BitModif", 0);
+        valeurs.put("IdtCompte", param.getCompte().getId());
 
         long param_id = db.insert(TABLE_PARAM, null, valeurs);
 
         return param_id;
     }
 
-    //Ajouter un Ã©vÃ©nement
+    //Ajouter un événement
     public long ajouterEvenement(Evenement e) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put(KEY_DATE_DEB, e.getDate_debut().toString());
-        valeurs.put(KEY_DATE_FIN, e.getDate_fin().toString());
-        valeurs.put(KEY_RECC, e.getReccurent());
-        valeurs.put(KEY_FREQ, e.getFrequence());
-        valeurs.put(KEY_TITRE, e.getTitre());
-        valeurs.put(KEY_PLACE, e.getEmplacement());
-        valeurs.put(KEY_COM, e.getCommentaire());
-        valeurs.put(KEY_DISPO, e.getDisponibilite());
-        valeurs.put(KEY_IS_PRIVE, e.getEst_prive());
-        //valeurs.put(KEY_COMPTE_ID, e.getId_compte());
+        valeurs.put("DateDeb", e.getDate_debut());
+        valeurs.put("DateFin", e.getDate_fin());
+        valeurs.put("Recurrent", e.getReccurent());
+        valeurs.put("Frequence", e.getFrequence());
+        valeurs.put("Titre", e.getTitre());
+        valeurs.put("Emplacement", e.getEmplacement());
+        valeurs.put("Commentaire", e.getCommentaire());
+        valeurs.put("Disponibilite", e.getDisponibilite());
+        valeurs.put("EstPrive", e.getEst_prive());
+        valeurs.put("BitAjout", 1);
+        valeurs.put("BitModif", 0);
+        valeurs.put("IdtCompte", e.getCompte().getId());
 
         long event_id = db.insert(TABLE_EVENT, null, valeurs);
 
@@ -396,17 +333,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
-        //On parcours toutes les commandes pour rÃ©cupÃ©rer les articles liÃ©s.
+        //On parcours toutes les commandes pour récupérer les articles.
         if (c.moveToFirst()) {
             do {
                 Bon ligne = new Bon(type);
-                ligne.setDate_commande(c.getString(c.getColumnIndex(KEY_DATE_BON)));
-                ligne.setEtat_commande(c.getString(c.getColumnIndex(KEY_ETAT_BON)));
-                ligne.setSuivi(c.getString(c.getColumnIndex(KEY_SUIVI)));
-                ligne.setTransporteur(c.getString(c.getColumnIndex(KEY_TRANSP)));
-                //ligne.setCommercial(getContact(c.getInt(c.getColumnIndex(KEY_CONTACT_ID)));
-                //ligne.setClient(getSociete(c.getInt(c.getColumnIndex(KEY_SOCIETE)));
-                ligne.setLignesBon(getLignesCommande(c.getInt(c.getColumnIndex(KEY_ID))));
+                ligne.setDate_commande(c.getString(c.getColumnIndex("DateCommande")));
+                ligne.setEtat_commande(c.getString(c.getColumnIndex("EtatCommande")));
+                ligne.setSuivi(c.getString(c.getColumnIndex("Suivi")));
+                ligne.setTransporteur(c.getString(c.getColumnIndex("Transporteur")));
+                ligne.setCommercial(getCommercial(c.getInt(c.getColumnIndex("IdtContact"))));
+                ligne.setClient(getClient(c.getInt(c.getColumnIndex("IdtSociete"))));
+                ligne.setLignesBon(getLignesCommande(c.getInt(c.getColumnIndex("IdtBon"))));
 
                 //On ajoute la commande
                 bons.add(ligne);
@@ -420,7 +357,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<LigneCommande> getLignesCommande(long id_bon){
 
         List<LigneCommande> lignes = new ArrayList<LigneCommande>();
-        String requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, IdtBon, IdtProduit, Remise FROM Ligne_commande"
+        String requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtProduit, IdtBon FROM Ligne_commande"
                             + "WHERE IdtBon = " + id_bon ;
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -430,14 +367,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()){
             do {
                 LigneCommande ligne = new LigneCommande();
-                ligne.setCode(c.getString(c.getColumnIndex(KEY_CODE)));
-                ligne.setDescription(c.getString(c.getColumnIndex(KEY_DESC)));
-                ligne.setId_bon(c.getInt(c.getColumnIndex(KEY_BON_ID)));
-                ligne.setId_produit(c.getInt(c.getColumnIndex(KEY_PRODUIT_ID)));
-                ligne.setNom(c.getString(c.getColumnIndex(KEY_NOM)));
-                ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex(KEY_PRIX_U)));
-                ligne.setQuantite(c.getInt(c.getColumnIndex(KEY_QUANTITE)));
-                ligne.setRemise(c.getDouble(c.getColumnIndex(KEY_REMISE)));
+                ligne.setId(c.getInt(c.getColumnIndex("Idt")));
+                ligne.setCode(c.getString(c.getColumnIndex("Code")));
+                ligne.setDescription(c.getString(c.getColumnIndex("Description")));
+                ligne.setId_bon(c.getInt(c.getColumnIndex("IdtBon")));
+                ligne.setId_produit(c.getInt(c.getColumnIndex("IdtProduit")));
+                ligne.setNom(c.getString(c.getColumnIndex("Nom")));
+                ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex("PrixUnitaire")));
+                ligne.setQuantite(c.getInt(c.getColumnIndex("Quantite")));
+                ligne.setRemise(c.getDouble(c.getColumnIndex("Remise")));
 
                 ligne.calculerPrixRemise();
                 ligne.calculerPrixTotal();
@@ -450,6 +388,112 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lignes;
     }
 
+    public Societe getClient(int id_client){
+
+        Societe client = new Societe();
+        String requete = "SELECT Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur FROM Societe"
+                        + "WHERE IdtSociete = " + id_client;
+
+        Log.e("LOG", requete);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            c.moveToFirst();
+
+            client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+            client.setNom(c.getString(c.getColumnIndex("Nom")));
+            client.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
+            client.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
+            client.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+            client.setVille(c.getString(c.getColumnIndex("Ville")));
+            client.setPays(c.getString(c.getColumnIndex("Pays")));
+            client.setType(c.getString(c.getColumnIndex("Type")));
+            client.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+            client.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+        }
+        else
+            client = null;
+
+        return client;
+    }
+
+    public Contact getCommercial(int id_commercial){
+
+        Contact commercial = new Contact();
+        String requete = "SELECT Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
+                        + "Commentaire, Auteur FROM Contact"
+                        + "WHERE IdtContact = " + id_commercial;
+
+        Log.e("LOG", requete);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            c.moveToFirst();
+
+            commercial.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+            commercial.setNom(c.getString(c.getColumnIndex("Nom")));
+            commercial.setPrenom(c.getString(c.getColumnIndex("Prenom")));
+            commercial.setPoste(c.getString(c.getColumnIndex("Poste")));
+            commercial.setTel_fixe(c.getString(c.getColumnIndex("TelFixe")));
+            commercial.setFax(c.getString(c.getColumnIndex("Fax")));
+            commercial.setTel_mobile(c.getString(c.getColumnIndex("TelMobile")));
+            commercial.setEmail(c.getString(c.getColumnIndex("Mail")));
+            commercial.setAdresse(c.getString(c.getColumnIndex("Adresse")));
+            commercial.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+            commercial.setVille(c.getString(c.getColumnIndex("Ville")));
+            commercial.setPays(c.getString(c.getColumnIndex("Pays")));
+            commercial.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+            commercial.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+        }
+        else
+            commercial = null;
+
+        return commercial;
+    }
+
+    public List<Societe> getSocietes(String type, String clauseWhere){
+
+        List<Societe> societes = new ArrayList<Societe>();
+
+        String requete = "SELECT Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur FROM Societe " + clauseWhere;
+
+        Log.e("LOG", requete);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les sociétés pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+                do {
+
+                    Societe ligne = new Societe();
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+                    ligne.setNom(c.getString(c.getColumnIndex("Nom")));
+                    ligne.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
+                    ligne.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
+                    ligne.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+                    ligne.setVille(c.getString(c.getColumnIndex("Ville")));
+                    ligne.setPays(c.getString(c.getColumnIndex("Pays")));
+                    ligne.setType(c.getString(c.getColumnIndex("Type")));
+                    ligne.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+                    ligne.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+
+                    //On ajoute la commande
+                    societes.add(ligne);
+
+                } while (c.moveToNext());
+            }
+        }
+
+        return societes;
+    }
+
+    
     /***********************
      * METTRE A JOUR
      ***********************/

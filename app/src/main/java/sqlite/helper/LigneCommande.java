@@ -133,4 +133,8 @@ public class LigneCommande {
         this.prixTotal = this.prixRemise.multiply(new BigDecimal(quantite));
         this.prixTotal = this.prixTotal.setScale(2, BigDecimal.ROUND_HALF_UP);
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

@@ -15,8 +15,8 @@ public class Bon {
     private String type;
     private String suivi;
     private String transporteur;
+    private String auteur;
     private String date_changement;
-    private Boolean change;
     private List<LigneCommande> lignesBon;
     private Societe client;
     private Contact commercial;
@@ -54,10 +54,6 @@ public class Bon {
         return date_changement;
     }
 
-    public Boolean getChange() {
-        return change;
-    }
-
     public void setDate_commande(String date_commande) {
         this.date_commande = date_commande;
     }
@@ -82,11 +78,6 @@ public class Bon {
         this.date_changement = date_changement;
     }
 
-    public void setChange(Boolean change) {
-        this.change = change;
-    }
-
-
     public List<LigneCommande> getLignesBon() {
         return lignesBon;
     }
@@ -109,5 +100,13 @@ public class Bon {
 
     public void setCommercial(Contact commercial) {
         this.commercial = commercial;
+    }
+
+    public String getAuteur() {
+        return auteur;
+    }
+
+    public void setAuteur(String auteur) {
+        this.auteur = auteur;
     }
 }

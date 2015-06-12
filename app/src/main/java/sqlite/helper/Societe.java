@@ -14,13 +14,21 @@ public class Societe {
     private String code_postal;
     private String ville;
     private String pays;
+    private String type;
     private String commentaire;
-    private String date_modif;
-    private Boolean bit_modif;
+    private String auteur;
 
     //Constructeurs
-    public Societe() {
+    public Societe(){
 
+    }
+
+    public Societe(String auteur) {
+        this.auteur = auteur;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getNom() {
@@ -79,23 +87,23 @@ public class Societe {
         this.commentaire = commentaire;
     }
 
-    public String getDate_modif() {
-        return date_modif;
+    public String getAuteur() {
+        return auteur;
     }
 
-    public void setDate_modif(String date_modif) {
-        this.date_modif = date_modif;
+    public void setAuteur(String auteur) {
+        this.auteur = auteur;
     }
 
-    public Boolean getBit_modif() {
-        return bit_modif;
+    public String getType() {
+        return type;
     }
 
-    public void setBit_modif(Boolean bit_modif) {
-        this.bit_modif = bit_modif;
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public int getId() {
-        return id;
+    public void setId(int id) {
+        this.id = id;
     }
 }
