@@ -6,6 +6,7 @@ package sqlite.helper;
 public class Compte {
 
     private int id;
+    private int contact_id;
     private String nom;
     private String mdp;
     private String email;
@@ -14,10 +15,6 @@ public class Compte {
 
     //Constructeurs
     public Compte(){
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getNom() {
@@ -58,5 +55,21 @@ public class Compte {
 
     public void setActif(Boolean actif) {
         this.actif = actif;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getContact_id() {
+        return contact_id;
+    }
+
+    public void setContact_id(int contact_id) {
+        this.contact_id = contact_id;
     }
 }

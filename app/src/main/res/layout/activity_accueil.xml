@@ -65,7 +65,8 @@
         android:textStyle="bold"
         android:textAllCaps="false"
         android:textSize="20dp"
-        android:drawableRight="@drawable/ic_chevron_right_white_48dp" />
+        android:drawableRight="@drawable/ic_chevron_right_white_48dp"
+        android:onClick="Authentifier"/>
 
     <ImageView
         android:layout_width="wrap_content"
