@@ -1,11 +1,12 @@
 package sqlite.helper;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Laurent on 10/06/2015.
  */
-public class Contact {
+public class Contact implements Serializable{
 
     private int id;
     private String nom;
@@ -145,5 +146,10 @@ public class Contact {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString(){
+        return this.prenom + " " + this.nom;
     }
 }

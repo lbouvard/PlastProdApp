@@ -12,7 +12,6 @@
         <item name="actionMenuTextColor">@color/blanc</item>
     </style>
 
-
     <!-- general styles for the action bar -->
     <style name="PlastProdBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:titleTextStyle">@style/PlastProdText</item>

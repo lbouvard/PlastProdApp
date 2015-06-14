@@ -1,27 +1,95 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:layout_height="match_parent"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:background="@drawable/gradient"
     tools:context="com.plastprod.plastprodapp.MenuActivity">
 
-    <Button
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Synchroniser"
+        android:id="@+id/imgUser"
+        android:layout_marginLeft="32dp"
+        android:background="@drawable/icone_rond"
+        android:contentDescription="@string/logo"
+        android:layout_centerHorizontal="false" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:text="vide"
+        android:textStyle="bold"
+        android:id="@+id/nom_utilisateur"
+        android:textColor="@color/blanc"
+        android:layout_below="@+id/imgUser"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="prenom.nom@plastprod.fr"
+        android:id="@+id/mail_utilisateur"
+        android:textSize="16sp"
+        android:textColor="@color/noir"
+        android:layout_below="@+id/nom_utilisateur"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentStart="true" />
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/liste_menu"
+        android:layout_below="@+id/mail_utilisateur"
+        android:layout_marginTop="16dp"
+        android:layout_alignParentStart="true"
+        android:background="@color/blanc"
+        android:choiceMode="singleChoice"
+        android:fastScrollEnabled="true"
+        tools:listitem="@android:layout/simple_list_item_1"
+        android:nestedScrollingEnabled="false"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/synchroniser"
         android:id="@+id/btn_syncro"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/liste_menu"
         android:layout_marginTop="20dp"
+        android:paddingStart="10dp"
         android:background="@drawable/button"
         android:clickable="true"
         android:textColor="@color/blanc"
-        android:width="180dp"
         android:textStyle="normal"
         android:textAllCaps="false"
-        android:textSize="18dp"
-        android:drawableLeft="@drawable/ic_autorenew_white_48dp" />
+        android:textSize="18sp"
+        android:layout_marginLeft="16dp"
+        android:drawableStart="@drawable/ic_sync_white_24dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/deconnexion"
+        android:id="@+id/btn_deconnexion"
+        android:layout_below="@+id/liste_menu"
+        android:layout_toEndOf="@+id/btn_syncro"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:paddingStart="10dp"
+        android:background="@drawable/button_gris"
+        android:clickable="true"
+        android:textColor="@color/noir"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:layout_marginLeft="16dp"
+        android:drawableStart="@drawable/ic_lock_open_black_24dp"
+        android:onClick="Deconnecter" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -29,8 +97,8 @@
         android:id="@+id/imgLogo"
         android:contentDescription="@string/logo"
         android:src="@drawable/ic_logo"
-        android:layout_below="@+id/btn_connexion"
-        android:layout_marginTop="40dp"
+        android:layout_below="@+id/btn_syncro"
+        android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

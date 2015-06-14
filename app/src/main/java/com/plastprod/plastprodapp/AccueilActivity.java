@@ -1,12 +1,14 @@
 package com.plastprod.plastprodapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -105,10 +107,12 @@ public class AccueilActivity extends ActionBarActivity {
 
     }
 
-    public void Authentifier(){
+    public void Authentifier(View vue){
 
         String identifiant;
         String motDePasse;
+        Boolean connexion_ok = false;
+        CharSequence message = "";
 
         try {
 
@@ -122,29 +126,44 @@ public class AccueilActivity extends ActionBarActivity {
 
             String salt = db.getSalt(identifiant);
 
-            if( salt != "" ) {
+            if( !salt.equals("") ) {
                 Cryptage securite = new Cryptage(motDePasse, salt);
                 String mdpEncode = securite.CrypterDonnees();
 
                 Log.d("Info", mdpEncode);
 
                 //Vérification des données d'identification
-                Contact commercial = db.verifierIdentifiantCommercial(identifiant, motDePasse);
+                Contact commercial = db.verifierIdentifiantCommercial(identifiant, mdpEncode);
 
                 //Réussite, on va au menu principal
                 if( commercial != null ){
-                    //intent
+
+                    connexion_ok = true;
+                    //nouvelle activité
+                    Intent activite = new Intent(this, MenuActivity.class);
+                    //on passe les infos du commercial
+                    activite.putExtra("Commercial", commercial);
+                    //on démarre la nouvelle activité
+                    startActivity(activite);
                 }
                 else{
-                    //Message d'erreur à afficher
-                    Context context = getApplicationContext();
-                    CharSequence message = "Identifiant et/ou mot de passe incorrect";
-                    int duree = Toast.LENGTH_SHORT;
-
-                    Toast notification = Toast.makeText(context, message, duree);
-                    notification.show();
+                    message = "Identifiant et/ou mot de passe incorrect";
                 }
             }
+            else{
+                message = "Identifiant inconnu";
+            }
+
+
+            if( !connexion_ok) {
+                //Message d'erreur à afficher
+                Context context = getApplicationContext();
+                int duree = Toast.LENGTH_LONG;
+
+                Toast notification = Toast.makeText(context, message, duree);
+                notification.show();
+            }
+
         }
         catch (Exception e){
             Log.d("Erreur", "Message : " + e.getMessage());

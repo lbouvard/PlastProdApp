@@ -447,7 +447,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Contact commercial = new Contact();
         String requete = "SELECT rowid, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
-                        + "Commentaire, Auteur FROM Contact"
+                        + "Commentaire, Auteur FROM Contact "
                         + "WHERE rowid = " + id_commercial;
 
         Log.d("Requete", requete);
@@ -728,7 +728,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
-        if( c != null) {
+        if( c.getCount() > 0 ) {
             c.moveToFirst();
 
             salt = c.getString(c.getColumnIndex("Salt"));
@@ -744,7 +744,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Contact info = new Contact();
         int id_contact = -1;
 
-        String requete = "SELECT IdtCompte FROM Contact "
+        String requete = "SELECT IdtContact FROM Compte "
                         + "WHERE Nom = '" + login + "' And MotDePasse = '" + motDePasse + "'";
 
         Log.d("Requete", requete);
@@ -752,9 +752,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
-        if( c != null) {
+        if( c.getCount() > 0) {
             c.moveToFirst();
-            id_contact = c.getInt(c.getColumnIndex("IdtCompte"));
+            id_contact = c.getInt(c.getColumnIndex("IdtContact"));
             c.close();
 
             info = getCommercial(id_contact);
