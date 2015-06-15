@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.List;
 
 import sqlite.helper.Compte;
@@ -34,12 +35,29 @@ public class AccueilActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    protected void onResume(){
+        super.onResume();
+
+        EditText edt_utilisateur = (EditText)findViewById(R.id.edt_nomutilisateur);
+        EditText edt_motdepasse = (EditText)findViewById(R.id.edt_motdepasse);
+
+        final Global jeton = (Global) getApplicationContext();
+
+        if( jeton.getNom_utilisateur() != "")
+            edt_utilisateur.setText(jeton.getNom_utilisateur());
+        if( jeton.getMail_utilisateur() != "")
+            edt_utilisateur.setText(jeton.getMail_utilisateur());
+
+        edt_motdepasse.setText("");
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+/*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -53,7 +71,7 @@ public class AccueilActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     private void chargerDonneesBase(){
 
@@ -139,10 +157,22 @@ public class AccueilActivity extends ActionBarActivity {
                 if( commercial != null ){
 
                     connexion_ok = true;
+                    final Global jeton = (Global) getApplicationContext();
+
+                    if( identifiant.contains("@") )
+                        jeton.setMail_utilisateur(identifiant);
+                    else
+                        jeton.setNom_utilisateur(identifiant);
+
+                    jeton.setUtilisateur(commercial);
+
+                    jeton.setDate_connexion(new Date());
+
                     //nouvelle activité
                     Intent activite = new Intent(this, MenuActivity.class);
                     //on passe les infos du commercial
-                    activite.putExtra("Commercial", commercial);
+                    //activite.putExtra("Commercial", commercial);
+
                     //on démarre la nouvelle activité
                     startActivity(activite);
                 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,31 +35,75 @@ public class MenuActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
-        itActivite = getIntent();
-        commercial = (Contact) itActivite.getSerializableExtra("Commercial");
+        //utilisateur authentifié
+        if( Outils.VerifierSession(getApplicationContext()) ){
 
-        //Alimente les textes
-        tvNom = (TextView) findViewById(R.id.nom_utilisateur);
-        tvNom.setText(commercial.toString());
-        tvMail = (TextView) findViewById(R.id.mail_utilisateur);
-        tvMail.setText(commercial.getEmail());
-        lvMenu = (ListView) findViewById(R.id.liste_menu);
+            final Global jeton = (Global) getApplicationContext();
 
-        String[] valeurs = new String[] { "Gestion des clients",
-            "Gestion des prospects", "Gestion des commandes", "Suivi commercial", "Suivi des performances" };
+            //paramètre passé à l'intent
+            /*itActivite = getIntent();
+            commercial = (Contact) itActivite.getSerializableExtra("Commercial");*/
+            commercial = jeton.getUtilisateur();
 
-        MenuAdaptateur adaptateur = new MenuAdaptateur(this, valeurs);
-        lvMenu.setAdapter(adaptateur);
+            //Alimente les textes
+            tvNom = (TextView) findViewById(R.id.nom_utilisateur);
+            tvNom.setText(commercial.toString());
+            tvMail = (TextView) findViewById(R.id.mail_utilisateur);
+            tvMail.setText(commercial.getEmail());
+            lvMenu = (ListView) findViewById(R.id.liste_menu);
+
+            String[] valeurs = new String[] { "Gestion des clients",
+                    "Gestion des prospects", "Gestion des commandes", "Suivi commercial", "Suivi des performances" };
+
+            MenuAdaptateur adaptateur = new MenuAdaptateur(this, valeurs);
+            lvMenu.setAdapter(adaptateur);
+
+            lvMenu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    switch (i){
+                        case 0:
+                            ouvrirClient();
+                            break;
+                        case 1:
+                            ouvrirProspect();
+                            break;
+                        case 2:
+                            ouvrirBon();
+                            break;
+                        case 3:
+                            ouvrirSuivi();
+                            break;
+                        case 4:
+                            ouvrirPerf();
+                            break;
+                    }
+                }
+            });
+
+        }
+        else {
+            terminerSession();
+        }
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        if( !Outils.VerifierSession(getApplicationContext()) ){
+            terminerSession();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_menu, menu);
+        //getMenuInflater().inflate(R.menu.menu_menu, menu);
         return true;
     }
 
+    /*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -72,9 +117,45 @@ public class MenuActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }*/
+
+    public void terminerSession(){
+
+        Intent activite = new Intent(this, AccueilActivity.class);
+        activite.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(activite);
+        finish();
     }
 
     public void Deconnecter(View vue){
-        //getParentActivityIntent();
+
+        terminerSession();
+    }
+
+    public void ouvrirClient(){
+        Intent activite = new Intent(this, ClientActivity.class);
+        startActivity(activite);
+    }
+
+    public void ouvrirProspect(){
+        Intent activite = new Intent(this, ProspectActivity.class);
+        startActivity(activite);
+    }
+
+    public void ouvrirBon(){
+        Intent activite = new Intent(this, BonActivity.class);
+        startActivity(activite);
+    }
+
+    public void ouvrirSuivi(){
+        Intent activite = new Intent(this, SuiviActivity.class);
+        startActivity(activite);
+    }
+
+    public void ouvrirPerf(){
+        Intent activite = new Intent(this, PerfActivity.class);
+        startActivity(activite);
     }
 }

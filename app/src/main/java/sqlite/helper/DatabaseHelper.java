@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 15;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";

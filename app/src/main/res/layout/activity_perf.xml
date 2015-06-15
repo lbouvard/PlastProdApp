@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.plastprod.plastprodapp.PerfActivity">
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/liste_menu"
+
+        android:layout_alignParentStart="true"
+        android:background="@color/blanc"
+        android:choiceMode="singleChoice"
+        android:fastScrollEnabled="true"
+        tools:listitem="@android:layout/simple_list_item_1"
+        android:nestedScrollingEnabled="false"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
+
+</RelativeLayout>

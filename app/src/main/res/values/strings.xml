@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">PlastProd App</string>
-    <string name="action_settings">Paramètres</string>
-    <string name="action_search">Rechercher</string>
+    <string name="action_recherche">Rechercher</string>
     <string name="edit_message">Entrer un message</string>
     <string name="button_send">Valider</string>
     <string name="title_activity_afficher_message">Message</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_menu">Menu</string>
     <string name="nom_utilisateur">Nom d\'utilisateur</string>
     <string name="mdp">Mot de passe</string>
@@ -14,4 +12,12 @@
     <string name="synchroniser">Synchroniser</string>
     <string name="deconnexion">Déconnexion</string>
     <string name="logo">Entreprise PlastProd</string>
+    <string name="title_activity_client">Clients</string>
+    <string name="title_activity_prospect">Prospects</string>
+    <string name="title_activity_contact">Contacts</string>
+    <string name="title_activity_bon">Bons</string>
+    <string name="title_activity_suivi">Suivi commercial</string>
+    <string name="title_activity_perf">Suivi des performances</string>
+    <string name="action_ajout">Ajouter un contact</string>
+
 </resources>
