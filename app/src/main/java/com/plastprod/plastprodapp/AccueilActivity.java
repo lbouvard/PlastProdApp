@@ -73,58 +73,6 @@ public class AccueilActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }*/
 
-    private void chargerDonneesBase(){
-
-        try{
-
-            db = new DatabaseHelper(getApplicationContext());
-
-            //ajout de la societe plastprod
-            Societe nouveau = new Societe();
-            nouveau.setNom("PlastProd");
-            nouveau.setAdresse1("1 rue du comodo");
-            nouveau.setAdresse2("");
-            nouveau.setCode_postal("54600");
-            nouveau.setVille("Villers-Lès-nancy");
-            nouveau.setPays("France");
-            nouveau.setCommentaire("Société mère");
-            nouveau.setAuteur("LB");
-            db.ajouterClient(nouveau, "M");
-
-            //ajout du contact
-            Contact contact = new Contact();
-            contact.setNom("Bouvard");
-            contact.setPrenom("Laurent");
-            contact.setPoste("Commercial");
-            contact.setTel_fixe("+33383256594");
-            contact.setTel_mobile("+33645986147");
-            contact.setFax("");
-            contact.setEmail("laurent.bouvard@plastprod.fr");
-            contact.setAdresse("1 rue du comodo");
-            contact.setCode_postal("54600");
-            contact.setVille("Villers-Lès-nancy");
-            contact.setPays("France");
-            contact.setCommentaire("");
-            contact.setAuteur("LB");
-            contact.setSociete(nouveau);
-            long id_compte = db.ajouterContact(contact);
-
-            //ajout d'un compte
-            Compte compte = new Compte();
-            compte.setNom("bouvard.laurent");
-            compte.setEmail("laurent.bouvard@plastprod.fr");
-            compte.setActif(true);
-            compte.setSalt("5703c8599affced67f20c76ff6ec0116");
-            compte.setMdp("ZQGi8N+qt7Rt0o1Z/4hFodTwaXrj8BIYtj5zCbXMtXg2j5CKpoaoveoKPQodBS1oTs3XC+0bjwGLfj9mHjiX6Q==");
-            compte.setContact_id((int)id_compte);
-            db.ajouterCompte(compte);
-
-        } catch (Exception e){
-            Log.d("chargerDonneesBase", "Message : " + e.getMessage());
-        }
-
-    }
-
     public void Authentifier(View vue){
 
         String identifiant;
@@ -193,6 +141,8 @@ public class AccueilActivity extends ActionBarActivity {
                 Toast notification = Toast.makeText(context, message, duree);
                 notification.show();
             }
+
+            db.close();
 
         }
         catch (Exception e){

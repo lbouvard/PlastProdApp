@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 public class LigneCommande {
 
     private int id;
-    private int id_produit;
     private int id_bon;
     private int quantite;
     private String code;
@@ -66,14 +65,6 @@ public class LigneCommande {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public int getId_produit() {
-        return id_produit;
-    }
-
-    public void setId_produit(int id_produit) {
-        this.id_produit = id_produit;
     }
 
     public int getId_bon() {

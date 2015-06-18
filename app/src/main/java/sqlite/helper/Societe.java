@@ -17,6 +17,7 @@ public class Societe {
     private String type;
     private String commentaire;
     private String auteur;
+    private int nb_contact;
 
     //Constructeurs
     public Societe(){
@@ -105,5 +106,13 @@ public class Societe {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getNb_contact() {
+        return nb_contact;
+    }
+
+    public void setNb_contact(int nb_contact) {
+        this.nb_contact = nb_contact;
     }
 }

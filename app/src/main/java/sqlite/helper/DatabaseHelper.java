@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 18;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -59,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY (IdtContact) REFERENCES Contact(IdtContact))";
 
     private static final String CREATE_TABLE_BON = "CREATE TABLE Bon(IdtBon INTEGER PRIMARY KEY, DateCommande TEXT NOT NULL,"
-            + "EtatCommande TEXT, Type TEXT, Suivi TEXT NOT NULL, Transporteur TEXT NOT NULL, Auteur TEXT NOT NULL, DateChg TEXT, BitChg  INTEGER NOT NULL,"
+            + "EtatCommande TEXT, Type TEXT, Suivi TEXT, Transporteur TEXT, Auteur TEXT NOT NULL, DateChg TEXT, BitChg  INTEGER NOT NULL,"
             + "BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtContact INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete),"
             + "FOREIGN KEY (IdtContact) REFERENCES Contact(IdtContact))";
@@ -73,8 +73,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY(IdtEntree) REFERENCES Stock(IdtEntree))";
 
     private static final String CREATE_TABLE_OBJ = "CREATE TABLE Objectif(IdtObjectif INTEGER PRIMARY KEY,"
-            + "Annee TEXT NOT NULL, Type  TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, BitAjout INTEGER NOT NULL,"
-            + "BitModif INTEGER NOT NULL, IdtCompte INTEGER NOT NULL,"
+            + "Annee TEXT NOT NULL, Type  TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, IdtCompte INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_PARAM = "CREATE TABLE Parametre(IdtParam INTEGER PRIMARY KEY,"
@@ -100,9 +99,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_LIGNE = "CREATE TABLE LigneCommande(Idt INTEGER PRIMARY KEY, Quantite INTEGER NOT NULL,"
-            + "Code TEXT, Nom TEXT NOT NULL, Description TEXT, PrixUnitaire REAL NOT NULL, Remise REAL NOT NULL, IdtProduit  INTEGER NOT NULL,"
+            + "Code TEXT, Nom TEXT NOT NULL, Description TEXT, PrixUnitaire REAL NOT NULL, Remise REAL NOT NULL,"
             + "IdtBon INTEGER NOT NULL,"
-            + "FOREIGN KEY (IdtProduit) REFERENCES Produit(IdtProduit), FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
+            + "FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -147,6 +146,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // create new tables
         onCreate(db);
+
+        //populate tables
+        chargerTables(db);
     }
 
     /***********************
@@ -217,12 +219,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues valeurs = new ContentValues();
         valeurs.put("Quantite", ligne.getQuantite());
-        valeurs.put("Code", ligne.getCode() );
-        valeurs.put("Nom", ligne.getNom() );
-        valeurs.put("Description", ligne.getDescription() );
-        valeurs.put("Remise", ligne.getRemise() );
-        valeurs.put("PrixUnitaire", ligne.getPrixUnitaire() );
-        valeurs.put("IdtProduit", ligne.getId_produit() );
+        valeurs.put("Code", ligne.getCode());
+        valeurs.put("Nom", ligne.getNom());
+        valeurs.put("Description", ligne.getDescription());
+        valeurs.put("Remise", ligne.getRemise());
+        valeurs.put("PrixUnitaire", ligne.getPrixUnitaire());
         valeurs.put("IdtBon", bon_id);
 
         return db.insert(TABLE_LIGNE, null, valeurs);
@@ -373,7 +374,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<LigneCommande> getLignesCommande(long id_bon){
 
         List<LigneCommande> lignes = new ArrayList<LigneCommande>();
-        String requete = "SELECT rowid, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtProduit, IdtBon FROM Ligne_commande"
+        String requete = "SELECT rowid, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtBon FROM Ligne_commande"
                             + "WHERE IdtBon = " + id_bon ;
 
         Log.d("Requete", requete);
@@ -390,7 +391,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setCode(c.getString(c.getColumnIndex("Code")));
                     ligne.setDescription(c.getString(c.getColumnIndex("Description")));
                     ligne.setId_bon(c.getInt(c.getColumnIndex("IdtBon")));
-                    ligne.setId_produit(c.getInt(c.getColumnIndex("IdtProduit")));
+                    //ligne.setId_produit(c.getInt(c.getColumnIndex("IdtProduit")));
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex("PrixUnitaire")));
                     ligne.setQuantite(c.getInt(c.getColumnIndex("Quantite")));
@@ -446,9 +447,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Contact getCommercial(int id_commercial){
 
         Contact commercial = new Contact();
-        String requete = "SELECT rowid, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
+        String requete = "SELECT IdtContact, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
                         + "Commentaire, Auteur FROM Contact "
-                        + "WHERE rowid = " + id_commercial;
+                        + "WHERE IdtContact = " + id_commercial;
 
         Log.d("Requete", requete);
 
@@ -484,10 +485,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<Societe> getSocietes(String clauseWhere){
 
         List<Societe> societes = new ArrayList<Societe>();
+        String requete = "";
 
-        String requete = "SELECT rowid, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur FROM Societe " + clauseWhere;
-
-        Log.d("Requete", requete);
+        requete = "SELECT soc.IdtSociete, soc.Nom, soc.Adresse1, soc.Adresse2, soc.CodePostal, soc.Ville, soc.Pays, soc.Type, soc.Commentaire, " +
+                "soc.Auteur, COUNT(con.IdtContact) AS Nb " +
+                "FROM Societe soc INNER JOIN Contact con ON soc.IdtSociete =  con.IdtSociete " +
+                "WHERE soc.Type = 'C' GROUP BY con.IdtContact ORDER BY soc.IdtSociete";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
@@ -498,7 +501,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
 
                     Societe ligne = new Societe();
-                    ligne.setId(c.getInt(c.getColumnIndex("rowid")));
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtSociete")));
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
                     ligne.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
@@ -508,6 +511,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setType(c.getString(c.getColumnIndex("Type")));
                     ligne.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
                     ligne.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+                    ligne.setNb_contact(c.getInt(c.getColumnIndex("Nb")));
 
                     //On ajoute la commande
                     societes.add(ligne);
@@ -903,7 +907,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Description", ligne.getDescription() );
         valeurs.put("Remise", ligne.getRemise() );
         valeurs.put("PrixUnitaire", ligne.getPrixUnitaire() );
-        valeurs.put("IdtProduit", ligne.getId_produit() );
 
         // updating row
         db.update(TABLE_LIGNE, valeurs, "Idt = ?",
@@ -957,5 +960,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.delete(TABLE_LIGNE, "Idt = ?",
                 new String[]{String.valueOf(ligne.getId())});
+    }
+
+
+    //Populate tables
+    public void chargerTables(SQLiteDatabase db){
+
+        db.execSQL("INSERT INTO Societe (IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur, BitAjout, BitModif) VALUES (1, 'PlastProd', '1 rue du comodo', '', '54600', 'Villers-Lès-Nancy', 'France', 'M', 'Société mère', '', 0, 0),	(5, 'Societe1', 'ZI Fessel', '', '69000', 'Lyon', 'France', 'C', '', 'Bouvard Laurent', 0, 0),(6, 'Societe2', '16 rue du clos', '', '93600', 'Bondy', 'France', 'C', '', 'Dupond Jean', 0, 0),(7, 'Boite3', '20 avenue du général de Gaulle', '', '78000', 'Versailles', 'France', 'P', '', 'Bouvard Laurent', 0, 0)");
+
+        db.execSQL("INSERT INTO Contact (IdtContact, Nom, Prenom, Poste, TelFixe, TelMobile, Fax, Mail, Adresse, CodePostal, Ville, Pays, Commentaire, Auteur, BitAjout, BitModif, IdtSociete) VALUES (2, 'Bouvard', 'Laurent', 'Commercial', '+33383256594', '+33645986147', NULL, 'laurent.bouvard@plastprod.fr', '1 rue du comodo', '54600', 'Villers-Lès-Nancy', 'France', '', '', 0, 0, 1),(3, 'Convenant', 'Claude', 'Commercial', '+33145328564', '+33610447251', NULL, 'convenant.claude@boite3.fr', '20 avenue du général de Gaulle', '78000', 'Versailles', 'France', '','Bouvard Laurent', 0, 0, 7),	(4, 'Dupond', 'Jean', 'Commercial', '+33383256598', '+33612356898', NULL, 'jean.dupond@plastprod.fr', '1 rue du comodo', '54600', 'Villers-Lès-Nancy', 'France', 'Commentaire', '', 0, 0, 1),	(6, 'Lemoine', 'Alain', 'Commercial', '+33133443002', '+33610447251', NULL, 'alain.lemoine@societe2.fr', '16 rue du clos', '93600', 'Bondy', 'France', '', 'Dupond Jean', 0, 0, 6)");
+        db.execSQL("INSERT INTO Contact (IdtContact, Nom, Prenom, Poste, TelFixe, TelMobile, Fax, Mail, Adresse, CodePostal, Ville, Pays, Commentaire, Auteur, BitAjout, BitModif, IdtSociete) VALUES (7, 'Morandi', 'Pierre', 'Directeur technique', '+33445238590', '+33645464724', NULL, 'pierre.morandi@societe1.fr', 'ZI Fessel', '69000', 'Lyon', 'France', '', 'Bouvard Laurent', 0, 0, 5)");
+
+        db.execSQL("INSERT INTO Compte (IdtCompte, Nom, MotDePasse, Mail, Salt, Actif, IdtContact) VALUES (2, 'bouvard.laurent', 'ZQGi8N+qt7Rt0o1Z/4hFodTwaXrj8BIYtj5zCbXMtXg2j5CKpoaoveoKPQodBS1oTs3XC+0bjwGLfj9mHjiX6Q==', 'laurent.bouvard@plastprod.fr', '5703c8599affced67f20c76ff6ec0116', 1, 2),(4, 'dupond.jean', 'xs2y6GqgDMuy1G+jJxelOTeouwIeVwdad1/vUJi3U87fDNfpNiiNkFoLcGmt/pYHIVvjgs0Xb48Fys2zFjaAxQ==', 'jean.dupond@plasprod.fr', '5703c8599affgku67f20c76ff6ec0116', 1, 4),(9, 'super.admin', 'whqoSMIHm68/KSh1L4mvV/aWen4c4VlIQ9RBPYzCAFkDBwtJBgZcraI9at0uzqXyjda7n5LiJn5Nybd9NlP8Iw==', 'admin@plastprod.fr', '0575f5b5602389cf17daf9bbbc5b4e7a', 1, 9)");
+
+        db.execSQL("INSERT INTO Bon (IdtBon, DateCommande ,EtatCommande, Type, Suivi, Transporteur, Auteur, DateChg, BitChg  ,BitAjout, BitModif, IdtSociete, IdtContact) VALUES (1, '2015-03-17 18:59:05', 'Validée', 'CD', NULL, NULL, '', NULL, 0, 0, 0, 5, 4),(2, '2015-03-17 19:38:52', 'Validée', 'CD', NULL, NULL,'', NULL, 0, 0, 0,  7, 2),(3, '2015-03-23 23:38:45', 'Validée', 'CD', NULL, NULL, '', NULL, 0, 0, 0, 5, 2),(4, '2015-05-15 15:25:10', 'En cours de préparation', 'CD', NULL, NULL, '','2015-05-17 16:14:15', 1, 0, 0, 5, 4)");
+
+        db.execSQL("INSERT INTO LigneCommande (Idt, Quantite ,Code, Nom, Description, PrixUnitaire, Remise, IdtBon) VALUES (1, 4, 'RE15208', 'Comodo208', 'Boite à gant granuleux', 58, 0.05, 1),(2, 3, 'PE14542', 'Comodo542', 'Dock prise mobile', 18, 0.06, 1),(3, 4, 'FD13633', 'CommandeClim', 'Bloc commande climatisation', 85, 0, 2),(4, 2, 'PE14542', 'Comodo542', 'Dock prise mobile', 18, 0.02, 2),(5, 15, 'RE15208', 'Comodo208', 'Boite à gant granuleux', 58, 0, 2),(6, 5, 'RE15208', 'Comodo208', 'Boite à gant granuleux', 58, 0.05, 3),(7, 10, 'FD13633', 'CommandeClim', 'Bloc commande climatisation', 85, 0.1, 4),(8, 6, 'PE14542', 'Comodo542', 'Dock prise mobile', 18, 0.05, 4)");
+
+        db.execSQL("INSERT INTO Produit	(IdtProduit ,Nom, Description, Categorie, Code ,Prix, IdtEntree) VALUES	(1, 'Comodo208', 'Boite à gant granuleux', 'Automobile', 'RE15208', 58, 1),(2, 'Comodo542', 'Dock prise mobile', 'Automobile', 'PE14542', 18, 2),(3, 'CommandeClim', 'Bloc commande climatisation', 'Automobile', 'FD13633', 85, 3),(10, 'Commande2', 'Bloc commande2', 'Automobile', 'KJ16233', 57, 4),(11, 'Commande3', 'Bloc commande3', 'Automobile', 'CD25478', 100, 5)");
+
+        db.execSQL("INSERT INTO Stock (IdtEntree ,Quantite, DelaisMoy, Delais) VALUES (1, 10, 6, 0),(2, 5, 4, 0),(3, 2, 10, 0),(4, 1, 10, 2),(5, 4, 2, 0)");
+
+        db.execSQL("INSERT INTO Objectif (IdtObjectif, Annee, Type , Libelle, Valeur, IdtCompte) VALUES	(1, '2015', 'CA', 'Chiffre d''affaire', 85, 2),(2, '2015','CD', 'Commandes', 150, 2),(3, '2015', 'CL', 'Nouveaux clients', 10, 2),(4, '2015','PR', 'Nouveaux prospects', 15, 2),(5, '2015', 'PE', 'Perte de client', 3, 2),(6, '2015','AN', 'Animations', 12, 2),(7, '2015', 'CA', 'Chiffre d''affaire', 90, 4),(8, '2015','CD', 'Commandes', 160, 4),(9, '2015', 'CL', 'Nouveaux clients', 10, 4),(10, '2015','PR', 'Nouveaux prospects', 15, 4),(11, '2015', 'PE', 'Perte de client', 3, 4),(12, '2015','AN', 'Animations', 10, 4)");
+
+        db.execSQL("INSERT INTO Parametre (IdtParam ,Nom, Type, Libelle, Valeur, BitAjout ,BitModif, IdtCompte) VALUES	(1, 'Qauto', 'Booleen', 'Active mode auto', 1, 0, 0, 2),(2, 'Qetape', 'Chaine', 'Envoyer à l''étape', 'Commande validée', 0, 0, 2),(3, 'Qdelais', 'Heure', 'Envoyer après', 48, 0, 0, 2),(4, 'QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 0, 2),(5, 'Qauto', 'Booleen', 'Active mode auto', 1, 0, 0, 4),(6, 'Qetape', 'Chaine', 'Envoyer à l''étape', 'Terminé', 0, 0, 4),(7, 'Qdelais', 'Heure', 'Envoyer après', 24, 0, 0, 4),(8, 'QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 0, 4)");
+
+        db.execSQL("INSERT INTO Commentaire	(IdtCommentaire, Texte, IdtSociete) VALUES	(1, 'Commentaire positif', 5),(2, 'Commentaire 2', 5),(3, 'Commentaire négatif', 6),(4, 'Commentaire sympathique', 6),(5, 'Commentaire très court', 7),(6, 'Commentaire 3', 7)");
     }
 }
