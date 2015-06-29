@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,12 +30,14 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
     private int max = couleur.length;
     private int i = 0;
     private String couleur_en_cours = "";
+    private SparseBooleanArray mSelectedItemsIds;
 
     public ClientAdaptateur(Context context, List<Societe> clients) {
         super(context, -1, clients);
 
         this.context = context;
         this.valeurs = clients;
+        mSelectedItemsIds = new SparseBooleanArray();
     }
 
     @Override
@@ -50,7 +53,7 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
 
         Societe client = valeurs.get(position);
 
-        //couleur icône
+        //couleur icÃ´ne
         if( position == 0) {
             changeCouleur();
             auteur = client.getAuteur();
@@ -86,4 +89,24 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
         }
     }
 
+    public void toggleSelection(int position) {
+        selectView(position, !mSelectedItemsIds.get(position));
+    }
+
+    public void selectView(int position, boolean value) {
+        if (value)
+            mSelectedItemsIds.put(position, value);
+        else
+            mSelectedItemsIds.delete(position);
+        notifyDataSetChanged();
+    }
+
+    public SparseBooleanArray getClientsSelectionnes() {
+        return mSelectedItemsIds;
+    }
+
+    public void removeSelection() {
+        mSelectedItemsIds = new SparseBooleanArray();
+        notifyDataSetChanged();
+    }
 }
