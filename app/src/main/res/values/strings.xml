@@ -19,5 +19,8 @@
     <string name="title_activity_suivi">Suivi commercial</string>
     <string name="title_activity_perf">Suivi des performances</string>
     <string name="action_ajout">Ajouter un contact</string>
+    <string name="action_contact">Liste des contacts</string>
+    <string name="action_histo">Historique des commandes</string>
+    <string name="action_supprime">Supprimer un client</string>
 
 </resources>

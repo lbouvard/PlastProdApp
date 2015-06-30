@@ -10,6 +10,8 @@
         <item name="actionBarStyle">@style/PlastProdBar</item>
         <item name="actionBarTabTextStyle">@style/Onglet</item>
         <item name="actionMenuTextColor">@color/blanc</item>
+
+        <item name="actionModeStyle">@style/actionMode</item>
     </style>
 
     <!-- general styles for the action bar -->
@@ -30,6 +32,10 @@
     <!-- action bar tab text -->
     <style name="Onglet" parent="@style/Widget.AppCompat.ActionBar.TabText">
         <item name="android:textColor">@color/blanc</item>
+    </style>
+
+    <style name="actionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/orange</item>
     </style>
 
 </resources>

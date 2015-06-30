@@ -17,6 +17,7 @@ public class Societe {
     private String type;
     private String commentaire;
     private String auteur;
+    private String couleur;
     private int nb_contact;
     private boolean EstSelectionne;
 
@@ -123,5 +124,13 @@ public class Societe {
 
     public void setIsSelectionne(boolean estSelectionne) {
         EstSelectionne = estSelectionne;
+    }
+
+    public String getCouleur() {
+        return couleur;
+    }
+
+    public void setCouleur(String couleur) {
+        this.couleur = couleur;
     }
 }

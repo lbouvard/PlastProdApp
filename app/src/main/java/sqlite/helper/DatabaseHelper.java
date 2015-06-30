@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 23;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -44,6 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_SATISF = "SatisfactionQ";
     private static final String TABLE_SOCIETE = "Societe";
     private static final String TABLE_STOCK = "Stock";
+    private static final String TABLE_CORRESP_COULEUR = "CorrespCouleur";
 
     private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY_KEY, Nom TEXT NOT NULL,"
             + "Adresse1 TEXT NOT NULL, Adresse2 TEXT, CodePostal TEXT NOT NULL, Ville TEXT NOT NULL , Pays TEXT NOT NULL, Type TEXT NOT NULL, Commentaire  TEXT,"
@@ -103,6 +104,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "IdtBon INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
 
+    private static final String CREATE_TABLE_COULEUR = "CREATE TABLE CorrespCouleur (IdtLigne INTEGER PRIMARY_KEY, Nom TEXT NOT NULL,"
+            + "Couleur TEXT NOT NULL)";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -124,6 +128,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_SAIISF);
         db.execSQL(CREATE_TABLE_STOCK);
         db.execSQL(CREATE_TABLE_SOCIETE);
+        db.execSQL(CREATE_TABLE_COULEUR);
     }
 
     @Override
@@ -143,6 +148,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SATISF);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SOCIETE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOCK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CORRESP_COULEUR);
 
         // create new tables
         onCreate(db);
@@ -488,8 +494,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String requete = "";
 
         requete = "SELECT soc.IdtSociete, soc.Nom, soc.Adresse1, soc.Adresse2, soc.CodePostal, soc.Ville, soc.Pays, soc.Type, soc.Commentaire, " +
-                "soc.Auteur, COUNT(con.IdtContact) AS Nb " +
+                "soc.Auteur, cc.Couleur, COUNT(con.IdtContact) AS Nb " +
                 "FROM Societe soc INNER JOIN Contact con ON soc.IdtSociete =  con.IdtSociete " +
+                "INNER JOIN CorrespCouleur cc ON soc.Auteur = cc.Nom " +
                 "WHERE soc.Type = 'C' GROUP BY con.IdtContact ORDER BY soc.IdtSociete";
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -512,6 +519,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
                     ligne.setAuteur(c.getString(c.getColumnIndex("Auteur")));
                     ligne.setNb_contact(c.getInt(c.getColumnIndex("Nb")));
+                    ligne.setCouleur(c.getString(c.getColumnIndex("Couleur")));
 
                     //On ajoute la commande
                     societes.add(ligne);
@@ -986,5 +994,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO Parametre (IdtParam ,Nom, Type, Libelle, Valeur, BitAjout ,BitModif, IdtCompte) VALUES	(1, 'Qauto', 'Booleen', 'Active mode auto', 1, 0, 0, 2),(2, 'Qetape', 'Chaine', 'Envoyer à l''étape', 'Commande validée', 0, 0, 2),(3, 'Qdelais', 'Heure', 'Envoyer après', 48, 0, 0, 2),(4, 'QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 0, 2),(5, 'Qauto', 'Booleen', 'Active mode auto', 1, 0, 0, 4),(6, 'Qetape', 'Chaine', 'Envoyer à l''étape', 'Terminé', 0, 0, 4),(7, 'Qdelais', 'Heure', 'Envoyer après', 24, 0, 0, 4),(8, 'QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 0, 4)");
 
         db.execSQL("INSERT INTO Commentaire	(IdtCommentaire, Texte, IdtSociete) VALUES	(1, 'Commentaire positif', 5),(2, 'Commentaire 2', 5),(3, 'Commentaire négatif', 6),(4, 'Commentaire sympathique', 6),(5, 'Commentaire très court', 7),(6, 'Commentaire 3', 7)");
+
+        db.execSQL("INSERT INTO CorrespCouleur (IdtLigne, Nom, Couleur) VALUES (1, 'Bouvard Laurent', '#fff22e8a' ),(2, 'Dupond Jean', '#ff157ebf')");
     }
 }

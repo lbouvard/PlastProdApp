@@ -3,20 +3,22 @@ package com.plastprod.plastprodapp;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import sqlite.helper.Societe;
@@ -41,7 +43,6 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
     private int max = couleur.length;
     private int i = 0;
     private String couleur_en_cours = "";
-    private String couleur_selection = "";
 
     public ClientAdaptateur(Context context, List<Societe> clients) {
         super(context, -1, clients);
@@ -53,7 +54,6 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
         animation2 = AnimationUtils.loadAnimation(context, R.anim.anime2);
 
         ActionModeAffichee = false;
-
     }
 
     @Override
@@ -87,26 +87,12 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
             holder.nb_contact = (TextView) convertView.findViewById(R.id.nb_contact);
             convertView.setTag(holder);
         }
-
         holder = (ViewHolder) convertView.getTag();
 
         Societe client = getItem(position);
-
-        //couleur icône
-        if( position == 0) {
-            changeCouleur();
-            auteur = client.getAuteur();
-        }
-        else{
-            if( !auteur.equals(client.getAuteur()) ){
-                changeCouleur();
-                auteur = client.getAuteur();
-            }
-        }
-
+        //couleur de l'icône
         GradientDrawable drawable = (GradientDrawable) holder.icone.getBackground();
-        //set color
-        drawable.setColor(Color.parseColor(couleur_en_cours));
+        drawable.setColor(Color.parseColor(client.getCouleur()));
 
         //texte
         holder.nom_client.setText(client.getNom());
@@ -132,6 +118,9 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
         }
         else{
             holder.icone.setImageResource(R.drawable.pastille_client);
+            drawable = (GradientDrawable) holder.icone.getBackground();
+            drawable.setColor(Color.parseColor(client.getCouleur()));
+
             convertView.setBackgroundColor(context.getResources().getColor(R.color.blanc));
         }
 
@@ -175,7 +164,8 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
             private void setActionMode() {
                 if (NbLigneSelectionne > 0) {
                     if (!ActionModeAffichee) {
-                        mode = ((ClientActivity) context).startActionMode(new ClientActivity.ActionModeSpe(context));
+                        //mode = ((ClientActivity) context).startActionMode(new ClientActivity.ActionModeSpe(context));
+                        mode = ((ClientActivity) context).startSupportActionMode(modeCallBack);
                         ActionModeAffichee = true;
                     }
                 } else if (mode != null) {
@@ -221,4 +211,59 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
         TextView adresse;
         TextView nb_contact;
     }
+
+    private ActionMode.Callback modeCallBack = new ActionMode.Callback() {
+
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        public void onDestroyActionMode(ActionMode mode){
+            mode = null;
+        }
+
+        public boolean onCreateActionMode(ActionMode mode, Menu menu){
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.menu_client_select, menu);
+            return true;
+        }
+
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item){
+            ArrayList<Societe> liste_selectionne = new ArrayList<Societe>();
+
+            // get items selected
+            for (Societe client : ((ClientActivity) context).adaptateur.valeurs) {
+                if( client.isSelectionne() ) {
+                    liste_selectionne.add(client);
+                }
+            }
+
+            switch (item.getItemId()) {
+                case R.id.action_supprime:
+                    mode.finish();
+                    return true;
+                case R.id.action_contact:
+                    if (liste_selectionne.size() > 1){
+                        mode.finish();
+                        return false;
+                    }
+                    else {
+                        mode.finish();
+                        return true;
+                    }
+                case R.id.action_histo:
+                    if (liste_selectionne.size() > 1){
+                        mode.finish();
+                        return false;
+                    }
+                    else{
+                        mode.finish();
+                        return true;
+                    }
+                default:
+                    return false;
+            }
+        }
+
+    };
 }

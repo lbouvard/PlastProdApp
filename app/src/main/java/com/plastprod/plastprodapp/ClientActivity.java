@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
@@ -49,7 +50,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
 
             adaptateur = new ClientAdaptateur(this, liste_client);
             lvClient.setAdapter(adaptateur);
-            //lvClient.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            lvClient.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
         }
         else
@@ -67,77 +68,6 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         getMenuInflater().inflate(R.menu.menu_client, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-    public static final class ActionModeSpe implements ActionMode.Callback {
-
-        Context ctx;
-
-        public ActionModeSpe(Context ctx) {
-            this.ctx = ctx;
-        }
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-
-            menu.add("Suppression").setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            menu.add("Ajout").setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-            ArrayList<Societe> liste_selectionne = new ArrayList<Societe>();
-
-            // get items selected
-            for (Societe client : ((ClientActivity) ctx).adaptateur.valeurs) {
-                if( client.isSelectionne() ) {
-                    liste_selectionne.add(client);
-                }
-            }
-
-            if (item.getTitle().equals("Suppression")) {
-                // Suppression
-            } else if (item.getTitle().equals("Ajout")) {
-                // Ajout
-            }
-
-            mode.finish();
-            return true;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            // Action mode is finished reset the list and 'checked count' also
-            // set all the list items checked states to false
-            ((ClientActivity) ctx).adaptateur.NbLigneSelectionne = 0;
-            ((ClientActivity) ctx).adaptateur.ActionModeAffichee = false;
-            // set list items states to false
-            for (Societe client : ((ClientActivity) ctx).liste_client_selectionnee) {
-                client.setIsSelectionne(false);
-            }
-            ((ClientActivity) ctx).adaptateur.notifyDataSetChanged();
-        }
-    }
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_recherche) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 
     public void terminerSession(){
 
