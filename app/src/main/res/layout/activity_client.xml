@@ -9,7 +9,7 @@
         android:id="@+id/liste_client"
         android:layout_alignParentStart="true"
         android:background="@color/blanc"
-        android:choiceMode="singleChoice"
+        android:choiceMode="multipleChoiceModal"
         android:fastScrollEnabled="true"
         android:nestedScrollingEnabled="false"
         android:divider="@android:color/darker_gray"

@@ -18,6 +18,7 @@ public class Societe {
     private String commentaire;
     private String auteur;
     private int nb_contact;
+    private boolean EstSelectionne;
 
     //Constructeurs
     public Societe(){
@@ -114,5 +115,13 @@ public class Societe {
 
     public void setNb_contact(int nb_contact) {
         this.nb_contact = nb_contact;
+    }
+
+    public boolean isSelectionne() {
+        return EstSelectionne;
+    }
+
+    public void setIsSelectionne(boolean estSelectionne) {
+        EstSelectionne = estSelectionne;
     }
 }

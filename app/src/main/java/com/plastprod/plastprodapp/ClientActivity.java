@@ -1,5 +1,6 @@
 package com.plastprod.plastprodapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,9 +21,10 @@ import sqlite.helper.Societe;
 
 import android.widget.AbsListView.MultiChoiceModeListener;
 
-public class ClientActivity extends ActionBarActivity {
+public class ClientActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
 
     List<Societe> liste_client = new ArrayList<Societe>();
+    List<Societe> liste_client_selectionnee = new ArrayList<Societe>();
     DatabaseHelper db;
     ListView lvClient;
     ClientAdaptateur adaptateur;
@@ -42,81 +44,21 @@ public class ClientActivity extends ActionBarActivity {
             liste_client = db.getSocietes(null);
 
             lvClient = (ListView) findViewById(R.id.liste_client);
+            lvClient.setOnItemClickListener(this);
+
 
             adaptateur = new ClientAdaptateur(this, liste_client);
             lvClient.setAdapter(adaptateur);
-            lvClient.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            //lvClient.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
 
-            lvClient.setMultiChoiceModeListener(new MultiChoiceModeListener() {
-
-                @Override
-                public void onItemCheckedStateChanged(ActionMode mode,
-                                                      int position, long id, boolean checked) {
-                    // Capture total checked items
-                    final int checkedCount = lvClient.getCheckedItemCount();
-                    // Set the CAB title according to total checked items
-                    mode.setTitle(checkedCount);
-                    // Calls toggleSelection method from ListViewAdapter Class
-                    adaptateur.toggleSelection(position);
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    switch (item.getItemId()) {
-
-                        /*case R.id.delete:
-                            // Calls getSelectedIds method from ListViewAdapter Class
-                            SparseBooleanArray selected = adaptateur.getClientsSelectionnes();
-                            // Captures all selected ids with a loop
-                            for (int i = (selected.size() - 1); i >= 0; i--) {
-                                if (selected.valueAt(i)) {
-                                    WorldPopulation selecteditem = listviewadapter
-                                            .getItem(selected.keyAt(i));
-                                    // Remove selected items following the ids
-                                    listviewadapter.remove(selecteditem);
-                                }
-                            }
-                            // Close CAB
-                            mode.finish();
-
-                            return true;*/
-
-                        default:
-                            return false;
-                    }
-                }
-
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    mode.getMenuInflater().inflate(R.menu.menu_client_select, menu);
-                    return true;
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    // TODO Auto-generated method stub
-                    adaptateur.removeSelection();
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    // TODO Auto-generated method stub
-                    return false;
-                }
-            });
-           /* lvClient.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    switch (i){
-                        case 0:
-                            ;
-                            break;
-                    }
-                }
-            });*/
         }
         else
             terminerSession();
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        // show description
     }
 
     @Override
@@ -126,7 +68,63 @@ public class ClientActivity extends ActionBarActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
+    public static final class ActionModeSpe implements ActionMode.Callback {
+
+        Context ctx;
+
+        public ActionModeSpe(Context ctx) {
+            this.ctx = ctx;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+
+            menu.add("Suppression").setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            menu.add("Ajout").setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+            ArrayList<Societe> liste_selectionne = new ArrayList<Societe>();
+
+            // get items selected
+            for (Societe client : ((ClientActivity) ctx).adaptateur.valeurs) {
+                if( client.isSelectionne() ) {
+                    liste_selectionne.add(client);
+                }
+            }
+
+            if (item.getTitle().equals("Suppression")) {
+                // Suppression
+            } else if (item.getTitle().equals("Ajout")) {
+                // Ajout
+            }
+
+            mode.finish();
+            return true;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            // Action mode is finished reset the list and 'checked count' also
+            // set all the list items checked states to false
+            ((ClientActivity) ctx).adaptateur.NbLigneSelectionne = 0;
+            ((ClientActivity) ctx).adaptateur.ActionModeAffichee = false;
+            // set list items states to false
+            for (Societe client : ((ClientActivity) ctx).liste_client_selectionnee) {
+                client.setIsSelectionne(false);
+            }
+            ((ClientActivity) ctx).adaptateur.notifyDataSetChanged();
+        }
+    }
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -139,7 +137,7 @@ public class ClientActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     public void terminerSession(){
 
