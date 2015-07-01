@@ -199,7 +199,8 @@
             android:clickable="true"
             android:textColor="@color/blanc"
             android:textAllCaps="false"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:onClick="enregistrerModification"/>
     </RelativeLayout>
 
     </ScrollView>

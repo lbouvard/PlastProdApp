@@ -73,6 +73,28 @@ public class AccueilActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }*/
 
+    public void ByPass(View vue){
+
+        db = new DatabaseHelper(getApplicationContext());
+
+        //Vérification des données d'identification
+        Contact commercial = db.getCommercial(4);
+
+        //Réussite, on va au menu principal
+        if( commercial != null ) {
+
+            final Global jeton = (Global) getApplicationContext();
+            jeton.setNom_utilisateur("dupond.jean");
+            jeton.setUtilisateur(commercial);
+            jeton.setDate_connexion(new Date());
+
+            //nouvelle activité
+            Intent activite = new Intent(this, MenuActivity.class);
+            //on démarre la nouvelle activité
+            startActivity(activite);
+        }
+    }
+
     public void Authentifier(View vue){
 
         String identifiant;

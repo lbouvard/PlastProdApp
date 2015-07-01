@@ -18,14 +18,11 @@ import java.util.List;
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    //Nom de l'utilisateur en cours
-    private String Auteur = "";
-
     //logcat tag
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 24;
+    private static final int DATABASE_VERSION = 30;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -273,7 +270,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Ville", contact.getVille());
         valeurs.put("Pays", contact.getPays());
         valeurs.put("Commentaire", contact.getCommentaire());
-        valeurs.put("Auteur", this.Auteur);
+        valeurs.put("Auteur", contact.getAuteur());
         valeurs.put("BitAjout", 1);
         valeurs.put("BitModif", 0);
         valeurs.put("IdtSociete", contact.getSociete().getId());
@@ -769,10 +766,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             id_contact = c.getInt(c.getColumnIndex("IdtContact"));
             c.close();
 
+            //Authentification réussie
             info = getCommercial(id_contact);
-
-            //authentification réussie, on mémorise localement l'utilisateur
-            this.Auteur = info.getPrenom() + " " + info.getNom();
         }
         else
             info = null;
@@ -786,7 +781,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * METTRE A JOUR
      ***********************/
 
-    public void majSociete(Societe client, boolean modif_nouveau){
+    public int majSociete(Societe client){
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -798,13 +793,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Ville", client.getVille());
         valeurs.put("Pays", client.getPays());
         valeurs.put("Commentaire", client.getCommentaire());
-        valeurs.put("Auteur", this.Auteur);
-        valeurs.put("BitAjout", modif_nouveau);
+        valeurs.put("Auteur", client.getAuteur());
+        valeurs.put("BitAjout", 0);
         valeurs.put("BitModif", 1);
 
         // updating row
         db.update(TABLE_SOCIETE, valeurs, "IdtSociete = ?",
                 new String[] { String.valueOf(client.getId()) });
+
+        return 0;
     }
 
     public void majContact(Contact contact, boolean modif_nouveau){
@@ -824,7 +821,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Ville", contact.getVille());
         valeurs.put("Pays", contact.getPays());
         valeurs.put("Commentaire", contact.getCommentaire());
-        valeurs.put("Auteur", this.Auteur);
+        valeurs.put("Auteur", contact.getAuteur());
         valeurs.put("BitAjout", modif_nouveau);
         valeurs.put("BitModif", 1);
         valeurs.put("IdtSociete", contact.getSociete().getId());
@@ -891,7 +888,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Type", bon.getType());
         valeurs.put("Suivi", bon.getSuivi());
         valeurs.put("Transporteur", bon.getTransporteur());
-        valeurs.put("Auteur", this.Auteur);
+        valeurs.put("Auteur", bon.getAuteur());
         valeurs.put("DateChg", DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(new Date()));
         valeurs.put("BitChg", 1);
         valeurs.put("BitAjout", modif_nouveau);

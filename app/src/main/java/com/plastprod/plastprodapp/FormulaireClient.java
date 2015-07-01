@@ -1,5 +1,6 @@
 package com.plastprod.plastprodapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -7,7 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Societe;
 
 
@@ -15,13 +18,19 @@ public class FormulaireClient extends ActionBarActivity {
 
     EditText etGenerique;
     Societe client_en_cours;
+    DatabaseHelper db;
+
+    Context context;
+    int duree = Toast.LENGTH_LONG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulaire_client);
 
-        //on recup�re les donn�es
+        context = getApplicationContext();
+
+        //on recupère les données
         Intent intent = getIntent();
         client_en_cours = (Societe) intent.getSerializableExtra("Client");
 
@@ -33,7 +42,7 @@ public class FormulaireClient extends ActionBarActivity {
             //adresse
             etGenerique = (EditText) findViewById(R.id.etAdresse);
             etGenerique.setText(client_en_cours.getAdresse1());
-            //compl�ment adresse
+            //complément adresse
             etGenerique = (EditText) findViewById(R.id.etComplement);
             etGenerique.setText(client_en_cours.getAdresse2());
             //code postal
@@ -78,25 +87,36 @@ public class FormulaireClient extends ActionBarActivity {
     //pour enregistrer les modification
     public void enregistrerModification(View vue){
 
-        //on recup�re la variable globale pour recup�rer l'auteur
+        //on recupère la variable globale pour recupérer l'auteur
         final Global jeton = (Global) getApplicationContext();
 
         Societe client = new Societe();
 
-        client.setNom(findViewById(R.id.etNom).toString());
-        client.setAdresse1(findViewById(R.id.etAdresse).toString());
-        client.setAdresse2(findViewById(R.id.etComplement).toString());
-        client.setCode_postal(findViewById(R.id.etCodePostal).toString());
-        client.setVille(findViewById(R.id.etVille).toString());
-        client.setPays(findViewById(R.id.etPays).toString());
-        client.setCommentaire(findViewById(R.id.etCommentaire).toString());
-        client.setAuteur(jeton.getUtilisateur().toString());
+        client.setNom(((EditText) findViewById(R.id.etNom)).getText().toString());
+        client.setAdresse1(((EditText) findViewById(R.id.etAdresse)).getText().toString());
+        client.setAdresse2(((EditText) findViewById(R.id.etComplement)).getText().toString());
+        client.setCode_postal(((EditText) findViewById(R.id.etCodePostal)).getText().toString());
+        client.setVille(((EditText) findViewById(R.id.etVille)).getText().toString());
+        client.setPays(((EditText) findViewById(R.id.etPays)).getText().toString());
+        client.setCommentaire(((EditText) findViewById(R.id.etCommentaire)).getText().toString());
+        client.setType("C");
 
         if( client_en_cours != null ){
-            client.setId( client_en_cours.getId());
-            modifierClient(client);
+
+            //si le commercial est bien l'auteur, on modifie sinon on affiche un message
+            if( client_en_cours.getAuteur().equals(jeton.getUtilisateur().toString())) {
+                client.setAuteur(jeton.getUtilisateur().toString());
+                client.setId(client_en_cours.getId());
+                modifierClient(client);
+            }
+            else{
+                //Message d'erreur à afficher
+                Toast notification = Toast.makeText(context, "Vous devez être le propriétaire de ce client pour le modifier.", duree);
+                notification.show();
+            }
         }
         else{
+            client.setAuteur(jeton.getUtilisateur().toString());
             creerClient(client);
         }
 
@@ -105,11 +125,27 @@ public class FormulaireClient extends ActionBarActivity {
     //pour modifier un client
     public void modifierClient(Societe client){
 
+        db = new DatabaseHelper(getApplicationContext());
+
+        db.majSociete(client);
+
+        db.close();
+
+        Toast notification = Toast.makeText(context, "Le client a été modifié avec succès.", duree);
+        notification.show();
     }
 
-    //pour cr�er un nouveau client
+    //pour créer un nouveau client
     public void creerClient(Societe client){
 
+        db = new DatabaseHelper(getApplicationContext());
+
+        db.ajouterClient(client, "C");
+
+        db.close();
+
+        Toast notification = Toast.makeText(context, "Le client a été ajouté avec succès.", duree);
+        notification.show();
     }
 
 }

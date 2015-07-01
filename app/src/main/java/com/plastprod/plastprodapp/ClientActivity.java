@@ -52,7 +52,6 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
             adaptateur = new ClientAdaptateur(this, liste_client);
             lvClient.setAdapter(adaptateur);
             lvClient.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-
         }
         else
             terminerSession();
@@ -66,6 +65,20 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
 
         //on récupère la classe qui contient les données du client
         Societe client = (Societe)((ListView) arg0).getAdapter().getItem(arg2);
+
+        //on transmert l'objet à la nouvelle activité
+        activite.putExtra("Client", client);
+
+        //et on affiche le formulaire
+        startActivity(activite);
+    }
+
+    public void ajouterClient(View vue){
+
+        //on recupère l'activité du formulaire client
+        Intent activite = new Intent(this, FormulaireClient.class);
+
+        Societe client = null;
 
         //on transmert l'objet à la nouvelle activité
         activite.putExtra("Client", client );
