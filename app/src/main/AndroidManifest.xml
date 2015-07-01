@@ -69,6 +69,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.MenuActivity" />
         </activity>
+        <activity
+            android:name=".FormulaireClient"
+            android:label="@string/title_activity_formulaire_client"
+            android:parentActivityName=".ClientActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.ClientActivity" />
+        </activity>
     </application>
 
 </manifest>

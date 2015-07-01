@@ -1,11 +1,12 @@
 package sqlite.helper;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Laurent on 10/06/2015.
  */
-public class Societe {
+public class Societe implements Serializable {
 
     private int id;
     private String nom;
@@ -23,7 +24,8 @@ public class Societe {
 
     //Constructeurs
     public Societe(){
-
+        this.EstSelectionne = false;
+        this.nb_contact = 0;
     }
 
     public Societe(String auteur) {

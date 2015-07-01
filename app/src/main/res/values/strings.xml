@@ -22,5 +22,18 @@
     <string name="action_contact">Liste des contacts</string>
     <string name="action_histo">Historique des commandes</string>
     <string name="action_supprime">Supprimer un client</string>
+    <string name="title_activity_formulaire_client">Client</string>
+
+    <string name="form_client_nom">Nom de la société</string>
+    <string name="form_client_adresse">Adresse</string>
+    <string name="form_client_complement">Complément adresse</string>
+    <string name="form_client_cp">Code postal</string>
+    <string name="form_client_ville">Ville</string>
+    <string name="form_client_pays">Pays</string>
+    <string name="form_client_commentaire">Commentaires</string>
+
+    <string name="btn_annuler">Annuler</string>
+    <string name="btn_enregistre">Enregistrer</string>
+
 
 </resources>

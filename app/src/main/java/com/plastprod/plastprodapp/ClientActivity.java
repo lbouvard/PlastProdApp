@@ -21,6 +21,7 @@ import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Societe;
 
 import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.Toast;
 
 public class ClientActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
 
@@ -59,7 +60,18 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-        // show description
+
+        //on recupère l'activité du formulaire client
+        Intent activite = new Intent(this, FormulaireClient.class);
+
+        //on récupère la classe qui contient les données du client
+        Societe client = (Societe)((ListView) arg0).getAdapter().getItem(arg2);
+
+        //on transmert l'objet à la nouvelle activité
+        activite.putExtra("Client", client );
+
+        //et on affiche le formulaire
+        startActivity(activite);
     }
 
     @Override

@@ -40,9 +40,6 @@ public class MenuActivity extends ActionBarActivity {
 
             final Global jeton = (Global) getApplicationContext();
 
-            //paramètre passé à l'intent
-            /*itActivite = getIntent();
-            commercial = (Contact) itActivite.getSerializableExtra("Commercial");*/
             commercial = jeton.getUtilisateur();
 
             //Alimente les textes

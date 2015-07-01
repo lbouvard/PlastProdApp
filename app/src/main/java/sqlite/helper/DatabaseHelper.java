@@ -25,7 +25,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 23;
+    private static final int DATABASE_VERSION = 24;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -974,7 +974,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //Populate tables
     public void chargerTables(SQLiteDatabase db){
 
-        db.execSQL("INSERT INTO Societe (IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur, BitAjout, BitModif) VALUES (1, 'PlastProd', '1 rue du comodo', '', '54600', 'Villers-Lès-Nancy', 'France', 'M', 'Société mère', '', 0, 0),	(5, 'Societe1', 'ZI Fessel', '', '69000', 'Lyon', 'France', 'C', '', 'Bouvard Laurent', 0, 0),(6, 'Societe2', '16 rue du clos', '', '93600', 'Bondy', 'France', 'C', '', 'Dupond Jean', 0, 0),(7, 'Boite3', '20 avenue du général de Gaulle', '', '78000', 'Versailles', 'France', 'P', '', 'Bouvard Laurent', 0, 0)");
+        db.execSQL("INSERT INTO Societe (IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur, BitAjout, BitModif) VALUES (1, 'PlastProd', '1 rue du comodo', '', '54600', 'Villers-Lès-Nancy', 'France', 'M', 'Société mère', '', 0, 0),	(5, 'Societe1', '25 rue du ponant', 'ZI Fessel', '69000', 'Lyon', 'France', 'C', '', 'Bouvard Laurent', 0, 0),(6, 'Societe2', '16 rue du clos', '', '93600', 'Bondy', 'France', 'C', '', 'Dupond Jean', 0, 0),(7, 'Boite3', '20 avenue du général de Gaulle', '', '78000', 'Versailles', 'France', 'P', '', 'Bouvard Laurent', 0, 0)");
 
         db.execSQL("INSERT INTO Contact (IdtContact, Nom, Prenom, Poste, TelFixe, TelMobile, Fax, Mail, Adresse, CodePostal, Ville, Pays, Commentaire, Auteur, BitAjout, BitModif, IdtSociete) VALUES (2, 'Bouvard', 'Laurent', 'Commercial', '+33383256594', '+33645986147', NULL, 'laurent.bouvard@plastprod.fr', '1 rue du comodo', '54600', 'Villers-Lès-Nancy', 'France', '', '', 0, 0, 1),(3, 'Convenant', 'Claude', 'Commercial', '+33145328564', '+33610447251', NULL, 'convenant.claude@boite3.fr', '20 avenue du général de Gaulle', '78000', 'Versailles', 'France', '','Bouvard Laurent', 0, 0, 7),	(4, 'Dupond', 'Jean', 'Commercial', '+33383256598', '+33612356898', NULL, 'jean.dupond@plastprod.fr', '1 rue du comodo', '54600', 'Villers-Lès-Nancy', 'France', 'Commentaire', '', 0, 0, 1),	(6, 'Lemoine', 'Alain', 'Commercial', '+33133443002', '+33610447251', NULL, 'alain.lemoine@societe2.fr', '16 rue du clos', '93600', 'Bondy', 'France', '', 'Dupond Jean', 0, 0, 6)");
         db.execSQL("INSERT INTO Contact (IdtContact, Nom, Prenom, Poste, TelFixe, TelMobile, Fax, Mail, Adresse, CodePostal, Ville, Pays, Commentaire, Auteur, BitAjout, BitModif, IdtSociete) VALUES (7, 'Morandi', 'Pierre', 'Directeur technique', '+33445238590', '+33645464724', NULL, 'pierre.morandi@societe1.fr', 'ZI Fessel', '69000', 'Lyon', 'France', '', 'Bouvard Laurent', 0, 0, 5)");
