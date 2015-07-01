@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 30;
+    private static final int DATABASE_VERSION = 31;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -43,7 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_STOCK = "Stock";
     private static final String TABLE_CORRESP_COULEUR = "CorrespCouleur";
 
-    private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY_KEY, Nom TEXT NOT NULL,"
+    private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY KEY, Nom TEXT NOT NULL,"
             + "Adresse1 TEXT NOT NULL, Adresse2 TEXT, CodePostal TEXT NOT NULL, Ville TEXT NOT NULL , Pays TEXT NOT NULL, Type TEXT NOT NULL, Commentaire  TEXT,"
             + "Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL)";
 
@@ -101,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "IdtBon INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
 
-    private static final String CREATE_TABLE_COULEUR = "CREATE TABLE CorrespCouleur (IdtLigne INTEGER PRIMARY_KEY, Nom TEXT NOT NULL,"
+    private static final String CREATE_TABLE_COULEUR = "CREATE TABLE CorrespCouleur (IdtLigne INTEGER PRIMARY KEY, Nom TEXT NOT NULL,"
             + "Couleur TEXT NOT NULL)";
 
     public DatabaseHelper(Context context) {
@@ -491,10 +491,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String requete = "";
 
         requete = "SELECT soc.IdtSociete, soc.Nom, soc.Adresse1, soc.Adresse2, soc.CodePostal, soc.Ville, soc.Pays, soc.Type, soc.Commentaire, " +
-                "soc.Auteur, cc.Couleur, COUNT(con.IdtContact) AS Nb " +
-                "FROM Societe soc INNER JOIN Contact con ON soc.IdtSociete =  con.IdtSociete " +
+                "soc.Auteur, cc.Couleur, ifnull(COUNT(con.IdtContact),0) AS Nb " +
+                "FROM Societe soc LEFT JOIN Contact con ON soc.IdtSociete =  con.IdtSociete " +
                 "INNER JOIN CorrespCouleur cc ON soc.Auteur = cc.Nom " +
-                "WHERE soc.Type = 'C' GROUP BY con.IdtContact ORDER BY soc.IdtSociete";
+                "WHERE soc.Type = 'C' GROUP BY con.IdtContact, soc.IdtSociete ORDER BY soc.IdtSociete";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
