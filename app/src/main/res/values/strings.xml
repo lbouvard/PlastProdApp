@@ -22,6 +22,7 @@
     <string name="action_contact">Liste des contacts</string>
     <string name="action_histo">Historique des commandes</string>
     <string name="action_supprime">Supprimer un client</string>
+    <string name="action_supprime_contact">Supprimer un contact</string>
     <string name="title_activity_formulaire_client">Client</string>
 
     <string name="form_client_nom">Nom de la société</string>

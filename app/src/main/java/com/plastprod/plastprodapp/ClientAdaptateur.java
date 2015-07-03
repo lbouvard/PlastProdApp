@@ -2,6 +2,7 @@ package com.plastprod.plastprodapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.v7.app.ActionBarActivity;
@@ -16,11 +17,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Societe;
 
 /**
@@ -38,11 +41,8 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
     ImageView ivFlip;
     ActionMode mode;
 
-    private String auteur = "";
-    private String[] couleur = {"#fff22e8a", "#ff157ebf", "#ff0a5916", "#ffbfa004", "#ffd9c8bf", "#ff14beff", "#fff22111", "#ffbf00ff", "#ffffa100", "#fffeffff"};
-    private int max = couleur.length;
-    private int i = 0;
-    private String couleur_en_cours = "";
+    DatabaseHelper db;
+    String auteur = "";
 
     public ClientAdaptateur(Context context, List<Societe> clients) {
         super(context, -1, clients);
@@ -54,6 +54,8 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
         animation2 = AnimationUtils.loadAnimation(context, R.anim.anime2);
 
         ActionModeAffichee = false;
+
+        auteur = Outils.recupererAuteur(context);
     }
 
     @Override
@@ -193,18 +195,6 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
         animation2.setAnimationListener(animListner);
     }
 
-    public void changeCouleur(){
-
-        if( i < max ){
-            couleur_en_cours = couleur[i];
-            i++;
-        }
-        else {
-            couleur_en_cours = couleur[0];
-            i = 0;
-        }
-    }
-
     static class ViewHolder {
         ImageView icone;
         TextView nom_client;
@@ -215,7 +205,20 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
     private ActionMode.Callback modeCallBack = new ActionMode.Callback() {
 
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
+            MenuItem itemContact = menu.findItem(R.id.action_contact);
+            MenuItem itemHisto = menu.findItem(R.id.action_histo);
+            //depending on your conditions, either enable/disable
+
+            if( NbLigneSelectionne > 1) {
+                itemContact.setEnabled(false);
+                itemHisto.setEnabled(false);
+            }
+            else{
+                itemContact.setEnabled(true);
+                itemHisto.setEnabled(true);
+            }
+
+            return true;
         }
 
         public void onDestroyActionMode(ActionMode mode){
@@ -229,6 +232,7 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
         }
 
         public boolean onActionItemClicked(ActionMode mode, MenuItem item){
+
             ArrayList<Societe> liste_selectionne = new ArrayList<Societe>();
 
             // get items selected
@@ -240,30 +244,36 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
 
             switch (item.getItemId()) {
                 case R.id.action_supprime:
+
+                    //base de données
+                    db = new DatabaseHelper(context);
+
+                    //on parcours la liste des clients séléctionnée
+                    for( Societe client : liste_selectionne){
+
+                        //si le commercial en cours est l'auteur du client, on supprime
+                        if( auteur.equals(client.getAuteur())) {
+                            db.suppprimerSociete(client, true);
+                        }
+                    }
+
+                    db.close();
                     mode.finish();
+
                     return true;
+
                 case R.id.action_contact:
-                    if (liste_selectionne.size() > 1){
-                        mode.finish();
-                        return false;
-                    }
-                    else {
-                        mode.finish();
-                        return true;
-                    }
+
+                    ((ClientActivity) context).afficherContacts(liste_selectionne.get(0));
+                    return true;
+
                 case R.id.action_histo:
-                    if (liste_selectionne.size() > 1){
-                        mode.finish();
-                        return false;
-                    }
-                    else{
-                        mode.finish();
-                        return true;
-                    }
+
+                    return true;
+
                 default:
                     return false;
             }
         }
-
     };
 }

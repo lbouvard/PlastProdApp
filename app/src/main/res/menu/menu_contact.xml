@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.plastprod.plastprodapp.ContactActivity">
 
-    <item android:id="@+id/action_ajout"
+    <item android:id="@+id/action_ajout_contact"
         android:title="@string/action_ajout"
         android:icon="@drawable/ic_person_add_white_48dp"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_recherche"
+    <item android:id="@+id/action_recherche_contact"
         android:title="@string/action_recherche"
         android:icon="@drawable/ic_search_white_48dp"
         app:showAsAction="ifRoom" />

@@ -58,6 +58,24 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_client, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        /*MenuItem itemContact = menu.findItem(R.id.action_contact);
+        //depending on your conditions, either enable/disable
+        item.setEnabled(false);
+        super.onPrepareOptionsMenu(menu);
+        return true;*/
+        return true;
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
         //on recupère l'activité du formulaire client
@@ -87,11 +105,16 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         startActivity(activite);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_client, menu);
-        return super.onCreateOptionsMenu(menu);
+    public void afficherContacts(Societe client){
+
+        //on recupère l'activité du formulaire client
+        Intent activite = new Intent(this, ContactActivity.class);
+
+        //on transmert l'objet à la nouvelle activité
+        activite.putExtra("Client", client);
+
+        //et on affiche le formulaire
+        startActivity(activite);
     }
 
     public void terminerSession(){

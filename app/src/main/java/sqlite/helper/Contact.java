@@ -23,9 +23,11 @@ public class Contact implements Serializable{
     private String commentaire;
     private String auteur;
     private Societe societe;
+    private boolean EstSelectionne;
 
     //Constructeurs
     public Contact(){
+        this.EstSelectionne = false;
     }
 
     public int getId() {
@@ -146,6 +148,14 @@ public class Contact implements Serializable{
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isSelectionne() {
+        return EstSelectionne;
+    }
+
+    public void setIsSelectionne(boolean estSelectionne) {
+        EstSelectionne = estSelectionne;
     }
 
     @Override

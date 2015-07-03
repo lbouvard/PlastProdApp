@@ -1,28 +1,21 @@
 package com.plastprod.plastprodapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.util.Date;
-import java.util.List;
-
-import sqlite.helper.Compte;
 import sqlite.helper.Contact;
 import sqlite.helper.DatabaseHelper;
-import sqlite.helper.Societe;
-
 
 public class AccueilActivity extends ActionBarActivity {
 
+    //pour la base de donnée locale
     DatabaseHelper db;
 
     @Override
@@ -38,16 +31,18 @@ public class AccueilActivity extends ActionBarActivity {
     protected void onResume(){
         super.onResume();
 
+        //on affiche le nom d'utilisateur ou son mail si il s'est déjà connecté
         EditText edt_utilisateur = (EditText)findViewById(R.id.edt_nomutilisateur);
         EditText edt_motdepasse = (EditText)findViewById(R.id.edt_motdepasse);
 
         final Global jeton = (Global) getApplicationContext();
 
-        if( jeton.getNom_utilisateur() != "")
+        if( jeton.getNom_utilisateur().equals("") )
             edt_utilisateur.setText(jeton.getNom_utilisateur());
-        if( jeton.getMail_utilisateur() != "")
+        if( jeton.getMail_utilisateur().equals("") )
             edt_utilisateur.setText(jeton.getMail_utilisateur());
 
+        //on enlève le mot de passe
         edt_motdepasse.setText("");
     }
 
@@ -57,21 +52,6 @@ public class AccueilActivity extends ActionBarActivity {
         //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-/*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
 
     public void ByPass(View vue){
 
@@ -140,8 +120,6 @@ public class AccueilActivity extends ActionBarActivity {
 
                     //nouvelle activité
                     Intent activite = new Intent(this, MenuActivity.class);
-                    //on passe les infos du commercial
-                    //activite.putExtra("Commercial", commercial);
 
                     //on démarre la nouvelle activité
                     startActivity(activite);
@@ -157,11 +135,12 @@ public class AccueilActivity extends ActionBarActivity {
 
             if( !connexion_ok) {
                 //Message d'erreur à afficher
-                Context context = getApplicationContext();
+                Outils.afficherToast(getApplicationContext(), message.toString());
+                /*Context context = getApplicationContext();
                 int duree = Toast.LENGTH_LONG;
 
                 Toast notification = Toast.makeText(context, message, duree);
-                notification.show();
+                notification.show();*/
             }
 
             db.close();
