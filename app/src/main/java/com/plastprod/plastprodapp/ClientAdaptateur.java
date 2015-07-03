@@ -35,6 +35,7 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
     boolean ActionModeAffichee;
 
     Context context;
+    Context general;
     List<Societe> valeurs;
     Animation animation1;
     Animation animation2;
@@ -44,10 +45,11 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
     DatabaseHelper db;
     String auteur = "";
 
-    public ClientAdaptateur(Context context, List<Societe> clients) {
+    public ClientAdaptateur(Context context, List<Societe> clients, Context app) {
         super(context, -1, clients);
 
         this.context = context;
+        this.general = app;
         this.valeurs = clients;
 
         animation1 = AnimationUtils.loadAnimation(context, R.anim.anime1);
@@ -55,7 +57,7 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
 
         ActionModeAffichee = false;
 
-        auteur = Outils.recupererAuteur(context);
+        auteur = Outils.recupererAuteur(app);
     }
 
     @Override
@@ -164,13 +166,22 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
 
             // Show/Hide action mode
             private void setActionMode() {
+
+                //si au moins un client est séléctionné
                 if (NbLigneSelectionne > 0) {
+
+                    //on affiche l'action bar seulement si elle n'est pas déjà affiché
                     if (!ActionModeAffichee) {
-                        //mode = ((ClientActivity) context).startActionMode(new ClientActivity.ActionModeSpe(context));
+                        //on lance le mode pour la gestion de l'action bar
                         mode = ((ClientActivity) context).startSupportActionMode(modeCallBack);
                         ActionModeAffichee = true;
                     }
-                } else if (mode != null) {
+
+                    //on met à jour le  contenu du menu
+                    mode.invalidate();
+
+                }
+                else if (mode != null) {
                     mode.finish();
                     ActionModeAffichee = false;
                 }
@@ -210,12 +221,12 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
             //depending on your conditions, either enable/disable
 
             if( NbLigneSelectionne > 1) {
-                itemContact.setEnabled(false);
-                itemHisto.setEnabled(false);
+                itemContact.setVisible(false);
+                itemHisto.setVisible(false);
             }
             else{
-                itemContact.setEnabled(true);
-                itemHisto.setEnabled(true);
+                itemContact.setVisible(true);
+                itemHisto.setVisible(true);
             }
 
             return true;

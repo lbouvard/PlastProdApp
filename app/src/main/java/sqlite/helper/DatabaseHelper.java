@@ -536,8 +536,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String requete = "";
 
         if( clauseWhere.isEmpty() ) {
-            requete = "SELECT rowid, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
-                    + "Commentaire, Auteur FROM Contact"
+            requete = "SELECT IdtContact, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
+                    + "Commentaire, Auteur FROM Contact "
                     + "WHERE IdtSociete = " + id_societe;
         }
         else{
@@ -556,7 +556,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
 
                     Contact ligne = new Contact();
-                    ligne.setId(c.getInt(c.getColumnIndex("rowid")));
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtContact")));
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setPrenom(c.getString(c.getColumnIndex("Prenom")));
                     ligne.setPoste(c.getString(c.getColumnIndex("Poste")));

@@ -43,18 +43,19 @@ public class ContactAdaptateur extends ArrayAdapter<Contact> {
     DatabaseHelper db;
     String auteur = "";
 
-    public ContactAdaptateur(Context context, List<Contact> contacts) {
+    public ContactAdaptateur(Context context, List<Contact> contacts, Context app, Societe client) {
         super(context, -1, contacts);
 
         this.context = context;
         this.valeurs = contacts;
+        this.client_en_cours = client;
 
         animation1 = AnimationUtils.loadAnimation(context, R.anim.anime1);
         animation2 = AnimationUtils.loadAnimation(context, R.anim.anime2);
 
         ActionModeAffichee = false;
 
-        auteur = Outils.recupererAuteur(context);
+        auteur = Outils.recupererAuteur(app);
     }
 
     @Override
@@ -90,7 +91,7 @@ public class ContactAdaptateur extends ArrayAdapter<Contact> {
         holder = (ViewHolder) convertView.getTag();
 
         Contact contact = getItem(position);
-        //couleur de l'icône
+        //couleur de l'icÃ´ne
         GradientDrawable drawable = (GradientDrawable) holder.icone.getBackground();
         drawable.setColor(Color.parseColor(client_en_cours.getCouleur()));
 
@@ -226,10 +227,10 @@ public class ContactAdaptateur extends ArrayAdapter<Contact> {
             switch (item.getItemId()) {
                 case R.id.action_supprime:
 
-                    //base de données
+                    //base de donnÃ©es
                     db = new DatabaseHelper(context);
 
-                    //on parcours la liste des clients séléctionnée
+                    //on parcours la liste des clients sÃ©lÃ©ctionnÃ©e
                     for (Contact contact : liste_selectionne) {
 
                         //si le commercial en cours est l'auteur du client, on supprime
@@ -242,6 +243,7 @@ public class ContactAdaptateur extends ArrayAdapter<Contact> {
                     mode.finish();
 
                     return true;
+
                 default:
                     return false;
             }

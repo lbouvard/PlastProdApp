@@ -8,10 +8,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import sqlite.helper.Contact;
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Societe;
@@ -31,24 +29,25 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
         client_en_cours = (Societe) intent.getSerializableExtra("Client");
 
-        //utilisateur authentifié
+        //utilisateur authentifiÃ©
         if( Outils.VerifierSession(getApplicationContext()) ){
 
             //connexion base
             db = new DatabaseHelper(getApplicationContext());
 
-            //récupération des clients
+            //rÃ©cupÃ©ration des clients
             liste_contact = db.getContacts(client_en_cours.getId(), "");
 
             lvContact = (ListView) findViewById(R.id.liste_contact);
             lvContact.setOnItemClickListener(this);
 
 
-            adaptateur = new ContactAdaptateur(this, liste_contact);
+            adaptateur = new ContactAdaptateur(this, liste_contact, getApplicationContext(), client_en_cours);
             lvContact.setAdapter(adaptateur);
             lvContact.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         }
@@ -65,51 +64,50 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_ajout) {
+        switch (item.getItemId()) {
+
+            case R.id.action_ajout_contact:
             return true;
-        }
 
-        if (id == R.id.action_recherche) {
+            case R.id.action_recherche :
             return true;
-        }
 
-        return super.onOptionsItemSelected(item);
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return true;
     }
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-        //on recupère l'activité du formulaire client
+        //on recupÃ¨re l'activitÃ© du formulaire client
         Intent activite = new Intent(this, FormulaireClient.class);
 
-        //on récupère la classe qui contient les données du client
+        //on rÃ©cupÃ¨re la classe qui contient les donnÃ©es du client
         Societe client = (Societe)((ListView) arg0).getAdapter().getItem(arg2);
 
-        //on transmert l'objet à la nouvelle activité
+        //on transmert l'objet Ã  la nouvelle activitÃ©
         activite.putExtra("Client", client);
 
         //et on affiche le formulaire
         startActivity(activite);
     }
 
-    public void ajouterClient(View vue){
+    public void ajouterContact(View vue){
+/*
+        //on recupÃ¨re l'activitÃ© du formulaire client
+        Intent activite = new Intent(this, FormulaireContact.class);
 
-        //on recupère l'activité du formulaire client
-        Intent activite = new Intent(this, FormulaireClient.class);
+        Contact contact = null;
 
-        Societe client = null;
-
-        //on transmert l'objet à la nouvelle activité
-        activite.putExtra("Client", client );
+        //on transmert l'objet Ã  la nouvelle activitÃ©
+        activite.putExtra("Contact", contact );
 
         //et on affiche le formulaire
-        startActivity(activite);
+        startActivity(activite);*/
     }
 
     public void terminerSession(){

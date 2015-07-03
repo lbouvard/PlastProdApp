@@ -1,27 +1,16 @@
 package com.plastprod.plastprodapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.SparseBooleanArray;
-import android.view.ActionMode;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Societe;
-
-import android.widget.AbsListView.MultiChoiceModeListener;
-import android.widget.Toast;
 
 public class ClientActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
 
@@ -49,7 +38,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
             lvClient.setOnItemClickListener(this);
 
 
-            adaptateur = new ClientAdaptateur(this, liste_client);
+            adaptateur = new ClientAdaptateur(this, liste_client, getApplicationContext());
             lvClient.setAdapter(adaptateur);
             lvClient.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         }
