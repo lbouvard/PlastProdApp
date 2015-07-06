@@ -36,5 +36,11 @@
     <string name="btn_annuler">Annuler</string>
     <string name="btn_enregistre">Enregistrer</string>
 
+    <string name="client_recherche_label">PlastProd</string>
+    <string name="client_recherche_hint">Rechercher dans les clients</string>
+    <string name="title_activity_rechecher">RechecherActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

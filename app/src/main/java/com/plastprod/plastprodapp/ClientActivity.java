@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -104,6 +105,28 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
 
         //et on affiche le formulaire
         startActivity(activite);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+
+            case R.id.action_recherche:
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void majListe(){
+
+        liste_client = db.getSocietes(null);
+        adaptateur.clear();
+        adaptateur.addAll(liste_client);
+        adaptateur.notifyDataSetChanged();
     }
 
     public void terminerSession(){

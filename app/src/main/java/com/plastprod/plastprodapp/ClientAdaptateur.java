@@ -269,6 +269,10 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
                     }
 
                     db.close();
+
+                    //maj listview
+                    ((ClientActivity) context).majListe();
+
                     mode.finish();
 
                     return true;
