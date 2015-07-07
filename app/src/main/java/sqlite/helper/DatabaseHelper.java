@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 31;
+    private static final int DATABASE_VERSION = 32;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -45,11 +45,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY KEY, Nom TEXT NOT NULL,"
             + "Adresse1 TEXT NOT NULL, Adresse2 TEXT, CodePostal TEXT NOT NULL, Ville TEXT NOT NULL , Pays TEXT NOT NULL, Type TEXT NOT NULL, Commentaire  TEXT,"
-            + "Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL)";
+            + "Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, BitSup INTEGER NOT NULL)";
 
     private static final String CREATE_TABLE_CONTACT = "CREATE TABLE Contact(IdtContact INTEGER PRIMARY KEY, Nom TEXT NOT NULL,"
             + "Prenom TEXT NOT NULL, Poste TEXT, TelFixe TEXT, Fax TEXT, TelMobile TEXT, Mail  TEXT, Adresse TEXT, CodePostal  TEXT, Ville TEXT, Pays  TEXT,"
-            + "Commentaire TEXT, Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, IdtSociete INTEGER NOT NULL,"
+            + "Commentaire TEXT, Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, BitSup INTEGER NOT NULL, IdtSociete INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
 
     private static final String CREATE_TABLE_COMPTE= "CREATE TABLE Compte(IdtCompte INTEGER PRIMARY KEY, Nom TEXT NOT NULL,"
@@ -58,7 +58,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_BON = "CREATE TABLE Bon(IdtBon INTEGER PRIMARY KEY, DateCommande TEXT NOT NULL,"
             + "EtatCommande TEXT, Type TEXT, Suivi TEXT, Transporteur TEXT, Auteur TEXT NOT NULL, DateChg TEXT, BitChg  INTEGER NOT NULL,"
-            + "BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtContact INTEGER NOT NULL,"
+            + "BitAjout INTEGER NOT NULL, BitModif INTEGER NOT NULL, BitSup INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtContact INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete),"
             + "FOREIGN KEY (IdtContact) REFERENCES Contact(IdtContact))";
 
@@ -79,15 +79,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "BitModif INTEGER NOT NULL, IdtCompte INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
-    private static final String CREATE_TABLE_COM = "CREATE TABLE Commentaire(IdtCommentaire INTEGER PRIMARY KEY,"
-            + "Texte TEXT NOT NULL, IdtSociete INTEGER NOT NULL,"
-            + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
-
     private static final String CREATE_TABLE_REPONSE = "CREATE TABLE Reponse(IdtQuestion INTEGER PRIMARY KEY,"
-            + "Question TEXT NOT NULL, Reponse TEXT NOT NULL, Categorie TEXT NOT NULL, IdtSatisfaction INTEGER NOT NULL,"
+            + "Question TEXT NOT NULL, Reponse TEXT NOT NULL, Categorie TEXT NOT NULL, Type TEXT NOT NULL, IdtSatisfaction INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtSatisfaction) REFERENCES SatisfactionQ(IdtSatisfaction))";
 
-    private static final String CREATE_TABLE_SAIISF = "CREATE TABLE SatisfactionQ(IdtSatisfaction INTEGER PRIMARY KEY,"
+    private static final String CREATE_TABLE_SATISF = "CREATE TABLE SatisfactionQ(IdtSatisfaction INTEGER PRIMARY KEY,"
             + "Nom TEXT, DateEnvoi TEXT NOT NULL, DateRecu TEXT, IdtSociete INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
 
@@ -101,7 +97,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "IdtBon INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
 
-    private static final String CREATE_TABLE_COULEUR = "CREATE TABLE CorrespCouleur (IdtLigne INTEGER PRIMARY KEY, Nom TEXT NOT NULL,"
+    private static final String CREATE_TABLE_CORRESP_COULEUR = "CREATE TABLE CorrespCouleur (IdtLigne INTEGER PRIMARY KEY, Nom TEXT NOT NULL,"
             + "Couleur TEXT NOT NULL)";
 
     public DatabaseHelper(Context context) {
@@ -113,7 +109,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // creating required tables
         db.execSQL(CREATE_TABLE_BON);
-        db.execSQL(CREATE_TABLE_COM);
+        db.execSQL(CREATE_TABLE_REPONSE);
         db.execSQL(CREATE_TABLE_COMPTE);
         db.execSQL(CREATE_TABLE_CONTACT);
         db.execSQL(CREATE_TABLE_EVENT);
@@ -121,11 +117,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_OBJ);
         db.execSQL(CREATE_TABLE_PARAM);
         db.execSQL(CREATE_TABLE_PRODUIT);
-        db.execSQL(CREATE_TABLE_REPONSE);
-        db.execSQL(CREATE_TABLE_SAIISF);
+        db.execSQL(CREATE_TABLE_SATISF);
         db.execSQL(CREATE_TABLE_STOCK);
         db.execSQL(CREATE_TABLE_SOCIETE);
-        db.execSQL(CREATE_TABLE_COULEUR);
+        db.execSQL(CREATE_TABLE_CORRESP_COULEUR);
     }
 
     @Override
@@ -340,8 +335,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Bon> bons = new ArrayList<Bon>();
 
         String requete = "SELECT rowid, DateCommande, EtatCommande, Suivi, Transporteur, IdtContact, IdtSociete"
-                        + "FROM " + TABLE_BON
-                        + "WHERE " + clauseWhere;
+                + "FROM " + TABLE_BON
+                + "WHERE " + clauseWhere;
 
         Log.d("Requete", requete);
 
@@ -378,7 +373,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         List<LigneCommande> lignes = new ArrayList<LigneCommande>();
         String requete = "SELECT rowid, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtBon FROM Ligne_commande"
-                            + "WHERE IdtBon = " + id_bon ;
+                + "WHERE IdtBon = " + id_bon ;
 
         Log.d("Requete", requete);
 
@@ -418,7 +413,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Societe client = new Societe();
         String requete = "SELECT rowid, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur FROM Societe"
-                        + "WHERE rowid = " + id_client;
+                + "WHERE rowid = " + id_client;
 
         Log.d("Requete", requete);
 
@@ -451,8 +446,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Contact commercial = new Contact();
         String requete = "SELECT IdtContact, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
-                        + "Commentaire, Auteur FROM Contact "
-                        + "WHERE IdtContact = " + id_commercial;
+                + "Commentaire, Auteur FROM Contact "
+                + "WHERE IdtContact = " + id_commercial;
 
         Log.d("Requete", requete);
 
@@ -518,7 +513,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setNb_contact(c.getInt(c.getColumnIndex("Nb")));
                     ligne.setCouleur(c.getString(c.getColumnIndex("Couleur")));
 
-                    //On ajoute la commande
+                    //On ajoute la société
                     societes.add(ligne);
 
                 } while (c.moveToNext());
@@ -754,7 +749,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int id_contact = -1;
 
         String requete = "SELECT IdtContact FROM Compte "
-                        + "WHERE Nom = '" + login + "' And MotDePasse = '" + motDePasse + "'";
+                + "WHERE Nom = '" + login + "' And MotDePasse = '" + motDePasse + "'";
 
         Log.d("Requete", requete);
 
@@ -967,6 +962,120 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(ligne.getId())});
     }
 
+    /*****************************
+     *     Synchronisation
+     ******************************/
+    public List<Societe> getSyncClient(String type){
+
+        List<Societe> clients = new ArrayList<Societe>();
+        Societe client = new Societe();
+        String requete = "";
+
+        if( type.equals("AJOUT")){
+            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur "
+                    + "FROM Societe"
+                    + "WHERE BitAjout = 1";
+        }
+        else if( type.equals("MAJ")){
+            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur "
+                    + "FROM Societe"
+                    + "WHERE BitModif = 1";
+        }
+        else{
+            //données supprimés
+            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur "
+                    + "FROM Societe"
+                    + "WHERE BitSup = 1";
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les produits pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+                client.setNom(c.getString(c.getColumnIndex("Nom")));
+                client.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
+                client.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
+                client.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+                client.setVille(c.getString(c.getColumnIndex("Ville")));
+                client.setPays(c.getString(c.getColumnIndex("Pays")));
+                client.setType(c.getString(c.getColumnIndex("Type")));
+                client.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+                client.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+
+                //On ajoute la commande
+                clients.add(client);
+            }
+
+            c.close();
+        }
+
+        return clients;
+    }
+
+    public List<Contact> getSyncContact(String type){
+
+        List<Contact> contacts = new ArrayList<Contact>();
+        Contact contact = new Contact();
+        Societe client = new Societe();
+        String requete = "";
+
+        if( type.equals("AJOUT")){
+            requete = "SELECT IdtContact, Nom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays, "
+                    + "Commentaire, Auteur, IdtSociete "
+                    + "FROM Contact "
+                    + "WHERE BitAjout = 1 AND BitSup = 0";
+        }
+        else if( type.equals("MAJ")){
+            requete = "SELECT IdtContact, Nom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays, "
+                    + "Commentaire, Auteur, IdtSociete "
+                    + "FROM Contact "
+                    + "WHERE BitModif = 1 AND BitAjout = 0";
+        }
+        else{
+            //données supprimés
+            requete = "SELECT IdtContact, Nom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays, "
+                    + "Commentaire, Auteur, IdtSociete "
+                    + "FROM Contact "
+                    + "WHERE BitSup = 1 AND BitAjout = 0 AND BitModif = 0";
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les contact pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                contact.setId(c.getInt(c.getColumnIndex("IdtContact")));
+                contact.setNom(c.getString(c.getColumnIndex("Nom")));
+                contact.setPoste(c.getString(c.getColumnIndex("Poste")));
+                contact.setTel_fixe(c.getString(c.getColumnIndex("TelFixe")));
+                contact.setTel_mobile(c.getString(c.getColumnIndex("TelMobile")));
+                contact.setFax(c.getString(c.getColumnIndex("Fax")));
+                contact.setEmail(c.getString(c.getColumnIndex("Mail")));
+                contact.setAdresse(c.getString(c.getColumnIndex("Adresse")));
+                contact.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+                contact.setVille(c.getString(c.getColumnIndex("Ville")));
+                contact.setPays(c.getString(c.getColumnIndex("Pays")));
+                contact.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+                contact.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+
+                client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+                contact.setSociete(client);
+
+                //On ajoute le contact
+                contacts.add(contact);
+            }
+            c.close();
+        }
+
+        return contacts;
+    }
+
 
     //Populate tables
     public void chargerTables(SQLiteDatabase db){
@@ -992,6 +1101,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("INSERT INTO Commentaire	(IdtCommentaire, Texte, IdtSociete) VALUES	(1, 'Commentaire positif', 5),(2, 'Commentaire 2', 5),(3, 'Commentaire négatif', 6),(4, 'Commentaire sympathique', 6),(5, 'Commentaire très court', 7),(6, 'Commentaire 3', 7)");
 
-        db.execSQL("INSERT INTO CorrespCouleur (IdtLigne, Nom, Couleur) VALUES (1, 'Bouvard Laurent', '#fff22e8a' ),(2, 'Dupond Jean', '#ff157ebf')");
+        db.execSQL("INSERT INTO CorrespCouleur (IdtLigne, Nom, Couleur) VALUES (1, 'Bouvard Laurent', '#ff9e0e40' ),(2, 'Dupond Jean', '#ff00ff00'),(3,'','ffff0000'),(4, '', 'ffffff00'),(5,'','ff77b5fe'),(6,'','ffff00ff'),(7,'','ff87e990'),(8,'','ffc72c48'),(9,'','ffffd700'),(10,'','ff0f056b'),(11,'','ff9683ec'),(12,'','ff54f98d'),(13,'','ff6d071a'),(14,'','ff73c2fb'),(15,'','ff791cf8')");
     }
 }
