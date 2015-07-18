@@ -16,7 +16,7 @@ public class RechercherActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rechecher);
 
-        //recupère l'intent, verifie l'action et recupère la demande
+        //recupÃ¨re l'intent, verifie l'action et recupÃ¨re la demande
         Intent intent = getIntent();
         if( Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String demande = intent.getStringExtra(SearchManager.QUERY);
