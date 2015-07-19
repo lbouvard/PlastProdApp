@@ -159,7 +159,7 @@ public class AccueilActivity extends ActionBarActivity {
             Log.d("Erreur", "Message : " + e.getMessage());
         }
     }
-/*
+
     public int SynchroniserApp(){
 
         List<Societe> liste_client = new ArrayList<Societe>();
@@ -170,7 +170,7 @@ public class AccueilActivity extends ActionBarActivity {
         List<Parametre> liste_parametre = new ArrayList<Parametre>();
 
         //Appels au WebServices
-        RESTApi controleur = new RESTApi(getApplicationContext());
+        RestApi controleur = new RestApi(getApplicationContext());
 
         //accès base
         db = new DatabaseHelper(getApplicationContext());
@@ -188,26 +188,26 @@ public class AccueilActivity extends ActionBarActivity {
         liste_client = db.getSyncClient("AJOUT");
         //Contact
         liste_contact = db.getSyncContact("AJOUT");
-        //Bon
+        /*//Bon
         liste_bon = db.getSyncBon("AJOUT");
         //LigneCommande
         liste_lignecommande = db.getSyncLigne("AJOUT");
         //Evenement
-        liste_evenement = db.getSyncEvenement("AJOUT");
+        liste_evenement = db.getSyncEvenement("AJOUT");*/
 
         //Envoi des données
         controleur.envoyerClients(1, liste_client);
 
         //B : Données à modifier
 
-        liste_client = db.getSyncClient("MAJ");
+        /*liste_client = db.getSyncClient("MAJ");
         liste_contact = db.getSyncContact("MAJ");
         liste_bon = db.getSyncBon("MAJ");
         liste_lignecommande = db.getSyncLigne("MAJ");
         liste_evenement = db.getSyncEvenement("MAJ");
 
         //Envoi des données
-        controleur.envoyerDonneesMaj(liste_client, liste_contact, liste_bon, liste_lignecommande, liste_evenement);
+        controleur.envoyerDonneesMaj(liste_client, liste_contact, liste_bon, liste_lignecommande, liste_evenement);*/
 
         // *******************************************
         // **										**
@@ -225,5 +225,5 @@ public class AccueilActivity extends ActionBarActivity {
         // ********************************************
         
         return 0;
-    }*/
+    }
 }
