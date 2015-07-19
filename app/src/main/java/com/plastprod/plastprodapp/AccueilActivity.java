@@ -159,8 +159,8 @@ public class AccueilActivity extends ActionBarActivity {
             Log.d("Erreur", "Message : " + e.getMessage());
         }
     }
-
-    /*public int SynchroniserApp(){
+/*
+    public int SynchroniserApp(){
 
         List<Societe> liste_client = new ArrayList<Societe>();
         List<Contact> liste_contact = new ArrayList<Contact>();
@@ -170,7 +170,7 @@ public class AccueilActivity extends ActionBarActivity {
         List<Parametre> liste_parametre = new ArrayList<Parametre>();
 
         //Appels au WebServices
-        RestApi controleur = new RestApi();
+        RESTApi controleur = new RESTApi(getApplicationContext());
 
         //accès base
         db = new DatabaseHelper(getApplicationContext());
@@ -196,7 +196,7 @@ public class AccueilActivity extends ActionBarActivity {
         liste_evenement = db.getSyncEvenement("AJOUT");
 
         //Envoi des données
-        controleur.envoyerDonneesAAjouter(liste_client, liste_contact, liste_bon, liste_lignecommande, liste_evenement);
+        controleur.envoyerClients(1, liste_client);
 
         //B : Données à modifier
 
@@ -205,17 +205,6 @@ public class AccueilActivity extends ActionBarActivity {
         liste_bon = db.getSyncBon("MAJ");
         liste_lignecommande = db.getSyncLigne("MAJ");
         liste_evenement = db.getSyncEvenement("MAJ");
-
-        //Envoi des données
-        controleur.envoyerDonneesMaj(liste_client, liste_contact, liste_bon, liste_lignecommande, liste_evenement);
-
-        //C : Données à supprimer
-
-        liste_client = db.getSyncClient("SUPP");
-        liste_contact = db.getSyncContact("SUPP");
-        liste_bon = db.getSyncBon("SUPP");
-        liste_lignecommande = db.getSyncLigne("SUPP");
-        liste_evenement = db.getSyncEvenement("SUPP");
 
         //Envoi des données
         controleur.envoyerDonneesMaj(liste_client, liste_contact, liste_bon, liste_lignecommande, liste_evenement);
@@ -234,7 +223,7 @@ public class AccueilActivity extends ActionBarActivity {
         // **		Importer les données serveurs	**
         // **										**
         // ********************************************
-
-        //return 0;
+        
+        return 0;
     }*/
 }
