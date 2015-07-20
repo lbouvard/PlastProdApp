@@ -95,7 +95,7 @@ public class FormulaireClient extends ActionBarActivity {
         client.setNom(((EditText) findViewById(R.id.etNom)).getText().toString());
         client.setAdresse1(((EditText) findViewById(R.id.etAdresse)).getText().toString());
         client.setAdresse2(((EditText) findViewById(R.id.etComplement)).getText().toString());
-        client.setCode_postal(((EditText) findViewById(R.id.etCodePostal)).getText().toString());
+        client.setCodePostal(((EditText) findViewById(R.id.etCodePostal)).getText().toString());
         client.setVille(((EditText) findViewById(R.id.etVille)).getText().toString());
         client.setPays(((EditText) findViewById(R.id.etPays)).getText().toString());
         client.setCommentaire(((EditText) findViewById(R.id.etCommentaire)).getText().toString());

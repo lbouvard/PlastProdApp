@@ -1,6 +1,7 @@
 package com.plastprod.plastprodapp;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Switch;
 
 import com.google.gson.Gson;
@@ -43,29 +44,29 @@ public class RestApi {
 	private static final String API_CLIENT_AJT		= "http://10.0.2.2/WebServices/api/societes/ajt";
 	private static final String API_CLIENT_MAJ 		= "http://10.0.2.2/WebServices/api/societes/maj";
 	
-	private static final String API_CONTACT 		= "http://localhost/WebServices/api/contacts";
-	private static final String API_CONTACT_AJT 	= "http://localhost/WebServices/api/contacts/ajt";
-	private static final String API_CONTACT_MAJ		= "http://localhost/WebServices/api/contacts/maj";
+	private static final String API_CONTACT 		= "http://10.0.2.2/WebServices/api/contacts";
+	private static final String API_CONTACT_AJT 	= "http://10.0.2.2/WebServices/api/contacts/ajt";
+	private static final String API_CONTACT_MAJ		= "http://10.0.2.2/WebServices/api/contacts/maj";
 	
-	private static final String API_BON 			= "http://localhost/WebServices/api/bons";
-	private static final String API_BON_AJT 		= "http://localhost/WebServices/api/bons/ajt";
-	private static final String API_BON_MAJ 		= "http://localhost/WebServices/api/bons/maj";
+	private static final String API_BON 			= "http://10.0.2.2/WebServices/api/bons";
+	private static final String API_BON_AJT 		= "http://10.0.2.2/WebServices/api/bons/ajt";
+	private static final String API_BON_MAJ 		= "http://10.0.2.2/WebServices/api/bons/maj";
 	
-	private static final String API_LIGNES			= "http://localhost/WebServices/api/lignes";
-	private static final String API_LIGNES_AJT		= "http://localhost/WebServices/api/lignes/ajt";
-	private static final String API_LIGNES_MAJ		= "http://localhost/WebServices/api/lignes/maj";
+	private static final String API_LIGNES			= "http://10.0.2.2/WebServices/api/lignes";
+	private static final String API_LIGNES_AJT		= "http://10.0.2.2/WebServices/api/lignes/ajt";
+	private static final String API_LIGNES_MAJ		= "http://10.0.2.2/WebServices/api/lignes/maj";
 	
-	private static final String API_EVENEMENT 		= "http://localhost/WebServices/api/evenements";
-	private static final String API_EVENEMENT_AJT 	= "http://localhost/WebServices/api/evenements/ajt";
-	private static final String API_EVENEMENT_MAJ 	= "http://localhost/WebServices/api/evenements/maj";
+	private static final String API_EVENEMENT 		= "http://10.0.2.2/WebServices/api/evenements";
+	private static final String API_EVENEMENT_AJT 	= "http://10.0.2.2/WebServices/api/evenements/ajt";
+	private static final String API_EVENEMENT_MAJ 	= "http://10.0.2.2/WebServices/api/evenements/maj";
 	
-	private static final String API_UTILISATEUR = "http://localhost/WebServices/api/utilisateurs";
-	private static final String API_PRODUIT 	= "http://localhost/WebServices/api/produits";
-	private static final String API_PARAMETRE 	= "http://localhost/WebServices/api/parametres";
-	private static final String API_OBJECTIF	= "http://localhost/WebServices/api/objectifs";
-	private static final String API_STOCK 		= "http://localhost/WebServices/api/stocks";
-	private static final String API_REPONSE		= "http://localhost/WebServices/api/reponses";
-	private static final String API_SATISF 		= "http://localhost/WebServices/api/satisfactions";
+	private static final String API_UTILISATEUR = "http://10.0.2.2/WebServices/api/utilisateurs";
+	private static final String API_PRODUIT 	= "http://10.0.2.2/WebServices/api/produits";
+	private static final String API_PARAMETRE 	= "http://10.0.2.2/WebServices/api/parametres";
+	private static final String API_OBJECTIF	= "http://10.0.2.2/WebServices/api/objectifs";
+	private static final String API_STOCK 		= "http://10.0.2.2/WebServices/api/stocks";
+	private static final String API_REPONSE		= "http://10.0.2.2/WebServices/api/reponses";
+	private static final String API_SATISF 		= "http://10.0.2.2/WebServices/api/satisfactions";
 
 	//constructeur
 	public RestApi(Context context) {
@@ -115,23 +116,27 @@ public class RestApi {
 		});
 	}
 	
-	public void envoyerVersWS(String url, JSONArray obj){
+	public void envoyerVersWS(String url, /*JSONArray obj*/ String donnees ){
 
 		StringEntity entite = null;
 
 		try {
-			entite = new StringEntity(obj.toString());
+			//entite = new StringEntity(obj.toString(), "UTF-8");
+            entite = new StringEntity(donnees);
 		}
 		catch (Exception ex){
 			ex.printStackTrace();
 		}
 
-		client.post(context, url, entite, "application/json", new AsyncHttpResponseHandler() {
+
+		client.post(context, url, entite, "text/html", new AsyncHttpResponseHandler() {
 
             //Réponse 200 OK
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 //Traiter
+				String test = new String(responseBody, StandardCharsets.UTF_8);
+				Log.d("test", test);
             }
 
             //Erreur
@@ -148,17 +153,14 @@ public class RestApi {
 			
 			Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
 			String clients = gson.toJson(liste_clients, type_liste);
-			JSONArray obj = new JSONArray(clients);
 
-			//clients = clients.replaceAll("\"","\\\"\"");
-			
 			//Ajout
 			if( methode == 1){
-				envoyerVersWS(API_CLIENT_AJT, obj);
+				envoyerVersWS(API_CLIENT_AJT, clients);
 			}
 			//Modification
 			else{
-				envoyerVersWS(API_CLIENT_MAJ, obj);
+				envoyerVersWS(API_CLIENT_MAJ, clients);
 			}
 		}
 		catch(Exception e){
@@ -168,7 +170,7 @@ public class RestApi {
 		
 		return 1;
 	}
-/*
+
 	public int envoyerContacts(int methode, List<Contact> liste_contacts){
 		try{
 			Type type_liste = new TypeToken<ArrayList<Contact>>() {}.getType();
@@ -260,7 +262,7 @@ public class RestApi {
 		
 		return 1;		
 	}
-*/
+
     public void setClients(JSONObject donnees){
 
         Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();

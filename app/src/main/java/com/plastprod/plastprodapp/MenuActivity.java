@@ -201,7 +201,7 @@ public class MenuActivity extends ActionBarActivity {
         controleur.envoyerClients(1, liste_client);
 
         //B : Données à modifier
-        liste_client = db.getSyncClient(false);
+        //liste_client = db.getSyncClient(false);
 
         /*liste_contact = db.getSyncContact("MAJ");
         liste_bon = db.getSyncBon("MAJ");
@@ -209,7 +209,7 @@ public class MenuActivity extends ActionBarActivity {
         liste_evenement = db.getSyncEvenement("MAJ");*/
 
         //Envoi des données
-        controleur.envoyerClients(2, liste_client);
+        //controleur.envoyerClients(2, liste_client);
 
         // *******************************************
         // **										**

@@ -12,7 +12,7 @@ public class Societe implements Serializable {
     private String nom;
     private String adresse1;
     private String adresse2;
-    private String code_postal;
+    private String codePostal;
     private String ville;
     private String pays;
     private String type;
@@ -63,11 +63,11 @@ public class Societe implements Serializable {
     }
 
     public String getCode_postal() {
-        return code_postal;
+        return codePostal;
     }
 
-    public void setCode_postal(String code_postal) {
-        this.code_postal = code_postal;
+    public void setCodePostal(String codePostal) {
+        this.codePostal = codePostal;
     }
 
     public String getVille() {

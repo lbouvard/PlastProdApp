@@ -428,7 +428,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             client.setNom(c.getString(c.getColumnIndex("Nom")));
             client.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
             client.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
-            client.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+            client.setCodePostal(c.getString(c.getColumnIndex("CodePostal")));
             client.setVille(c.getString(c.getColumnIndex("Ville")));
             client.setPays(c.getString(c.getColumnIndex("Pays")));
             client.setType(c.getString(c.getColumnIndex("Type")));
@@ -503,7 +503,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
                     ligne.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
-                    ligne.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+                    ligne.setCodePostal(c.getString(c.getColumnIndex("CodePostal")));
                     ligne.setVille(c.getString(c.getColumnIndex("Ville")));
                     ligne.setPays(c.getString(c.getColumnIndex("Pays")));
                     ligne.setType(c.getString(c.getColumnIndex("Type")));
@@ -1007,7 +1007,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 client.setNom(c.getString(c.getColumnIndex("Nom")));
                 client.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
                 client.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
-                client.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+                client.setCodePostal(c.getString(c.getColumnIndex("CodePostal")));
                 client.setVille(c.getString(c.getColumnIndex("Ville")));
                 client.setPays(c.getString(c.getColumnIndex("Pays")));
                 client.setType(c.getString(c.getColumnIndex("Type")));
