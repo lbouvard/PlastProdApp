@@ -8,19 +8,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import sqlite.helper.Bon;
 import sqlite.helper.Contact;
 import sqlite.helper.DatabaseHelper;
-import sqlite.helper.Evenement;
-import sqlite.helper.LigneCommande;
-import sqlite.helper.Parametre;
-import sqlite.helper.Societe;
 
 public class AccueilActivity extends ActionBarActivity {
 
@@ -158,72 +149,5 @@ public class AccueilActivity extends ActionBarActivity {
         catch (Exception e){
             Log.d("Erreur", "Message : " + e.getMessage());
         }
-    }
-
-    public int SynchroniserApp(){
-
-        List<Societe> liste_client = new ArrayList<Societe>();
-        List<Contact> liste_contact = new ArrayList<Contact>();
-        List<Bon> liste_bon = new ArrayList<Bon>();
-        List<LigneCommande> liste_lignecommande = new ArrayList<LigneCommande>();
-        List<Evenement> liste_evenement = new ArrayList<Evenement>();
-        List<Parametre> liste_parametre = new ArrayList<Parametre>();
-
-        //Appels au WebServices
-        RestApi controleur = new RestApi(getApplicationContext());
-
-        //accès base
-        db = new DatabaseHelper(getApplicationContext());
-
-        // *******************************************
-        // **										**
-        // **              ETAPE 1                  **
-        // **		Récupération données locale	    **
-        // **										**
-        // *******************************************
-
-        //A : Données à ajouter
-
-        //Societe
-        liste_client = db.getSyncClient("AJOUT");
-        //Contact
-        liste_contact = db.getSyncContact("AJOUT");
-        /*//Bon
-        liste_bon = db.getSyncBon("AJOUT");
-        //LigneCommande
-        liste_lignecommande = db.getSyncLigne("AJOUT");
-        //Evenement
-        liste_evenement = db.getSyncEvenement("AJOUT");*/
-
-        //Envoi des données
-        controleur.envoyerClients(1, liste_client);
-
-        //B : Données à modifier
-
-        /*liste_client = db.getSyncClient("MAJ");
-        liste_contact = db.getSyncContact("MAJ");
-        liste_bon = db.getSyncBon("MAJ");
-        liste_lignecommande = db.getSyncLigne("MAJ");
-        liste_evenement = db.getSyncEvenement("MAJ");
-
-        //Envoi des données
-        controleur.envoyerDonneesMaj(liste_client, liste_contact, liste_bon, liste_lignecommande, liste_evenement);*/
-
-        // *******************************************
-        // **										**
-        // **              ETAPE 2                  **
-        // **		Vider les données looales		**
-        // **										**
-        // *******************************************
-        //db.tronquerTable();
-
-        // ********************************************
-        // **										**
-        // **              ETAPE 3                   **
-        // **		Importer les données serveurs	**
-        // **										**
-        // ********************************************
-        
-        return 0;
     }
 }

@@ -70,7 +70,8 @@
         android:textAllCaps="false"
         android:textSize="18sp"
         android:layout_marginLeft="16dp"
-        android:drawableStart="@drawable/ic_sync_white_24dp" />
+        android:drawableStart="@drawable/ic_sync_white_24dp"
+        android:onClick="Synchroniser" />
 
     <Button
         android:layout_width="wrap_content"

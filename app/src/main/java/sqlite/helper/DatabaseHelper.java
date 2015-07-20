@@ -120,6 +120,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_STOCK);
         db.execSQL(CREATE_TABLE_SOCIETE);
         db.execSQL(CREATE_TABLE_CORRESP_COULEUR);
+
+        chargerTables(db);
     }
 
     @Override
@@ -333,9 +335,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         List<Bon> bons = new ArrayList<Bon>();
 
-        String requete = "SELECT rowid, DateCommande, EtatCommande, Suivi, Transporteur, IdtContact, IdtSociete"
+        String requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, IdtContact, IdtSociete"
                 + "FROM " + TABLE_BON
-                + "WHERE " + clauseWhere;
+                + "WHERE Type = '" + type + "'";
 
         Log.d("Requete", requete);
 
@@ -371,7 +373,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public List<LigneCommande> getLignesCommande(long id_bon){
 
         List<LigneCommande> lignes = new ArrayList<LigneCommande>();
-        String requete = "SELECT rowid, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtBon FROM Ligne_commande"
+        String requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtBon FROM Ligne_commande"
                 + "WHERE IdtBon = " + id_bon ;
 
         Log.d("Requete", requete);
@@ -384,7 +386,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
                 do {
                     LigneCommande ligne = new LigneCommande();
-                    ligne.setId(c.getInt(c.getColumnIndex("rowid")));
+                    ligne.setId(c.getInt(c.getColumnIndex("Idt")));
                     ligne.setCode(c.getString(c.getColumnIndex("Code")));
                     ligne.setDescription(c.getString(c.getColumnIndex("Description")));
                     ligne.setId_bon(c.getInt(c.getColumnIndex("IdtBon")));
@@ -411,8 +413,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Societe getClient(int id_client){
 
         Societe client = new Societe();
-        String requete = "SELECT rowid, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur FROM Societe"
-                + "WHERE rowid = " + id_client;
+        String requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur FROM Societe"
+                + "WHERE IdtSociete = " + id_client;
 
         Log.d("Requete", requete);
 
@@ -422,7 +424,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if( c != null) {
             c.moveToFirst();
 
-            client.setId(c.getInt(c.getColumnIndex("rowid")));
+            client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
             client.setNom(c.getString(c.getColumnIndex("Nom")));
             client.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
             client.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
@@ -533,7 +535,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + "WHERE IdtSociete = " + id_societe;
         }
         else{
-            requete = "SELECT rowid, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
+            requete = "SELECT IdtContact, Nom, Prenom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays,"
                     + "Commentaire, Auteur FROM Contact " + clauseWhere;
         }
 
@@ -580,7 +582,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Parametre> params = new ArrayList<Parametre>();
         String requete = "";
 
-        requete = "SELECT rowid, Nom, Type, Libelle, Valeur FROM Parametre"
+        requete = "SELECT IdtParametre, Nom, Type, Libelle, Valeur FROM Parametre"
                 + "WHERE IdtCompte = " + id_commercial;
 
         Log.d("Requete", requete);
@@ -593,7 +595,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
                 do {
                     Parametre ligne = new Parametre();
-                    ligne.setId(c.getInt(c.getColumnIndex("rowid")));
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtParametre")));
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setType(c.getString(c.getColumnIndex("Type")));
                     ligne.setLibelle(c.getString(c.getColumnIndex("Libelle")));
@@ -616,7 +618,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Objectif> objectifs = new ArrayList<Objectif>();
         String requete = "";
 
-        requete = "SELECT rowid, Annee, Type, Libelle, Valeur FROM Objectif"
+        requete = "SELECT IdtObjectif, Annee, Type, Libelle, Valeur FROM Objectif"
                 + "WHERE IdtCompte = " + id_commercial;
 
         Log.d("Requete", requete);
@@ -629,7 +631,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
                 do {
                     Objectif ligne = new Objectif();
-                    ligne.setId(c.getInt(c.getColumnIndex("rowid")));
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtObjectif")));
                     ligne.setAnnee(c.getString(c.getColumnIndex("Annee")));
                     ligne.setType(c.getString(c.getColumnIndex("Type")));
                     ligne.setLibelle(c.getString(c.getColumnIndex("Libelle")));
@@ -652,7 +654,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Produit> produits = new ArrayList<Produit>();
         String requete = "";
 
-        requete = "SELECT rowid, Nom, Description, Categorie, Code, Prix, IdtEntree FROM Produit";
+        requete = "SELECT IdtProduit, Nom, Description, Categorie, Code, Prix, IdtEntree FROM Produit";
 
         Log.d("Requete", requete);
 
@@ -665,7 +667,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     Produit ligne = new Produit();
 
-                    ligne.setId(c.getInt(c.getColumnIndex("rowid")));
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtProduit")));
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setDescription(c.getString(c.getColumnIndex("Description")));
                     ligne.setCategorie(c.getString(c.getColumnIndex("Categorie")));
@@ -939,7 +941,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         db.update(TABLE_SOCIETE, valeurs, "IdtSociete = ?",
-                new String[] { String.valueOf(client.getId()) });
+                new String[]{String.valueOf(client.getId())});
     }
 
     public void supprimerContact(Contact contact){
@@ -977,27 +979,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /*****************************
      *     Synchronisation
      ******************************/
-    public List<Societe> getSyncClient(String type){
+    public List<Societe> getSyncClient(Boolean ajout){
 
         List<Societe> clients = new ArrayList<Societe>();
         Societe client = new Societe();
         String requete = "";
 
-        if( type.equals("AJOUT")){
-            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur "
-                    + "FROM Societe"
-                    + "WHERE BitAjout = 1";
-        }
-        else if( type.equals("MAJ")){
-            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur "
-                    + "FROM Societe"
-                    + "WHERE BitModif = 1";
+        if( ajout ){
+            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur, BitSup "
+                    + "FROM Societe "
+                    + "WHERE BitAjout = 1 AND ATraiter = 1";
         }
         else{
-            //données supprimés
-            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur "
-                    + "FROM Societe"
-                    + "WHERE BitSup = 1";
+            requete = "SELECT IdtSociete, Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur, BitSup "
+                    + "FROM Societe "
+                    + "WHERE ATraiter = 1 AND BitAjout = 0 ";
         }
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1017,6 +1013,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 client.setType(c.getString(c.getColumnIndex("Type")));
                 client.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
                 client.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+
+                if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
+                    client.setASupprimer(true);
+                }
+                else {
+                    client.setASupprimer(false);
+                }
 
                 //On ajoute la commande
                 clients.add(client);

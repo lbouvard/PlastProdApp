@@ -38,33 +38,33 @@ public class RestApi {
     List<LigneCommande> liste_articles;
     List<Evenement> liste_evenements;
 
-	private static final String API_CLIENT			= "http://localhost/api/societes";
-	private static final String API_CLIENT_AJT		= "http://localhost/api/societes/ajt";
-	private static final String API_CLIENT_MAJ 		= "http://localhost/api/societes/maj";
+	private static final String API_CLIENT			= "http://localhost/WebServices/api/societes";
+	private static final String API_CLIENT_AJT		= "http://localhost/WebServices/api/societes/ajt";
+	private static final String API_CLIENT_MAJ 		= "http://localhost/WebServices/api/societes/maj";
 	
-	private static final String API_CONTACT 		= "http://localhost/api/contacts";
-	private static final String API_CONTACT_AJT 	= "http://localhost/api/contacts/ajt";
-	private static final String API_CONTACT_MAJ		= "http://localhost/api/contacts/maj";
+	private static final String API_CONTACT 		= "http://localhost/WebServices/api/contacts";
+	private static final String API_CONTACT_AJT 	= "http://localhost/WebServices/api/contacts/ajt";
+	private static final String API_CONTACT_MAJ		= "http://localhost/WebServices/api/contacts/maj";
 	
-	private static final String API_BON 			= "http://localhost/api/bons";
-	private static final String API_BON_AJT 		= "http://localhost/api/bons/ajt";
-	private static final String API_BON_MAJ 		= "http://localhost/api/bons/maj";
+	private static final String API_BON 			= "http://localhost/WebServices/api/bons";
+	private static final String API_BON_AJT 		= "http://localhost/WebServices/api/bons/ajt";
+	private static final String API_BON_MAJ 		= "http://localhost/WebServices/api/bons/maj";
 	
-	private static final String API_LIGNES			= "http://localhost/api/lignes";
-	private static final String API_LIGNES_AJT		= "http://localhost/api/lignes/ajt";
-	private static final String API_LIGNES_MAJ		= "http://localhost/api/lignes/maj";
+	private static final String API_LIGNES			= "http://localhost/WebServices/api/lignes";
+	private static final String API_LIGNES_AJT		= "http://localhost/WebServices/api/lignes/ajt";
+	private static final String API_LIGNES_MAJ		= "http://localhost/WebServices/api/lignes/maj";
 	
-	private static final String API_EVENEMENT 		= "http://localhost/api/evenements";
-	private static final String API_EVENEMENT_AJT 	= "http://localhost/api/evenements/ajt";
-	private static final String API_EVENEMENT_MAJ 	= "http://localhost/api/evenements/maj";
+	private static final String API_EVENEMENT 		= "http://localhost/WebServices/api/evenements";
+	private static final String API_EVENEMENT_AJT 	= "http://localhost/WebServices/api/evenements/ajt";
+	private static final String API_EVENEMENT_MAJ 	= "http://localhost/WebServices/api/evenements/maj";
 	
-	private static final String API_UTILISATEUR = "http://localhost/api/utilisateurs";
-	private static final String API_PRODUIT 	= "http://localhost/api/produits";
-	private static final String API_PARAMETRE 	= "http://localhost/api/parametres";
-	private static final String API_OBJECTIF	= "http://localhost/api/objectifs";
-	private static final String API_STOCK 		= "http://localhost/api/stocks";
-	private static final String API_REPONSE		= "http://localhost/api/reponses";
-	private static final String API_SATISF 		= "http://localhost/api/satisfactions";
+	private static final String API_UTILISATEUR = "http://localhost/WebServices/api/utilisateurs";
+	private static final String API_PRODUIT 	= "http://localhost/WebServices/api/produits";
+	private static final String API_PARAMETRE 	= "http://localhost/WebServices/api/parametres";
+	private static final String API_OBJECTIF	= "http://localhost/WebServices/api/objectifs";
+	private static final String API_STOCK 		= "http://localhost/WebServices/api/stocks";
+	private static final String API_REPONSE		= "http://localhost/WebServices/api/reponses";
+	private static final String API_SATISF 		= "http://localhost/WebServices/api/satisfactions";
 
 	//constructeur
 	public RestApi(Context context) {

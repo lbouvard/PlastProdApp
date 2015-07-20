@@ -19,8 +19,10 @@ public class Societe implements Serializable {
     private String commentaire;
     private String auteur;
     private String couleur;
+
     private int nb_contact;
     private boolean EstSelectionne;
+    private boolean ASupprimer;
 
     //Constructeurs
     public Societe(){
@@ -134,5 +136,13 @@ public class Societe implements Serializable {
 
     public void setCouleur(String couleur) {
         this.couleur = couleur;
+    }
+
+    public boolean isASupprimer() {
+        return ASupprimer;
+    }
+
+    public void setASupprimer(boolean ASupprimer) {
+        this.ASupprimer = ASupprimer;
     }
 }
