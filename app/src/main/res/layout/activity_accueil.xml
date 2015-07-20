@@ -65,7 +65,7 @@
         android:textAllCaps="false"
         android:textSize="18dp"
         android:drawableRight="@drawable/ic_chevron_right_white_48dp"
-        android:onClick="ByPass"/>
+        android:onClick="Authentifier"/>
 
     <!-- android:onClick="Authentifier" -->
 

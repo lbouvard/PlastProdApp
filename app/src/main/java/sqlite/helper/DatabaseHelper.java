@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 36;
+    private static final int DATABASE_VERSION = 37;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -240,7 +240,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Commentaire", client.getCommentaire());
         valeurs.put("Auteur", client.getAuteur());
         valeurs.put("BitAjout", 1);
-        valeurs.put("BitModif", 0);
+        valeurs.put("BitSup", 0);
+        valeurs.put("ATraiter", 1);
 
         db.insert(TABLE_SOCIETE, null, valeurs);
         db.close();
@@ -485,7 +486,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "soc.Auteur, cc.Couleur, ifnull(COUNT(con.IdtContact),0) AS Nb " +
                 "FROM Societe soc LEFT JOIN Contact con ON soc.IdtSociete =  con.IdtSociete " +
                 "INNER JOIN CorrespCouleur cc ON soc.Auteur = cc.Nom " +
-                "WHERE soc.Type = 'C' GROUP BY con.IdtContact, soc.IdtSociete ORDER BY soc.IdtSociete";
+                "WHERE soc.Type = 'C' AND soc.BitSup = 0 GROUP BY con.IdtContact, soc.IdtSociete ORDER BY soc.IdtSociete";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
@@ -786,7 +787,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Commentaire", client.getCommentaire());
         valeurs.put("Auteur", client.getAuteur());
         valeurs.put("BitAjout", 0);
-        valeurs.put("BitModif", 1);
+        valeurs.put("BitSup", 0);
+        valeurs.put("ATraiter", 1);
 
         // updating row
         db.update(TABLE_SOCIETE, valeurs, "IdtSociete = ?",
@@ -917,13 +919,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        if( supprimer_contact ){
+        /*if( supprimer_contact ){
             db.delete(TABLE_CONTACT, "IdtSociete = ?",
                     new String[] { String.valueOf(client.getId()) });
-        }
+        }*/
 
-        db.delete(TABLE_SOCIETE, "IdtSociete = ?",
-                new String[]{String.valueOf(client.getId())});
+        ContentValues valeurs = new ContentValues();
+        valeurs.put("Nom", client.getNom());
+        valeurs.put("Adresse1", client.getAdresse1());
+        valeurs.put("Adresse2", client.getAdresse2());
+        valeurs.put("CodePostal", client.getCode_postal());
+        valeurs.put("Ville", client.getVille());
+        valeurs.put("Pays", client.getPays());
+        valeurs.put("Commentaire", client.getCommentaire());
+        valeurs.put("Auteur", client.getAuteur());
+        valeurs.put("BitAjout", 0);
+        valeurs.put("BitSup", 1);
+        valeurs.put("ATraiter", 1);
+
+        // updating row
+        db.update(TABLE_SOCIETE, valeurs, "IdtSociete = ?",
+                new String[] { String.valueOf(client.getId()) });
     }
 
     public void supprimerContact(Contact contact){
