@@ -9,6 +9,7 @@ import com.loopj.android.http.*;
 
 import org.apache.http.Header;
 import org.apache.http.entity.StringEntity;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,9 +39,9 @@ public class RestApi {
     List<LigneCommande> liste_articles;
     List<Evenement> liste_evenements;
 
-	private static final String API_CLIENT			= "http://localhost/WebServices/api/societes";
-	private static final String API_CLIENT_AJT		= "http://localhost/WebServices/api/societes/ajt";
-	private static final String API_CLIENT_MAJ 		= "http://localhost/WebServices/api/societes/maj";
+	private static final String API_CLIENT			= "http://10.0.2.2/WebServices/api/societes";
+	private static final String API_CLIENT_AJT		= "http://10.0.2.2/WebServices/api/societes/ajt";
+	private static final String API_CLIENT_MAJ 		= "http://10.0.2.2/WebServices/api/societes/maj";
 	
 	private static final String API_CONTACT 		= "http://localhost/WebServices/api/contacts";
 	private static final String API_CONTACT_AJT 	= "http://localhost/WebServices/api/contacts/ajt";
@@ -114,22 +115,18 @@ public class RestApi {
 		});
 	}
 	
-	public void envoyerVersWS(String url, String donneesJSON){
+	public void envoyerVersWS(String url, JSONArray obj){
 
-        StringEntity entite = null;
-        RequestParams params = null;
+		StringEntity entite = null;
 
-        try {
-            entite = new StringEntity(donneesJSON, "UTF-8");
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
+		try {
+			entite = new StringEntity(obj.toString());
+		}
+		catch (Exception ex){
+			ex.printStackTrace();
+		}
 
-        params = new RequestParams();
-        params.put("data", entite);
-
-		client.post(context, url, params, new AsyncHttpResponseHandler() {
+		client.post(context, url, entite, "application/json", new AsyncHttpResponseHandler() {
 
             //Réponse 200 OK
             @Override
@@ -151,14 +148,17 @@ public class RestApi {
 			
 			Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
 			String clients = gson.toJson(liste_clients, type_liste);
+			JSONArray obj = new JSONArray(clients);
+
+			//clients = clients.replaceAll("\"","\\\"\"");
 			
 			//Ajout
 			if( methode == 1){
-				envoyerVersWS(API_CLIENT_AJT, clients);
+				envoyerVersWS(API_CLIENT_AJT, obj);
 			}
 			//Modification
 			else{
-				envoyerVersWS(API_CLIENT_MAJ, clients);
+				envoyerVersWS(API_CLIENT_MAJ, obj);
 			}
 		}
 		catch(Exception e){
@@ -168,7 +168,7 @@ public class RestApi {
 		
 		return 1;
 	}
-
+/*
 	public int envoyerContacts(int methode, List<Contact> liste_contacts){
 		try{
 			Type type_liste = new TypeToken<ArrayList<Contact>>() {}.getType();
@@ -260,7 +260,7 @@ public class RestApi {
 		
 		return 1;		
 	}
-
+*/
     public void setClients(JSONObject donnees){
 
         Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
