@@ -22,7 +22,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 37;
+    private static final int DATABASE_VERSION = 39;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -37,7 +37,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_PARAM = "Parametre";
     private static final String TABLE_PRODUIT = "Produit";
     private static final String TABLE_REPONSE = "Reponse";
-    private static final String TABLE_SATISF = "SatisfactionQ";
+    private static final String TABLE_SATISF = "Satisfaction";
     private static final String TABLE_SOCIETE = "Societe";
     private static final String TABLE_STOCK = "Stock";
     private static final String TABLE_CORRESP_COULEUR = "CorrespCouleur";
@@ -46,52 +46,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "Adresse1 TEXT NOT NULL, Adresse2 TEXT, CodePostal TEXT NOT NULL, Ville TEXT NOT NULL , Pays TEXT NOT NULL, Type TEXT NOT NULL, Commentaire  TEXT, "
             + "Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL)";
 
-    private static final String CREATE_TABLE_CONTACT = "CREATE TABLE Contact(IdtContact INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
+    private static final String CREATE_TABLE_CONTACT = "CREATE TABLE Contact (IdtContact INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
             + "Prenom TEXT NOT NULL, Poste TEXT, TelFixe TEXT, Fax TEXT, TelMobile TEXT, Mail  TEXT, Adresse TEXT, CodePostal  TEXT, Ville TEXT, Pays  TEXT, "
             + "Commentaire TEXT, Auteur TEXT NOT NULL, BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
 
-    private static final String CREATE_TABLE_COMPTE= "CREATE TABLE Compte(IdtCompte INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
+    private static final String CREATE_TABLE_COMPTE= "CREATE TABLE Compte (IdtCompte INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
             + "MotDePasse  TEXT NOT NULL, Mail TEXT NOT NULL, Salt TEXT NOT NULL, Actif INTEGER NOT NULL, IdtContact INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtContact) REFERENCES Contact(IdtContact))";
 
-    private static final String CREATE_TABLE_BON = "CREATE TABLE Bon(IdtBon INTEGER PRIMARY KEY, DateCommande TEXT NOT NULL, "
+    private static final String CREATE_TABLE_BON = "CREATE TABLE Bon (IdtBon INTEGER PRIMARY KEY, DateCommande TEXT NOT NULL, "
             + "EtatCommande TEXT, Type TEXT, Suivi TEXT, Transporteur TEXT, Auteur TEXT NOT NULL, DateChg TEXT, BitChg  INTEGER NOT NULL, "
             + "BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtContact INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete),"
             + "FOREIGN KEY (IdtContact) REFERENCES Contact(IdtContact))";
 
-    private static final String CREATE_TABLE_STOCK = "CREATE TABLE Stock(IdtEntree INTEGER PRIMARY KEY, "
+    private static final String CREATE_TABLE_STOCK = "CREATE TABLE Stock (IdtEntree INTEGER PRIMARY KEY, "
             + "Quantite INTEGER NOT NULL, DelaisMoy INTEGER NOT NULL, Delais INTEGER NOT NULL)";
 
-    private static final String CREATE_TABLE_PRODUIT = "CREATE TABLE Produit(IdtProduit INTEGER PRIMARY KEY, "
+    private static final String CREATE_TABLE_PRODUIT = "CREATE TABLE Produit (IdtProduit INTEGER PRIMARY KEY, "
             + "Nom TEXT NOT NULL, Description TEXT NOT NULL, Categorie TEXT NOT NULL, Code TEXT NOT NULL, "
             + "Prix REAL NOT NULL, IdtEntree INTEGER NOT NULL,"
             + "FOREIGN KEY(IdtEntree) REFERENCES Stock(IdtEntree))";
 
-    private static final String CREATE_TABLE_OBJ = "CREATE TABLE Objectif(IdtObjectif INTEGER PRIMARY KEY, "
+    private static final String CREATE_TABLE_OBJ = "CREATE TABLE Objectif (IdtObjectif INTEGER PRIMARY KEY, "
             + "Annee TEXT NOT NULL, Type  TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, IdtCompte INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
-    private static final String CREATE_TABLE_PARAM = "CREATE TABLE Parametre(IdtParam INTEGER PRIMARY KEY, "
+    private static final String CREATE_TABLE_PARAM = "CREATE TABLE Parametre (IdtParam INTEGER PRIMARY KEY, "
             + "Nom TEXT NOT NULL, Type TEXT NOT NULL, Libelle TEXT NOT NULL, Valeur TEXT NOT NULL, BitModif INTEGER NOT NULL, "
             + "IdtCompte INTEGER NOT NULL,"
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
-    private static final String CREATE_TABLE_REPONSE = "CREATE TABLE Reponse(IdtQuestion INTEGER PRIMARY KEY, "
+    private static final String CREATE_TABLE_REPONSE = "CREATE TABLE Reponse (IdtQuestion INTEGER PRIMARY KEY, "
             + "Question TEXT NOT NULL, Reponse TEXT NOT NULL, Categorie TEXT NOT NULL, Type TEXT NOT NULL, IdtSatisfaction INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSatisfaction) REFERENCES SatisfactionQ(IdtSatisfaction))";
 
-    private static final String CREATE_TABLE_SATISF = "CREATE TABLE SatisfactionQ(IdtSatisfaction INTEGER PRIMARY KEY, "
+    private static final String CREATE_TABLE_SATISF = "CREATE TABLE Satisfaction (IdtSatisfaction INTEGER PRIMARY KEY, "
             + "Nom TEXT, DateEnvoi TEXT NOT NULL, DateRecu TEXT, IdtSociete INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
 
-    private static final String CREATE_TABLE_EVENT = "CREATE TABLE Evenement(IdtEvent INTEGER PRIMARY KEY, DateDeb TEXT NOT NULL, "
+    private static final String CREATE_TABLE_EVENT = "CREATE TABLE Evenement (IdtEvent INTEGER PRIMARY KEY, DateDeb TEXT NOT NULL, "
             + "DateFin TEXT NOT NULL, Recurrent TEXT, Frequence TEXT, Titre TEXT NOT NULL, Emplacement TEXT NOT NULL, Commentaire TEXT NOT NULL, "
             + "Disponibilite TEXT NOT NULL, EstPrive INTEGER NOT NULL, BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL, IdtCompte  INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
-    private static final String CREATE_TABLE_LIGNE = "CREATE TABLE LigneCommande(Idt INTEGER PRIMARY KEY, Quantite INTEGER NOT NULL, "
+    private static final String CREATE_TABLE_LIGNE = "CREATE TABLE LigneCommande (Idt INTEGER PRIMARY KEY, Quantite INTEGER NOT NULL, "
             + "Code TEXT, Nom TEXT NOT NULL, Description TEXT, PrixUnitaire REAL NOT NULL, Remise REAL NOT NULL, "
             + "BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL, IdtBon INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
@@ -239,6 +239,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Ville", client.getVille());
         valeurs.put("Pays", client.getPays());
         valeurs.put("Type", type);
+        valeurs.put("Commentaire", client.getCommentaire());
+        valeurs.put("Auteur", client.getAuteur());
+        valeurs.put("BitAjout", 1);
+        valeurs.put("BitSup", 0);
+        valeurs.put("ATraiter", 1);
+
+        db.insert(TABLE_SOCIETE, null, valeurs);
+        db.close();
+    }
+
+    //charger les données depuis le serveur plastprod
+    public void chargerClient(Societe client){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put("IdtSociete", client.getId());
+        valeurs.put("Nom", client.getNom());
+        valeurs.put("Adresse1", client.getAdresse1());
+        valeurs.put("Adresse2", client.getAdresse2());
+        valeurs.put("CodePostal", client.getCode_postal());
+        valeurs.put("Ville", client.getVille());
+        valeurs.put("Pays", client.getPays());
+        valeurs.put("Type", client.getType());
         valeurs.put("Commentaire", client.getCommentaire());
         valeurs.put("Auteur", client.getAuteur());
         valeurs.put("BitAjout", 1);
@@ -1115,5 +1139,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("INSERT INTO Parametre (IdtParam ,Nom, Type, Libelle, Valeur, BitModif, IdtCompte) VALUES	(1, 'Qauto', 'Booleen', 'Active mode auto', 1, 0, 2),(2, 'Qetape', 'Chaine', 'Envoyer à l''étape', 'Commande validée', 0, 2),(3, 'Qdelais', 'Heure', 'Envoyer après', 48, 0, 2),(4, 'QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 2),(5, 'Qauto', 'Booleen', 'Active mode auto', 1, 0, 4),(6, 'Qetape', 'Chaine', 'Envoyer à l''étape', 'Terminé', 0, 4),(7, 'Qdelais', 'Heure', 'Envoyer après', 24, 0, 4),(8, 'QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 4)");
 
         db.execSQL("INSERT INTO CorrespCouleur (IdtLigne, Nom, Couleur) VALUES (1, 'Bouvard Laurent', '#ff9e0e40' ),(2, 'Dupond Jean', '#ff00ff00'),(3,'','ffff0000'),(4, '', 'ffffff00'),(5,'','ff77b5fe'),(6,'','ffff00ff'),(7,'','ff87e990'),(8,'','ffc72c48'),(9,'','ffffd700'),(10,'','ff0f056b'),(11,'','ff9683ec'),(12,'','ff54f98d'),(13,'','ff6d071a'),(14,'','ff73c2fb'),(15,'','ff791cf8')");
+    }
+
+    //Vider les tables
+    public void viderTables(){
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        db.execSQL("DELETE FROM Societe");
+        db.execSQL("DELETE FROM Contact");
+        //db.execSQL("DELETE FROM Compte");
+        db.execSQL("DELETE FROM Bon");
+        db.execSQL("DELETE FROM LigneCommande");
+        db.execSQL("DELETE FROM Produit");
+        db.execSQL("DELETE FROM Stock");
+        db.execSQL("DELETE FROM Objectif");
+        db.execSQL("DELETE FROM Parametre");
+        db.execSQL("DELETE FROM Reponse");
+        db.execSQL("DELETE FROM Satisfaction");
     }
 }

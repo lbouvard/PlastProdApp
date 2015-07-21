@@ -164,7 +164,7 @@ public class MenuActivity extends ActionBarActivity {
 
     public int Synchroniser(View vue){
 
-        List<Societe> liste_client = new ArrayList<Societe>();
+        List<Societe> liste_client; // = new ArrayList<Societe>();
         /*List<Contact> liste_contact = new ArrayList<Contact>();
         List<Bon> liste_bon = new ArrayList<Bon>();
         List<LigneCommande> liste_lignecommande = new ArrayList<LigneCommande>();
@@ -217,7 +217,7 @@ public class MenuActivity extends ActionBarActivity {
         // **		Vider les données looales		**
         // **										**
         // *******************************************
-        //db.tronquerTable();
+        db.viderTables();
 
         // ********************************************
         // **										**
@@ -225,6 +225,7 @@ public class MenuActivity extends ActionBarActivity {
         // **		Importer les données serveurs	**
         // **										**
         // ********************************************
+        controleur.recupererClients(db);
 
         return 0;
     }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import sqlite.helper.Bon;
 import sqlite.helper.Contact;
+import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Evenement;
 import sqlite.helper.LigneCommande;
 import sqlite.helper.Societe;
@@ -32,6 +33,7 @@ public class RestApi {
 	//pour serialiser / déserialiser les objets
 	Gson gson;
 	Context context;
+    DatabaseHelper db;
 
     //les données à récupérer
     List<Societe> liste_clients;
@@ -77,46 +79,53 @@ public class RestApi {
 
 	public void recupererDepuisWS(String url, RequestParams parametres, final String type){
 
-		int codeRetour = 200;
-        JSONObject retour = null;
-
         client.get(url, parametres, new AsyncHttpResponseHandler() {
 
-			//Réponse OK
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+            //Réponse OK
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 
-				try {
-
+                try {
+                    //on récupère le corps de la réponse
                     String reponse = new String(responseBody, StandardCharsets.UTF_8);
+                    //données JSON (tableau)
+                    JSONArray obj = new JSONArray(reponse);
 
-					// JSON Object
-					JSONObject obj = new JSONObject(reponse);
-
-					//Mise en place des données
+                    //Mise en place des données
                     switch (type) {
 
                         case "Societes":
                             setClients(obj);
+                        case "Contacts":
+                        case "Bons":
+                        case "Articles":
+                        case "Produits":
+                        case "Utilisateurs":
+                        case "Objectifs":
+                        case "Satisfaction":
+                        case "Reponses":
+                        case "Stock":
+                        case "Parametres":
+                        case "Evenements":
+                            
                         default:
 
                     }
-				} 
-				catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			//Erreur
-			@Override
-			public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-				//Erreur
-			}
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
-		});
+            //Erreur
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                //Erreur
+            }
+
+        });
 	}
 	
-	public void envoyerVersWS(String url, /*JSONArray obj*/ String donnees ){
+	public void envoyerVersWS(String url, String donnees ){
 
 		StringEntity entite = null;
 
@@ -134,9 +143,24 @@ public class RestApi {
             //Réponse 200 OK
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
                 //Traiter
-				String test = new String(responseBody, StandardCharsets.UTF_8);
-				Log.d("test", test);
+				try{
+                    //on récupère le retour
+                    String test = new String(responseBody, StandardCharsets.UTF_8);
+                    //on trace
+                    Log.d("test", test);
+
+                    //On recupère l'objet issu de JSON
+                    JSONArray donnees = new JSONArray(test);
+
+
+                }
+                catch (Exception ex){
+                    ex.printStackTrace();
+                }
+
+
             }
 
             //Erreur
@@ -148,26 +172,28 @@ public class RestApi {
 	}
 
 	public int envoyerClients(int methode, List<Societe> liste_clients){
-		
-		try{
-			
-			Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
-			String clients = gson.toJson(liste_clients, type_liste);
 
-			//Ajout
-			if( methode == 1){
-				envoyerVersWS(API_CLIENT_AJT, clients);
-			}
-			//Modification
-			else{
-				envoyerVersWS(API_CLIENT_MAJ, clients);
-			}
-		}
-		catch(Exception e){
-			e.printStackTrace();
-			return -1;
-		}
-		
+        if( liste_clients.size() > 0 ) {
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
+                String clients = gson.toJson(liste_clients, type_liste);
+
+                //Ajout
+                if (methode == 1) {
+                    envoyerVersWS(API_CLIENT_AJT, clients);
+                }
+                //Modification
+                else {
+                    envoyerVersWS(API_CLIENT_MAJ, clients);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
 		return 1;
 	}
 
@@ -263,14 +289,19 @@ public class RestApi {
 		return 1;		
 	}
 
-    public void setClients(JSONObject donnees){
+    public void setClients(JSONArray donnees){
 
         Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
         liste_clients = gson.fromJson(donnees.toString(), type_liste);
 
+        for (Societe soc : liste_clients) {
+            db.chargerClient(soc);
+        }
     }
 
-	public void recupererClients(){
+	public void recupererClients(DatabaseHelper base){
+
+        db = base;
 
 		RequestParams parametres = new RequestParams();
 		//on intérroge le web service
