@@ -153,6 +153,16 @@ public class RestApi {
 
                     //On recupère l'objet issu de JSON
                     JSONArray donnees = new JSONArray(test);
+					JSONObject etat = null;
+
+					for(int i = 0; i < donnees.length() ; i++)
+					{
+						etat = donnees.getJSONObject(i);
+
+						if( etat.get("Etat").toString() == "OK" ){
+							//base de correspondance 
+						}
+					}
 
 
                 }
