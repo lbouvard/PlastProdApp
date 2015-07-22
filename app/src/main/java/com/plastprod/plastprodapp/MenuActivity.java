@@ -198,7 +198,7 @@ public class MenuActivity extends ActionBarActivity {
         liste_evenement = db.getSyncEvenement("AJOUT");*/
 
         //Envoi des données
-        controleur.envoyerClients(1, liste_client);
+        controleur.envoyerClients(1, liste_client, db);
 
         //B : Données à modifier
         //liste_client = db.getSyncClient(false);

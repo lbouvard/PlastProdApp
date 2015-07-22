@@ -25,6 +25,7 @@ import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Evenement;
 import sqlite.helper.LigneCommande;
 import sqlite.helper.Societe;
+import sqlite.helper.Synchro;
 
 public class RestApi {
 
@@ -125,7 +126,7 @@ public class RestApi {
         });
 	}
 	
-	public void envoyerVersWS(String url, String donnees ){
+	public void envoyerVersWS(String url, String donnees, final String type ){
 
 		StringEntity entite = null;
 
@@ -160,10 +161,16 @@ public class RestApi {
 						etat = donnees.getJSONObject(i);
 
 						if( etat.get("Etat").toString() == "OK" ){
-							//base de correspondance 
+							//base de correspondance
+							Synchro correspondance = new Synchro();
+
+							correspondance.setType(type);
+							correspondance.setNewId(etat.getInt("NewId"));
+							correspondance.setOldId(etat.getInt("OldId"));
+
+							db.ajouterCorrespondance(correspondance);
 						}
 					}
-
 
                 }
                 catch (Exception ex){
@@ -181,9 +188,11 @@ public class RestApi {
         });
 	}
 
-	public int envoyerClients(int methode, List<Societe> liste_clients){
+	public int envoyerClients(int methode, List<Societe> liste_clients, DatabaseHelper base){
 
         if( liste_clients.size() > 0 ) {
+
+			db = base;
 
             try {
 
@@ -192,11 +201,11 @@ public class RestApi {
 
                 //Ajout
                 if (methode == 1) {
-                    envoyerVersWS(API_CLIENT_AJT, clients);
+                    envoyerVersWS(API_CLIENT_AJT, clients, "Clients");
                 }
                 //Modification
                 else {
-                    envoyerVersWS(API_CLIENT_MAJ, clients);
+                    envoyerVersWS(API_CLIENT_MAJ, clients, "Clients");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -214,11 +223,11 @@ public class RestApi {
 			
 			//Ajout
 			if( methode == 1){
-				envoyerVersWS(API_CONTACT_AJT, contacts);
+				envoyerVersWS(API_CONTACT_AJT, contacts, "Contacts");
 			}
 			//Modification
 			else{
-				envoyerVersWS(API_CONTACT_MAJ, contacts);
+				envoyerVersWS(API_CONTACT_MAJ, contacts, "Contacts");
 			}
 
 		}
@@ -237,11 +246,11 @@ public class RestApi {
 			
 			//Ajout
 			if( methode == 1){
-				envoyerVersWS(API_BON_AJT, bons);
+				envoyerVersWS(API_BON_AJT, bons, "Bons");
 			}
 			//Modification
 			else{
-				envoyerVersWS(API_BON_MAJ, bons);
+				envoyerVersWS(API_BON_MAJ, bons, "Bons");
 			}
 
 		}
@@ -260,11 +269,11 @@ public class RestApi {
 			
 			//Ajout
 			if( methode == 1){
-				envoyerVersWS(API_LIGNES_AJT, lignes);
+				envoyerVersWS(API_LIGNES_AJT, lignes, "Articles");
 			}
 			//Modification
 			else{
-				envoyerVersWS(API_LIGNES_MAJ, lignes);
+				envoyerVersWS(API_LIGNES_MAJ, lignes, "Articles");
 			}
 
 		}
@@ -283,11 +292,11 @@ public class RestApi {
 			
 			//Ajout
 			if( methode == 1){
-				envoyerVersWS(API_EVENEMENT_AJT, events);
+				envoyerVersWS(API_EVENEMENT_AJT, events, "Evenements");
 			}
 			//Modification
 			else{
-				envoyerVersWS(API_EVENEMENT_MAJ, events);
+				envoyerVersWS(API_EVENEMENT_MAJ, events, "Evenements");
 			}
 
 		}

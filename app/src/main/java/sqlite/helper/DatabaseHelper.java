@@ -41,6 +41,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_SOCIETE = "Societe";
     private static final String TABLE_STOCK = "Stock";
     private static final String TABLE_CORRESP_COULEUR = "CorrespCouleur";
+    private static final String TABLE_CORRESP_ID = "CorrespId";
+
 
     private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
             + "Adresse1 TEXT NOT NULL, Adresse2 TEXT, CodePostal TEXT NOT NULL, Ville TEXT NOT NULL , Pays TEXT NOT NULL, Type TEXT NOT NULL, Commentaire  TEXT, "
@@ -80,7 +82,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_REPONSE = "CREATE TABLE Reponse (IdtQuestion INTEGER PRIMARY KEY, "
             + "Question TEXT NOT NULL, Reponse TEXT NOT NULL, Categorie TEXT NOT NULL, Type TEXT NOT NULL, IdtSatisfaction INTEGER NOT NULL, "
-            + "FOREIGN KEY (IdtSatisfaction) REFERENCES SatisfactionQ(IdtSatisfaction))";
+            + "FOREIGN KEY (IdtSatisfaction) REFERENCES Satisfaction(IdtSatisfaction))";
 
     private static final String CREATE_TABLE_SATISF = "CREATE TABLE Satisfaction (IdtSatisfaction INTEGER PRIMARY KEY, "
             + "Nom TEXT, DateEnvoi TEXT NOT NULL, DateRecu TEXT, IdtSociete INTEGER NOT NULL, "
@@ -98,6 +100,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_CORRESP_COULEUR = "CREATE TABLE CorrespCouleur (IdtLigne INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
             + "Couleur TEXT NOT NULL)";
+
+    private static final String CREATE_TABLE_CORRESP_ID = "CREATE TABLE CorrespId (Idt INTEGER PRIMARY KEY, Type TEXT NOT NULL, "
+            + "IdtAndroid INTEGER NOT NULL, IdtServeur INTEGER NOT NULL)";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -120,6 +125,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_STOCK);
         db.execSQL(CREATE_TABLE_SOCIETE);
         db.execSQL(CREATE_TABLE_CORRESP_COULEUR);
+        db.execSQL(CREATE_TABLE_CORRESP_ID);
 
         chargerTables(db);
     }
@@ -141,6 +147,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SOCIETE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOCK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CORRESP_COULEUR);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CORRESP_ID);
 
         // create new tables
         onCreate(db);
@@ -1115,6 +1122,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return contacts;
     }
 
+    public Synchro getCorrespondance(int oldId){
+
+        Synchro correspondance = new Synchro();
+
+        String requete = "SELECT Idt, IdtAndroid, Type, IdtServeur "
+                    + "FROM CorrespIp "
+                    + "WHERE IdtAndroid = " + oldId;
+
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les produits pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                correspondance.setId(c.getInt(c.getColumnIndex("Idt")));
+                correspondance.setType(c.getString(c.getColumnIndex("Type")));
+                correspondance.setNewId(c.getInt(c.getColumnIndex("IdtServeur")));
+                correspondance.setOldId(c.getInt(c.getColumnIndex("IdtAndroid")));
+            }
+
+            c.close();
+        }
+
+        return correspondance;
+    }
+
+    public void ajouterCorrespondance(Synchro correspondance){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put("Type", correspondance.getType());
+        valeurs.put("IdtServeur", correspondance.getNewId());
+        valeurs.put("IdtAndroid", correspondance.getOldId());
+
+        db.insert(TABLE_CORRESP_ID, null, valeurs);
+    }
 
     //Populate tables
     public void chargerTables(SQLiteDatabase db){
@@ -1157,5 +1203,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM Parametre");
         db.execSQL("DELETE FROM Reponse");
         db.execSQL("DELETE FROM Satisfaction");
+        db.execSQL("DELETE FROM CorrespId");
     }
 }
