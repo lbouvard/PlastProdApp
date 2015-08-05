@@ -272,9 +272,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Type", client.getType());
         valeurs.put("Commentaire", client.getCommentaire());
         valeurs.put("Auteur", client.getAuteur());
-        valeurs.put("BitAjout", 1);
+        valeurs.put("BitAjout", 0);
         valeurs.put("BitSup", 0);
-        valeurs.put("ATraiter", 1);
+        valeurs.put("ATraiter", 0);
 
         db.insert(TABLE_SOCIETE, null, valeurs);
         db.close();
@@ -472,6 +472,32 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             client = null;
 
         return client;
+    }
+
+    public Boolean clientExiste(String nom, int id_modif){
+
+        Boolean existe = true;
+        int id_trouve = -1;
+
+        String requete = "SELECT IdtSociete FROM Societe "
+                + "WHERE Nom = " + nom + " AND BitSup = 0";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            c.moveToFirst();
+            id_trouve = c.getInt(c.getColumnIndex("IdtSociete"));
+            c.close();
+
+            //lors d'une modification, le nom existe déjà donc il n'y a pas de conflit
+            if( id_trouve == id_modif )
+                existe = false;
+        }
+        else
+            existe = false;
+
+        return existe;
     }
 
     public Contact getCommercial(int id_commercial){
@@ -829,6 +855,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return 0;
     }
+
+    /*public void traiteSociete(int id_societe) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put("ATraiter", 0);
+
+        //maj
+        db.update(TABLE_SOCIETE, valeurs, "IdtSociete = ?",
+                new String[] { String.valueOf(id_societe)} );
+    }*/
 
     public void majContact(Contact contact, boolean modif_nouveau){
 
@@ -1193,8 +1231,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         db.execSQL("DELETE FROM Societe");
-        db.execSQL("DELETE FROM Contact");
-        //db.execSQL("DELETE FROM Compte");
+        /*db.execSQL("DELETE FROM Contact");
+        db.execSQL("DELETE FROM Compte");
         db.execSQL("DELETE FROM Bon");
         db.execSQL("DELETE FROM LigneCommande");
         db.execSQL("DELETE FROM Produit");
@@ -1202,7 +1240,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM Objectif");
         db.execSQL("DELETE FROM Parametre");
         db.execSQL("DELETE FROM Reponse");
-        db.execSQL("DELETE FROM Satisfaction");
+        db.execSQL("DELETE FROM Satisfaction");*/
         db.execSQL("DELETE FROM CorrespId");
     }
 }

@@ -147,7 +147,7 @@ public class AccueilActivity extends ActionBarActivity {
 
         }
         catch (Exception e){
-            Log.d("Erreur", "Message : " + e.getMessage());
+            Log.d("AccueilActivity", "Authentifier() : " + e.getMessage());
         }
     }
 }

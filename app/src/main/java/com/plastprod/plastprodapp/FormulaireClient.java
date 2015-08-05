@@ -127,12 +127,18 @@ public class FormulaireClient extends ActionBarActivity {
 
         db = new DatabaseHelper(getApplicationContext());
 
-        db.majSociete(client);
+        if( !db.clientExiste(client.getNom(), client.getId()) ) {
+            db.majSociete(client);
+
+            Toast notification = Toast.makeText(context, "Le client a été modifié avec succès.", duree);
+            notification.show();
+        }
+        else {
+            Toast notification = Toast.makeText(context, "Attention, un client existe déjà sous ce nom.", duree);
+            notification.show();
+        }
 
         db.close();
-
-        Toast notification = Toast.makeText(context, "Le client a été modifié avec succès.", duree);
-        notification.show();
     }
 
     //pour créer un nouveau client
@@ -140,12 +146,17 @@ public class FormulaireClient extends ActionBarActivity {
 
         db = new DatabaseHelper(getApplicationContext());
 
-        db.ajouterClient(client, "C");
+        if( !db.clientExiste(client.getNom(), -1) ) {
+            db.ajouterClient(client, "C");
+
+            Toast notification = Toast.makeText(context, "Le client a été ajouté avec succès.", duree);
+            notification.show();
+        }
+        else{
+            Toast notification = Toast.makeText(context, "Attention, un client existe déjà sous ce nom.", duree);
+            notification.show();
+        }
 
         db.close();
-
-        Toast notification = Toast.makeText(context, "Le client a été ajouté avec succès.", duree);
-        notification.show();
     }
-
 }

@@ -164,7 +164,7 @@ public class MenuActivity extends ActionBarActivity {
 
     public int Synchroniser(View vue){
 
-        List<Societe> liste_client; // = new ArrayList<Societe>();
+        //List<Societe> liste_client; // = new ArrayList<Societe>();
         /*List<Contact> liste_contact = new ArrayList<Contact>();
         List<Bon> liste_bon = new ArrayList<Bon>();
         List<LigneCommande> liste_lignecommande = new ArrayList<LigneCommande>();
@@ -172,10 +172,11 @@ public class MenuActivity extends ActionBarActivity {
         List<Parametre> liste_parametre = new ArrayList<Parametre>();*/
 
         //Appels au WebServices
-        RestApi controleur = new RestApi(getApplicationContext());
+        //RestApi controleur = new RestApi(getApplicationContext());
+        new RestApi().execute(getApplicationContext());
 
         //accès base
-        db = new DatabaseHelper(getApplicationContext());
+        //db = new DatabaseHelper(getApplicationContext());
 
         // *******************************************
         // **										**
@@ -185,7 +186,7 @@ public class MenuActivity extends ActionBarActivity {
         // *******************************************
 
         //A : Données à ajouter
-        liste_client = db.getSyncClient(true);
+        //liste_client = db.getSyncClient(true);
 
         /*
         //Contact
@@ -198,7 +199,9 @@ public class MenuActivity extends ActionBarActivity {
         liste_evenement = db.getSyncEvenement("AJOUT");*/
 
         //Envoi des données
-        controleur.envoyerClients(1, liste_client, db);
+        //controleur.envoyerClients(1, liste_client, db);
+
+        //attente de la réponse asynchrone
 
         //B : Données à modifier
         //liste_client = db.getSyncClient(false);
@@ -217,7 +220,7 @@ public class MenuActivity extends ActionBarActivity {
         // **		Vider les données looales		**
         // **										**
         // *******************************************
-        db.viderTables();
+        //db.viderTables();
 
         // ********************************************
         // **										**
@@ -225,7 +228,7 @@ public class MenuActivity extends ActionBarActivity {
         // **		Importer les données serveurs	**
         // **										**
         // ********************************************
-        controleur.recupererClients(db);
+        //controleur.recupererClients(db);
 
         return 0;
     }

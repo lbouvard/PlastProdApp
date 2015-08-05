@@ -1,6 +1,7 @@
 package com.plastprod.plastprodapp;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Switch;
 
@@ -13,8 +14,17 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.InputSource;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringWriter;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,21 +37,22 @@ import sqlite.helper.LigneCommande;
 import sqlite.helper.Societe;
 import sqlite.helper.Synchro;
 
-public class RestApi {
+public class RestApi extends AsyncTask<Context, Void, Void> {
 
 	//pour les requetes HTTP
-	AsyncHttpClient client;
+	//AsyncHttpClient client;
 	//pour serialiser / déserialiser les objets
 	Gson gson;
-	Context context;
+	//Context context;
     DatabaseHelper db;
-
     //les données à récupérer
     List<Societe> liste_clients;
-    List<Contact> liste_contacts;
+
+
+    /*List<Contact> liste_contacts;
     List<Bon> liste_bons;
     List<LigneCommande> liste_articles;
-    List<Evenement> liste_evenements;
+    List<Evenement> liste_evenements;*/
 
 	private static final String API_CLIENT			= "http://10.0.2.2/WebServices/api/societes";
 	private static final String API_CLIENT_AJT		= "http://10.0.2.2/WebServices/api/societes/ajt";
@@ -71,14 +82,214 @@ public class RestApi {
 	private static final String API_REPONSE		= "http://10.0.2.2/WebServices/api/reponses";
 	private static final String API_SATISF 		= "http://10.0.2.2/WebServices/api/satisfactions";
 
+    @Override
+    protected Void doInBackground(Context... arg){
+
+        //initialisation
+        db = new DatabaseHelper(arg[0]);
+        gson = new Gson();
+
+        //client
+        liste_clients = db.getSyncClient(true);
+        envoyerClients(1, liste_clients);
+
+        //vider les tables
+        db.viderTables();
+
+        //recupération des clients du serveur
+        recupererClients();
+
+        return null;
+    }
+
+    public int envoyerClients(int methode, List<Societe> liste_clients) { //}, DatabaseHelper base){
+
+        if( liste_clients.size() > 0 ) {
+
+            //db = base;
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
+                String clients = gson.toJson(liste_clients, type_liste);
+
+                //Ajout
+                if (methode == 1) {
+                    envoyerVersWS(API_CLIENT_AJT, clients, "Clients");
+                }
+                //Modification
+                else {
+                    envoyerVersWS(API_CLIENT_MAJ, clients, "Clients");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        return 1;
+    }
+
+    public void envoyerVersWS(String url, String donnees, final String type ){
+
+        URL adresse = null;
+        OutputStream donneesAEnvoyer = null;
+        InputStream resultat = null;
+        HttpURLConnection connexion = null;
+
+        try {
+            //appel du web service
+            adresse = new URL(url);
+
+            //pour un POST
+            connexion = (HttpURLConnection)adresse.openConnection();
+            connexion.setRequestMethod("POST");
+            connexion.setDoInput(true);
+            connexion.setDoOutput(true);
+            connexion.setFixedLengthStreamingMode(donnees.getBytes().length);
+
+            //header
+            connexion.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            connexion.setRequestProperty("X-Requested-With", "XMLHttpRequest");
+
+            //connexion
+            connexion.connect();
+
+            //envoi des données
+            donneesAEnvoyer = new BufferedOutputStream(connexion.getOutputStream());
+            donneesAEnvoyer.write(donnees.getBytes());
+            donneesAEnvoyer.flush();
+
+            //recupération des résultat
+            resultat = connexion.getInputStream();
+            String retour = RecupererChaineDepuisStream(resultat);
+
+            //pour debug
+            Log.d("Retour", retour);
+
+            //On recupère l'objet issu de JSON
+            JSONArray jsonRetour = new JSONArray(retour);
+            JSONObject etat = null;
+
+            for(int i = 0; i < jsonRetour.length() ; i++)
+            {
+                etat = jsonRetour.getJSONObject(i);
+
+                if( etat.getString("Etat").equals("OK") ){
+
+                    //base de correspondance pour connaitre l'id créer dans la base distante
+                    Synchro correspondance = new Synchro();
+
+                    correspondance.setType(type);
+                    correspondance.setNewId(etat.getInt("NewId"));
+                    correspondance.setOldId(etat.getInt("OldId"));
+
+                    db.ajouterCorrespondance(correspondance);
+                }
+            }
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        finally {
+
+            try {
+                donneesAEnvoyer.close();
+                resultat.close();
+                connexion.disconnect();
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+
+    }
+
+    public void recupererClients(){
+
+        RequestParams parametres = new RequestParams();
+        //on intérroge le web service
+        recupererDepuisWS(API_CLIENT, "Societes");
+
+    }
+
+    public void recupererDepuisWS(String url, final String type){
+
+        URL adresse = null;
+        InputStream retour = null;
+        HttpURLConnection connexion = null;
+
+        try{
+            adresse = new URL(url);
+
+            connexion = (HttpURLConnection)adresse.openConnection();
+            connexion.setRequestMethod("GET");
+
+            //connexion
+            connexion.connect();
+
+            retour = connexion.getInputStream();
+            String jsonString = RecupererChaineDepuisStream(retour);
+
+            //pour debug
+            Log.d("Retour", jsonString);
+
+            //transformation des résultats en objet json
+            JSONArray obj = new JSONArray(jsonString);
+
+            //Mise en place des données
+            switch (type) {
+
+                case "Societes":
+                    setClients(obj);
+                case "Contacts":
+                case "Bons":
+                case "Articles":
+                case "Produits":
+                case "Utilisateurs":
+                case "Objectifs":
+                case "Satisfaction":
+                case "Reponses":
+                case "Stock":
+                case "Parametres":
+                case "Evenements":
+
+                default:
+            }
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+        finally {
+
+            try {
+                retour.close();
+                connexion.disconnect();
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    public void setClients(JSONArray donnees){
+
+        Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
+        liste_clients = gson.fromJson(donnees.toString(), type_liste);
+
+        for (Societe soc : liste_clients) {
+            db.chargerClient(soc);
+        }
+    }
+/*
 	//constructeur
 	public RestApi(Context context) {
 		client = new AsyncHttpClient();
 		gson = new Gson();
 		this.context = context;
-	}
+	}*/
 
-	public void recupererDepuisWS(String url, RequestParams parametres, final String type){
+/*	public void recupererDepuisWS(String url, RequestParams parametres, final String type){
 
         client.get(url, parametres, new AsyncHttpResponseHandler() {
 
@@ -124,99 +335,11 @@ public class RestApi {
             }
 
         });
-	}
+	}*/
 	
-	public void envoyerVersWS(String url, String donnees, final String type ){
-
-		StringEntity entite = null;
-
-		try {
-			//entite = new StringEntity(obj.toString(), "UTF-8");
-            entite = new StringEntity(donnees);
-		}
-		catch (Exception ex){
-			ex.printStackTrace();
-		}
 
 
-		client.post(context, url, entite, "text/html", new AsyncHttpResponseHandler() {
-
-            //Réponse 200 OK
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
-                //Traiter
-				try{
-                    //on récupère le retour
-                    String test = new String(responseBody, StandardCharsets.UTF_8);
-                    //on trace
-                    Log.d("test", test);
-
-                    //On recupère l'objet issu de JSON
-                    JSONArray donnees = new JSONArray(test);
-					JSONObject etat = null;
-
-					for(int i = 0; i < donnees.length() ; i++)
-					{
-						etat = donnees.getJSONObject(i);
-
-						if( etat.get("Etat").toString() == "OK" ){
-							//base de correspondance
-							Synchro correspondance = new Synchro();
-
-							correspondance.setType(type);
-							correspondance.setNewId(etat.getInt("NewId"));
-							correspondance.setOldId(etat.getInt("OldId"));
-
-							db.ajouterCorrespondance(correspondance);
-						}
-					}
-
-                }
-                catch (Exception ex){
-                    ex.printStackTrace();
-                }
-
-
-            }
-
-            //Erreur
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                //Erreur
-            }
-        });
-	}
-
-	public int envoyerClients(int methode, List<Societe> liste_clients, DatabaseHelper base){
-
-        if( liste_clients.size() > 0 ) {
-
-			db = base;
-
-            try {
-
-                Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
-                String clients = gson.toJson(liste_clients, type_liste);
-
-                //Ajout
-                if (methode == 1) {
-                    envoyerVersWS(API_CLIENT_AJT, clients, "Clients");
-                }
-                //Modification
-                else {
-                    envoyerVersWS(API_CLIENT_MAJ, clients, "Clients");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return -1;
-            }
-        }
-
-		return 1;
-	}
-
-	public int envoyerContacts(int methode, List<Contact> liste_contacts){
+	/*public int envoyerContacts(int methode, List<Contact> liste_contacts){
 		try{
 			Type type_liste = new TypeToken<ArrayList<Contact>>() {}.getType();
 			String contacts = gson.toJson(liste_contacts, type_liste);
@@ -306,25 +429,19 @@ public class RestApi {
 		}
 		
 		return 1;		
-	}
+	}*/
 
-    public void setClients(JSONArray donnees){
+    public static String RecupererChaineDepuisStream(InputStream flux) throws IOException{
 
-        Type type_liste = new TypeToken<ArrayList<Societe>>() {}.getType();
-        liste_clients = gson.fromJson(donnees.toString(), type_liste);
+        int n = 0;
+        char[] buffer = new char[1024*4];
 
-        for (Societe soc : liste_clients) {
-            db.chargerClient(soc);
-        }
+        InputStreamReader lecteur = new InputStreamReader(flux, "UTF8");
+
+        StringWriter ecrivain = new StringWriter();
+
+        while( -1 != (n = lecteur.read(buffer))) ecrivain.write(buffer, 0, n);
+
+        return ecrivain.toString();
     }
-
-	public void recupererClients(DatabaseHelper base){
-
-        db = base;
-
-		RequestParams parametres = new RequestParams();
-		//on intérroge le web service
-		recupererDepuisWS(API_CLIENT, parametres, "Societes");
-
-	}
 }
