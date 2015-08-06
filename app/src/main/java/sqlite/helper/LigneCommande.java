@@ -18,6 +18,8 @@ public class LigneCommande {
     private BigDecimal prixRemise;
     private BigDecimal prixTotal;
 
+    private boolean ASupprimer;
+
     public LigneCommande() {
     }
 
@@ -127,5 +129,13 @@ public class LigneCommande {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public boolean isASupprimer() {
+        return ASupprimer;
+    }
+
+    public void setASupprimer(boolean ASupprimer) {
+        this.ASupprimer = ASupprimer;
     }
 }

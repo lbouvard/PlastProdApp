@@ -19,6 +19,8 @@ public class Evenement {
     private Boolean est_prive;
     private Compte compte;
 
+    private boolean ASupprimer;
+
     public Evenement() {
     }
 
@@ -104,5 +106,17 @@ public class Evenement {
 
     public void setCompte(Compte compte) {
         this.compte = compte;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isASupprimer() {
+        return ASupprimer;
+    }
+
+    public void setASupprimer(boolean ASupprimer) {
+        this.ASupprimer = ASupprimer;
     }
 }

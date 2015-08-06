@@ -979,7 +979,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // updating row
         db.update(TABLE_LIGNE, valeurs, "Idt = ?",
-                new String[] { String.valueOf(ligne.getId()) });
+                new String[]{String.valueOf(ligne.getId())});
     }
 
     /***********************
@@ -1050,8 +1050,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      ******************************/
     public List<Societe> getSyncClient(Boolean ajout){
 
-        List<Societe> clients = new ArrayList<Societe>();
-        Societe client = new Societe();
+        List<Societe> clients = new ArrayList<>();
         String requete = "";
 
         if( ajout ){
@@ -1072,26 +1071,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             //On parcours les produits pour ajouter un objet à la liste.
             if (c.moveToFirst()) {
 
-                client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
-                client.setNom(c.getString(c.getColumnIndex("Nom")));
-                client.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
-                client.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
-                client.setCodePostal(c.getString(c.getColumnIndex("CodePostal")));
-                client.setVille(c.getString(c.getColumnIndex("Ville")));
-                client.setPays(c.getString(c.getColumnIndex("Pays")));
-                client.setType(c.getString(c.getColumnIndex("Type")));
-                client.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
-                client.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+                do{
+                    Societe client = new Societe();
 
-                if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
-                    client.setASupprimer(true);
-                }
-                else {
-                    client.setASupprimer(false);
-                }
+                    client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+                    client.setNom(c.getString(c.getColumnIndex("Nom")));
+                    client.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
+                    client.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
+                    client.setCodePostal(c.getString(c.getColumnIndex("CodePostal")));
+                    client.setVille(c.getString(c.getColumnIndex("Ville")));
+                    client.setPays(c.getString(c.getColumnIndex("Pays")));
+                    client.setType(c.getString(c.getColumnIndex("Type")));
+                    client.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+                    client.setAuteur(c.getString(c.getColumnIndex("Auteur")));
 
-                //On ajoute la commande
-                clients.add(client);
+                    if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
+                        client.setASupprimer(true);
+                    }
+                    else {
+                        client.setASupprimer(false);
+                    }
+
+                    //On ajoute la commande
+                    clients.add(client);
+
+                } while (c.moveToNext());
             }
 
             c.close();
@@ -1100,31 +1104,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return clients;
     }
 
-    public List<Contact> getSyncContact(String type){
+    public List<Contact> getSyncContact(Boolean ajout){
 
         List<Contact> contacts = new ArrayList<Contact>();
-        Contact contact = new Contact();
-        Societe client = new Societe();
         String requete = "";
 
-        if( type.equals("AJOUT")){
+        if( ajout ){
             requete = "SELECT IdtContact, Nom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays, "
-                    + "Commentaire, Auteur, IdtSociete "
+                    + "Commentaire, Auteur, BitSup, IdtSociete "
                     + "FROM Contact "
-                    + "WHERE BitAjout = 1 AND BitSup = 0";
+                    + "WHERE BitAjout = 1 AND ATraiter = 1";
         }
-        else if( type.equals("MAJ")){
+        else {
             requete = "SELECT IdtContact, Nom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays, "
-                    + "Commentaire, Auteur, IdtSociete "
+                    + "Commentaire, Auteur, BitSup, IdtSociete "
                     + "FROM Contact "
-                    + "WHERE BitModif = 1 AND BitAjout = 0";
-        }
-        else{
-            //données supprimés
-            requete = "SELECT IdtContact, Nom, Poste, TelFixe, Fax, TelMobile, Mail, Adresse, CodePostal, Ville, Pays, "
-                    + "Commentaire, Auteur, IdtSociete "
-                    + "FROM Contact "
-                    + "WHERE BitSup = 1 AND BitAjout = 0 AND BitModif = 0";
+                    + "WHERE ATraiter = 1 AND BitAjout = 0";
         }
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1134,39 +1129,237 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             //On parcours les contact pour ajouter un objet à la liste.
             if (c.moveToFirst()) {
 
-                contact.setId(c.getInt(c.getColumnIndex("IdtContact")));
-                contact.setNom(c.getString(c.getColumnIndex("Nom")));
-                contact.setPoste(c.getString(c.getColumnIndex("Poste")));
-                contact.setTel_fixe(c.getString(c.getColumnIndex("TelFixe")));
-                contact.setTel_mobile(c.getString(c.getColumnIndex("TelMobile")));
-                contact.setFax(c.getString(c.getColumnIndex("Fax")));
-                contact.setEmail(c.getString(c.getColumnIndex("Mail")));
-                contact.setAdresse(c.getString(c.getColumnIndex("Adresse")));
-                contact.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
-                contact.setVille(c.getString(c.getColumnIndex("Ville")));
-                contact.setPays(c.getString(c.getColumnIndex("Pays")));
-                contact.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
-                contact.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+                do {
+                    Contact contact = new Contact();
+                    Societe client = new Societe();
 
-                client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
-                contact.setSociete(client);
+                    contact.setId(c.getInt(c.getColumnIndex("IdtContact")));
+                    contact.setNom(c.getString(c.getColumnIndex("Nom")));
+                    contact.setPoste(c.getString(c.getColumnIndex("Poste")));
+                    contact.setTel_fixe(c.getString(c.getColumnIndex("TelFixe")));
+                    contact.setTel_mobile(c.getString(c.getColumnIndex("TelMobile")));
+                    contact.setFax(c.getString(c.getColumnIndex("Fax")));
+                    contact.setEmail(c.getString(c.getColumnIndex("Mail")));
+                    contact.setAdresse(c.getString(c.getColumnIndex("Adresse")));
+                    contact.setCode_postal(c.getString(c.getColumnIndex("CodePostal")));
+                    contact.setVille(c.getString(c.getColumnIndex("Ville")));
+                    contact.setPays(c.getString(c.getColumnIndex("Pays")));
+                    contact.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+                    contact.setAuteur(c.getString(c.getColumnIndex("Auteur")));
 
-                //On ajoute le contact
-                contacts.add(contact);
+                    if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
+                        contact.setASupprimer(true);
+                    }
+                    else {
+                        contact.setASupprimer(false);
+                    }
+
+                    client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+                    contact.setSociete(client);
+
+                    //On ajoute le contact
+                    contacts.add(contact);
+
+                } while( c.moveToNext());
             }
+
             c.close();
         }
 
         return contacts;
     }
 
-    public Synchro getCorrespondance(int oldId){
+    public List<Bon> getSyncBon(Boolean ajout){
+
+        List<Bon> bons = new ArrayList<Bon>();
+        String requete = "";
+
+        if( ajout ){
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Type, Suivi, Transporteur, Auteur, "
+                    + "BitSup, IdtSociete, IdtContact "
+                    + "FROM Bon "
+                    + "WHERE BitAjout = 1 AND ATraiter = 1";
+        }
+        else {
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Type, Suivi, Transporteur, Auteur, "
+                    + "BitSup, IdtSociete, IdtContact "
+                    + "FROM Bon "
+                    + "WHERE ATraiter = 1 AND BitAjout = 0";
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les bons pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                do {
+                    Bon bon = new Bon();
+                    Contact contact = new Contact();
+                    Societe client = new Societe();
+
+                    bon.setId(c.getInt(c.getColumnIndex("IdtBon")));
+                    bon.setDate_commande(c.getString(c.getColumnIndex("DateCommande")));
+                    bon.setEtat_commande(c.getString(c.getColumnIndex("EtatCommande")));
+                    bon.setType(c.getString(c.getColumnIndex("Type")));
+                    bon.setSuivi(c.getString(c.getColumnIndex("Suivi")));
+                    bon.setTransporteur(c.getString(c.getColumnIndex("Transporteur")));
+                    bon.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+
+                    if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
+                        bon.setASupprimer(true);
+                    }
+                    else {
+                        bon.setASupprimer(false);
+                    }
+
+                    client.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+                    bon.setClient(client);
+                    contact.setId(c.getInt(c.getColumnIndex("IdtContact")));
+                    bon.setCommercial(contact);
+
+                    //On ajoute le bon
+                    bons.add(bon);
+
+                } while( c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return bons;
+    }
+
+    public List<LigneCommande> getSyncLigneBon(Boolean ajout){
+
+        List<LigneCommande> lignes = new ArrayList<LigneCommande>();
+        String requete = "";
+
+        if( ajout ){
+            requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, Remise, BitSup, IdtBon "
+                    + "FROM LigneCommande "
+                    + "WHERE BitAjout = 1 AND ATraiter = 1";
+        }
+        else {
+            requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, Remise, BitSup, IdtBon "
+                    + "FROM LigneCommande "
+                    + "WHERE ATraiter = 1 AND BitAjout = 0";
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les contact pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                do {
+                    LigneCommande ligne = new LigneCommande();
+
+                    ligne.setId(c.getInt(c.getColumnIndex("Idt")));
+                    ligne.setQuantite(c.getInt(c.getColumnIndex("Quantite")));
+                    ligne.setCode(c.getString(c.getColumnIndex("Code")));
+                    ligne.setNom(c.getString(c.getColumnIndex("Nom")));
+                    ligne.setDescription(c.getString(c.getColumnIndex("Description")));
+                    ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex("PrixUnitaire")));
+                    ligne.setRemise(c.getDouble(c.getColumnIndex("Remise")));
+                    ligne.setId_bon(c.getInt(c.getColumnIndex("IdtBon")));
+
+                    if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
+                        ligne.setASupprimer(true);
+                    }
+                    else {
+                        ligne.setASupprimer(false);
+                    }
+
+                    //On ajoute l'article
+                    lignes.add(ligne);
+
+                } while( c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return lignes;
+    }
+
+    public List<Evenement> getSyncEvent(Boolean ajout){
+
+        List<Evenement> events = new ArrayList<Evenement>();
+        String requete = "";
+
+        if( ajout ){
+            requete = "SELECT IdtEvent, DateDeb, DateFin, Recurrent, Frequence, Titre, Emplacement, Commentaire, Disponibilite, "
+                    + "EstPrive, BitSup, IdtCompte "
+                    + "FROM Evenement "
+                    + "WHERE BitAjout = 1 AND ATraiter = 1";
+        }
+        else {
+            requete = "SELECT IdtEvent, DateDeb, DateFin, Recurrent, Frequence, Titre, Emplacement, Commentaire, Disponibilite, "
+                    + "EstPrive, BitSup, IdtCompte "
+                    + "FROM Evenement "
+                    + "WHERE ATraiter = 1 AND BitAjout = 0";
+        }
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les contact pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                do {
+                    Evenement event = new Evenement();
+                    Compte compte = new Compte();
+
+                    event.setId(c.getInt(c.getColumnIndex("IdtEvent")));
+                    event.setDate_debut(c.getString(c.getColumnIndex("DateDeb")));
+                    event.setDate_fin(c.getString(c.getColumnIndex("DateFin")));
+                    event.setReccurent(c.getString(c.getColumnIndex("Recurrent")));
+                    event.setFrequence(c.getString(c.getColumnIndex("Frequence")));
+                    event.setTitre(c.getString(c.getColumnIndex("Titre")));
+                    event.setEmplacement(c.getString(c.getColumnIndex("Emplacement")));
+                    event.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+                    event.setDisponibilite(c.getString(c.getColumnIndex("Disponibilite")));
+
+                    if( c.getInt(c.getColumnIndex("EstPrive")) == 1 ) {
+                        event.setEst_prive(true);
+                    }
+                    else {
+                        event.setEst_prive(false);
+                    }
+
+                    if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
+                        event.setASupprimer(true);
+                    }
+                    else {
+                        event.setASupprimer(false);
+                    }
+
+                    compte.setId(c.getInt(c.getColumnIndex("IdtCompte")));
+                    event.setCompte(compte);
+
+                    //On ajoute l'événement
+                    events.add(event);
+
+                } while( c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return events;
+    }
+
+    public Synchro getCorrespondance(int oldId, String type){
 
         Synchro correspondance = new Synchro();
 
         String requete = "SELECT Idt, IdtAndroid, Type, IdtServeur "
                     + "FROM CorrespIp "
-                    + "WHERE IdtAndroid = " + oldId;
+                    + "WHERE IdtAndroid = " + oldId + " AND Type = '" + type + "'";
 
 
         SQLiteDatabase db = this.getReadableDatabase();

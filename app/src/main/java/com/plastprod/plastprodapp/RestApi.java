@@ -3,18 +3,12 @@ package com.plastprod.plastprodapp;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Switch;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.loopj.android.http.*;
 
-import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.InputSource;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -25,62 +19,76 @@ import java.io.StringWriter;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import sqlite.helper.Bon;
+import sqlite.helper.Compte;
 import sqlite.helper.Contact;
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Evenement;
 import sqlite.helper.LigneCommande;
+import sqlite.helper.Objectif;
+import sqlite.helper.Parametre;
+import sqlite.helper.Produit;
+import sqlite.helper.Reponse;
+import sqlite.helper.Satisfaction;
 import sqlite.helper.Societe;
+import sqlite.helper.Stock;
 import sqlite.helper.Synchro;
 
 public class RestApi extends AsyncTask<Context, Void, Void> {
 
-	//pour les requetes HTTP
-	//AsyncHttpClient client;
+    //Adresse du serveur plastprod
+    private final static String SVRPLASTPROD = "http://10.0.2.2/";
+
 	//pour serialiser / déserialiser les objets
 	Gson gson;
-	//Context context;
+    //connexion base
     DatabaseHelper db;
-    //les données à récupérer
+
+    //les données à envoyer/récupérer
     List<Societe> liste_clients;
-
-
-    /*List<Contact> liste_contacts;
+    List<Contact> liste_contacts;
     List<Bon> liste_bons;
     List<LigneCommande> liste_articles;
-    List<Evenement> liste_evenements;*/
+    List<Evenement> liste_evenements;
+    List<Compte> liste_utilisateurs;
+    List<Produit> liste_produits;
+    List<Parametre> liste_parametres;
+    List<Objectif> liste_objectifs;
+    List<Stock> liste_stocks;
+    List<Reponse> liste_reponses;
+    List<Satisfaction> liste_satifs;
 
-	private static final String API_CLIENT			= "http://10.0.2.2/WebServices/api/societes";
-	private static final String API_CLIENT_AJT		= "http://10.0.2.2/WebServices/api/societes/ajt";
-	private static final String API_CLIENT_MAJ 		= "http://10.0.2.2/WebServices/api/societes/maj";
+    //Adresse
+	private static final String API_CLIENT			= SVRPLASTPROD + "WebServices/api/societes";
+	private static final String API_CLIENT_AJT		= SVRPLASTPROD + "WebServices/api/societes/ajt";
+	private static final String API_CLIENT_MAJ 		= SVRPLASTPROD + "WebServices/api/societes/maj";
 	
-	private static final String API_CONTACT 		= "http://10.0.2.2/WebServices/api/contacts";
-	private static final String API_CONTACT_AJT 	= "http://10.0.2.2/WebServices/api/contacts/ajt";
-	private static final String API_CONTACT_MAJ		= "http://10.0.2.2/WebServices/api/contacts/maj";
+	private static final String API_CONTACT 		= SVRPLASTPROD + "WebServices/api/contacts";
+	private static final String API_CONTACT_AJT 	= SVRPLASTPROD + "WebServices/api/contacts/ajt";
+	private static final String API_CONTACT_MAJ		= SVRPLASTPROD + "WebServices/api/contacts/maj";
 	
-	private static final String API_BON 			= "http://10.0.2.2/WebServices/api/bons";
-	private static final String API_BON_AJT 		= "http://10.0.2.2/WebServices/api/bons/ajt";
-	private static final String API_BON_MAJ 		= "http://10.0.2.2/WebServices/api/bons/maj";
+	private static final String API_BON 			= SVRPLASTPROD + "WebServices/api/bons";
+	private static final String API_BON_AJT 		= SVRPLASTPROD + "WebServices/api/bons/ajt";
+	private static final String API_BON_MAJ 		= SVRPLASTPROD + "WebServices/api/bons/maj";
 	
-	private static final String API_LIGNES			= "http://10.0.2.2/WebServices/api/lignes";
-	private static final String API_LIGNES_AJT		= "http://10.0.2.2/WebServices/api/lignes/ajt";
-	private static final String API_LIGNES_MAJ		= "http://10.0.2.2/WebServices/api/lignes/maj";
+	private static final String API_LIGNES			= SVRPLASTPROD + "WebServices/api/lignes";
+	private static final String API_LIGNES_AJT		= SVRPLASTPROD + "WebServices/api/lignes/ajt";
+	private static final String API_LIGNES_MAJ		= SVRPLASTPROD + "WebServices/api/lignes/maj";
 	
-	private static final String API_EVENEMENT 		= "http://10.0.2.2/WebServices/api/evenements";
-	private static final String API_EVENEMENT_AJT 	= "http://10.0.2.2/WebServices/api/evenements/ajt";
-	private static final String API_EVENEMENT_MAJ 	= "http://10.0.2.2/WebServices/api/evenements/maj";
+	private static final String API_EVENEMENT 		= SVRPLASTPROD + "WebServices/api/evenements";
+	private static final String API_EVENEMENT_AJT 	= SVRPLASTPROD + "WebServices/api/evenements/ajt";
+	private static final String API_EVENEMENT_MAJ 	= SVRPLASTPROD + "WebServices/api/evenements/maj";
 	
-	private static final String API_UTILISATEUR = "http://10.0.2.2/WebServices/api/utilisateurs";
-	private static final String API_PRODUIT 	= "http://10.0.2.2/WebServices/api/produits";
-	private static final String API_PARAMETRE 	= "http://10.0.2.2/WebServices/api/parametres";
-	private static final String API_OBJECTIF	= "http://10.0.2.2/WebServices/api/objectifs";
-	private static final String API_STOCK 		= "http://10.0.2.2/WebServices/api/stocks";
-	private static final String API_REPONSE		= "http://10.0.2.2/WebServices/api/reponses";
-	private static final String API_SATISF 		= "http://10.0.2.2/WebServices/api/satisfactions";
+	private static final String API_UTILISATEUR = SVRPLASTPROD + "WebServices/api/utilisateurs";
+	private static final String API_PRODUIT 	= SVRPLASTPROD + "WebServices/api/produits";
+	private static final String API_PARAMETRE 	= SVRPLASTPROD + "WebServices/api/parametres";
+	private static final String API_OBJECTIF	= SVRPLASTPROD + "WebServices/api/objectifs";
+	private static final String API_STOCK 		= SVRPLASTPROD + "WebServices/api/stocks";
+	private static final String API_REPONSE		= SVRPLASTPROD + "WebServices/api/reponses";
+	private static final String API_SATISF 		= SVRPLASTPROD + "WebServices/api/satisfactions";
 
     @Override
     protected Void doInBackground(Context... arg){
@@ -89,24 +97,89 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         db = new DatabaseHelper(arg[0]);
         gson = new Gson();
 
-        //client
+
+        /*************************************
+         *  Données à envoyer sur le serveur
+         *************************************/
+
+        //clients à ajouter
         liste_clients = db.getSyncClient(true);
         envoyerClients(1, liste_clients);
+        //clients à modifier (modif et suppression)
+        liste_clients = db.getSyncClient(false);
+        envoyerClients(2, liste_clients);
 
-        //vider les tables
+        //contacts à ajouter
+        liste_contacts = db.getSyncContact(true);
+        envoyerContacts(1, liste_contacts);
+        //contacts à modifier (modif et suppression)
+        liste_contacts = db.getSyncContact(false);
+        envoyerContacts(2, liste_contacts);
+
+        //bons à ajouter
+        liste_bons = db.getSyncBon(true);
+        envoyerBons(1, liste_bons);
+        //bons à modifier (modif et suppression)
+        liste_bons = db.getSyncBon(false);
+        envoyerBons(2, liste_bons);
+
+        //lignes des bons à ajouter
+        liste_articles = db.getSyncLigneBon(true);
+        envoyerLignes(1, liste_articles);
+        //lignes des bons à modifier (modif et suppression)
+        liste_articles = db.getSyncLigneBon(false);
+        envoyerLignes(2, liste_articles);
+
+        //événements à ajouter
+        liste_evenements = db.getSyncEvent(true);
+        envoyerEvents(1, liste_evenements);
+        //événements à modifier (modif et suppression)
+        liste_evenements = db.getSyncEvent(false);
+        envoyerEvents(2, liste_evenements);
+
+
+        /*************************************
+         *  Tables à vider
+         *************************************/
+        //vide les tables à remplir
         db.viderTables();
 
-        //recupération des clients du serveur
+
+        /*******************************************
+         *  Données à récupérer depuis le serveur
+         *******************************************/
+
+        //clients
         recupererClients();
+        //contacts
+        recupererContacts();
+        //bons
+        recupererBons();
+        //lignes des bons
+        recupererLignes();
+        //événements
+        recupererEvents();
+        //utilisateurs
+        recupererComptes();
+        //produits
+        recupererProduits();
+        //paramètres
+        recupererParametres();
+        //objectifs
+        recupererObjectifs();
+        //info du stock
+        recupererStocks();
+        //réponse au questionnaire de satisfaction
+        recupererReponses();
+        //info sur les questionnaires de satisfaction
+        recupererQuestionnaires();
 
         return null;
     }
 
-    public int envoyerClients(int methode, List<Societe> liste_clients) { //}, DatabaseHelper base){
+    public int envoyerClients(int methode, List<Societe> liste_clients) {
 
         if( liste_clients.size() > 0 ) {
-
-            //db = base;
 
             try {
 
@@ -115,11 +188,115 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 
                 //Ajout
                 if (methode == 1) {
-                    envoyerVersWS(API_CLIENT_AJT, clients, "Clients");
+                    envoyerVersWS(API_CLIENT_AJT, clients, "Client");
                 }
                 //Modification
                 else {
-                    envoyerVersWS(API_CLIENT_MAJ, clients, "Clients");
+                    envoyerVersWS(API_CLIENT_MAJ, clients, "Client");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        return 1;
+    }
+
+    public int envoyerContacts(int methode, List<Contact> liste_contacts) {
+
+        if( liste_contacts.size() > 0 ) {
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Contact>>() {}.getType();
+                String contacts = gson.toJson(liste_contacts, type_liste);
+
+                //Ajout
+                if (methode == 1) {
+                    envoyerVersWS(API_CONTACT_AJT, contacts, "Contact");
+                }
+                //Modification
+                else {
+                    envoyerVersWS(API_CONTACT_MAJ, contacts, "Contact");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        return 1;
+    }
+
+    public int envoyerBons(int methode, List<Bon> liste_bons) {
+
+        if( liste_bons.size() > 0 ) {
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Bon>>() {}.getType();
+                String bons = gson.toJson(liste_bons, type_liste);
+
+                //Ajout
+                if (methode == 1) {
+                    envoyerVersWS(API_BON_AJT, bons, "Bon");
+                }
+                //Modification
+                else {
+                    envoyerVersWS(API_BON_MAJ, bons, "Bon");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        return 1;
+    }
+
+    public int envoyerLignes(int methode, List<LigneCommande> liste_lignes) {
+
+        if( liste_lignes.size() > 0 ) {
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<LigneCommande>>() {}.getType();
+                String lignes = gson.toJson(liste_lignes, type_liste);
+
+                //Ajout
+                if (methode == 1) {
+                    envoyerVersWS(API_LIGNES_AJT, lignes, "Ligne");
+                }
+                //Modification
+                else {
+                    envoyerVersWS(API_LIGNES_MAJ, lignes, "Ligne");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+
+        return 1;
+    }
+
+    public int envoyerEvents(int methode, List<Evenement> liste_events) {
+
+        if( liste_events.size() > 0 ) {
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Evenement>>() {}.getType();
+                String events = gson.toJson(liste_events, type_liste);
+
+                //Ajout
+                if (methode == 1) {
+                    envoyerVersWS(API_EVENEMENT_AJT, events, "Evenement");
+                }
+                //Modification
+                else {
+                    envoyerVersWS(API_EVENEMENT_MAJ, events, "Evenement");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -132,7 +309,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 
     public void envoyerVersWS(String url, String donnees, final String type ){
 
-        URL adresse = null;
+        URL adresse;
         OutputStream donneesAEnvoyer = null;
         InputStream resultat = null;
         HttpURLConnection connexion = null;
@@ -142,7 +319,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
             adresse = new URL(url);
 
             //pour un POST
-            connexion = (HttpURLConnection)adresse.openConnection();
+            connexion = (HttpURLConnection) adresse.openConnection();
             connexion.setRequestMethod("POST");
             connexion.setDoInput(true);
             connexion.setDoOutput(true);
@@ -167,24 +344,27 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
             //pour debug
             Log.d("Retour", retour);
 
-            //On recupère l'objet issu de JSON
-            JSONArray jsonRetour = new JSONArray(retour);
-            JSONObject etat = null;
-
-            for(int i = 0; i < jsonRetour.length() ; i++)
+            //si retour non vide alors c'est un ajout
+            if( retour.length() > 1 )
             {
-                etat = jsonRetour.getJSONObject(i);
+                //On recupère l'objet issu de JSON
+                JSONArray jsonRetour = new JSONArray(retour);
+                JSONObject etat;
 
-                if( etat.getString("Etat").equals("OK") ){
+                for (int i = 0; i < jsonRetour.length(); i++) {
+                    etat = jsonRetour.getJSONObject(i);
 
-                    //base de correspondance pour connaitre l'id créer dans la base distante
-                    Synchro correspondance = new Synchro();
+                    if (etat.getString("Etat").equals("OK")) {
 
-                    correspondance.setType(type);
-                    correspondance.setNewId(etat.getInt("NewId"));
-                    correspondance.setOldId(etat.getInt("OldId"));
+                        //base de correspondance pour connaitre l'id créer dans la base distante
+                        Synchro correspondance = new Synchro();
 
-                    db.ajouterCorrespondance(correspondance);
+                        correspondance.setType(type);
+                        correspondance.setNewId(etat.getInt("NewId"));
+                        correspondance.setOldId(etat.getInt("OldId"));
+
+                        db.ajouterCorrespondance(correspondance);
+                    }
                 }
             }
         }
@@ -206,16 +386,68 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
     }
 
     public void recupererClients(){
-
-        RequestParams parametres = new RequestParams();
         //on intérroge le web service
         recupererDepuisWS(API_CLIENT, "Societes");
+    }
 
+    public void recupererContacts(){
+        //on intérroge le web service
+        recupererDepuisWS(API_CONTACT, "Contacts");
+    }
+
+    public void recupererBons(){
+        //on intérroge le web service
+        recupererDepuisWS(API_BON, "Bons");
+    }
+
+    public void recupererLignes(){
+        //on intérroge le web service
+        recupererDepuisWS(API_LIGNES, "Articles");
+    }
+
+    public void recupererEvents(){
+        //on intérroge le web service
+        recupererDepuisWS(API_EVENEMENT, "Evenements");
+    }
+
+    public void recupererComptes(){
+        //on intérroge le web service
+        recupererDepuisWS(API_UTILISATEUR, "Comptes");
+    }
+
+    public void recupererProduits(){
+        //on intérroge le web service
+        recupererDepuisWS(API_PRODUIT, "Produits");
+    }
+
+    public void recupererParametres(){
+        //on intérroge le web service
+        recupererDepuisWS(API_PARAMETRE, "Parametres");
+    }
+
+    public void recupererObjectifs(){
+        //on intérroge le web service
+        recupererDepuisWS(API_OBJECTIF, "Objectifs");
+    }
+
+    public void recupererStocks(){
+        //on intérroge le web service
+        recupererDepuisWS(API_STOCK, "Stocks");
+    }
+
+    public void recupererReponses(){
+        //on intérroge le web service
+        recupererDepuisWS(API_REPONSE, "Reponses");
+    }
+
+    public void recupererQuestionnaires(){
+        //on intérroge le web service
+        recupererDepuisWS(API_SATISF, "Satisfactions");
     }
 
     public void recupererDepuisWS(String url, final String type){
 
-        URL adresse = null;
+        URL adresse;
         InputStream retour = null;
         HttpURLConnection connexion = null;
 
@@ -243,18 +475,27 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
                 case "Societes":
                     setClients(obj);
                 case "Contacts":
+                    setContacts(obj);
                 case "Bons":
+                    setBons(obj);
                 case "Articles":
+                    setLignes(obj);
                 case "Produits":
-                case "Utilisateurs":
+                    setProduits(obj);
+                case "Comptes":
+                    setComptes(obj);
                 case "Objectifs":
-                case "Satisfaction":
+                    setObjectifs(obj);
+                case "Satisfactions":
+                    setSatisfactions(obj);
                 case "Reponses":
-                case "Stock":
+                    setReponses(obj);
+                case "Stocks":
+                    setStocks(obj);
                 case "Parametres":
+                    setParametres(obj);
                 case "Evenements":
-
-                default:
+                    setEvents(obj);
             }
         }
         catch (Exception ex){
@@ -281,166 +522,128 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
             db.chargerClient(soc);
         }
     }
-/*
-	//constructeur
-	public RestApi(Context context) {
-		client = new AsyncHttpClient();
-		gson = new Gson();
-		this.context = context;
-	}*/
 
-/*	public void recupererDepuisWS(String url, RequestParams parametres, final String type){
+    public void setContacts(JSONArray donnees){
 
-        client.get(url, parametres, new AsyncHttpResponseHandler() {
+        Type type_liste = new TypeToken<ArrayList<Contact>>() {}.getType();
+        liste_contacts = gson.fromJson(donnees.toString(), type_liste);
 
-            //Réponse OK
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+        for (Contact con : liste_contacts) {
+            db.chargerContact(con);
+        }
+    }
 
-                try {
-                    //on récupère le corps de la réponse
-                    String reponse = new String(responseBody, StandardCharsets.UTF_8);
-                    //données JSON (tableau)
-                    JSONArray obj = new JSONArray(reponse);
+    public void setBons(JSONArray donnees){
 
-                    //Mise en place des données
-                    switch (type) {
+        Type type_liste = new TypeToken<ArrayList<Bon>>() {}.getType();
+        liste_bons = gson.fromJson(donnees.toString(), type_liste);
 
-                        case "Societes":
-                            setClients(obj);
-                        case "Contacts":
-                        case "Bons":
-                        case "Articles":
-                        case "Produits":
-                        case "Utilisateurs":
-                        case "Objectifs":
-                        case "Satisfaction":
-                        case "Reponses":
-                        case "Stock":
-                        case "Parametres":
-                        case "Evenements":
-                            
-                        default:
+        for (Bon bon : liste_bons) {
+            db.chargerBon(bon);
+        }
+    }
 
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
+    public void setLignes(JSONArray donnees){
 
-            //Erreur
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                //Erreur
-            }
+        Type type_liste = new TypeToken<ArrayList<LigneCommande>>() {}.getType();
+        liste_articles = gson.fromJson(donnees.toString(), type_liste);
 
-        });
-	}*/
-	
+        for (LigneCommande ligne : liste_articles) {
+            db.chargerLignes(ligne);
+        }
+    }
 
+    public void setEvents(JSONArray donnees){
 
-	/*public int envoyerContacts(int methode, List<Contact> liste_contacts){
-		try{
-			Type type_liste = new TypeToken<ArrayList<Contact>>() {}.getType();
-			String contacts = gson.toJson(liste_contacts, type_liste);
-			
-			//Ajout
-			if( methode == 1){
-				envoyerVersWS(API_CONTACT_AJT, contacts, "Contacts");
-			}
-			//Modification
-			else{
-				envoyerVersWS(API_CONTACT_MAJ, contacts, "Contacts");
-			}
+        Type type_liste = new TypeToken<ArrayList<Evenement>>() {}.getType();
+        liste_evenements = gson.fromJson(donnees.toString(), type_liste);
 
-		}
-		catch(Exception e){
-			e.printStackTrace();
-			return -1;
-		}
-		
-		return 1;		
-	}
+        for (Evenement event : liste_evenements) {
+            db.chargerEvenement(event);
+        }
+    }
 
-	public int envoyerBons(int methode, List<Bon> liste_bons){
-		try{
-			Type type_liste = new TypeToken<ArrayList<Bon>>() {}.getType();
-			String bons = gson.toJson(liste_bons, type_liste);
-			
-			//Ajout
-			if( methode == 1){
-				envoyerVersWS(API_BON_AJT, bons, "Bons");
-			}
-			//Modification
-			else{
-				envoyerVersWS(API_BON_MAJ, bons, "Bons");
-			}
+    public void setComptes(JSONArray donnees){
 
-		}
-		catch(Exception e){
-            e.printStackTrace();
-            return -1;
-		}
-		
-		return 1;		
-	}
+        Type type_liste = new TypeToken<ArrayList<Compte>>() {}.getType();
+        liste_utilisateurs = gson.fromJson(donnees.toString(), type_liste);
 
-	public int envoyerLignes(int methode, List<LigneCommande> liste_lignes){
-		try{
-			Type type_liste = new TypeToken<ArrayList<LigneCommande>>() {}.getType();
-			String lignes = gson.toJson(liste_lignes, type_liste);
-			
-			//Ajout
-			if( methode == 1){
-				envoyerVersWS(API_LIGNES_AJT, lignes, "Articles");
-			}
-			//Modification
-			else{
-				envoyerVersWS(API_LIGNES_MAJ, lignes, "Articles");
-			}
+        for (Compte com : liste_utilisateurs) {
+            db.chargerCompte(com);
+        }
+    }
 
-		}
-		catch(Exception e){
-            e.printStackTrace();
-            return -1;
-		}
-		
-		return 1;		
-	}
+    public void setParametres(JSONArray donnees){
 
-	public int envoyerEvenements(int methode, List<Evenement> liste_events){
-		try{
-			Type type_liste = new TypeToken<ArrayList<Evenement>>() {}.getType();
-			String events = gson.toJson(liste_events, type_liste);
-			
-			//Ajout
-			if( methode == 1){
-				envoyerVersWS(API_EVENEMENT_AJT, events, "Evenements");
-			}
-			//Modification
-			else{
-				envoyerVersWS(API_EVENEMENT_MAJ, events, "Evenements");
-			}
+        Type type_liste = new TypeToken<ArrayList<Parametre>>() {}.getType();
+        liste_parametres = gson.fromJson(donnees.toString(), type_liste);
 
-		}
-		catch(Exception e){
-            e.printStackTrace();
-            return -1;
-		}
-		
-		return 1;		
-	}*/
+        for (Parametre par : liste_parametres) {
+            db.chargerParametre(par);
+        }
+    }
+
+    public void setProduits(JSONArray donnees){
+
+        Type type_liste = new TypeToken<ArrayList<Produit>>() {}.getType();
+        liste_produits = gson.fromJson(donnees.toString(), type_liste);
+
+        for (Produit prod : liste_produits) {
+            db.chargerProduit(prod);
+        }
+    }
+
+    public void setStocks(JSONArray donnees){
+
+        Type type_liste = new TypeToken<ArrayList<Stock>>() {}.getType();
+        liste_stocks = gson.fromJson(donnees.toString(), type_liste);
+
+        for (Stock st : liste_stocks) {
+            db.chargerStock(st);
+        }
+    }
+
+    public void setObjectifs(JSONArray donnees){
+
+        Type type_liste = new TypeToken<ArrayList<Objectif>>() {}.getType();
+        liste_objectifs = gson.fromJson(donnees.toString(), type_liste);
+
+        for (Objectif obj : liste_objectifs) {
+            db.chargerObjectif(obj);
+        }
+    }
+
+    public void setReponses(JSONArray donnees){
+
+        Type type_liste = new TypeToken<ArrayList<Reponse>>() {}.getType();
+        liste_reponses = gson.fromJson(donnees.toString(), type_liste);
+
+        for (Reponse rep : liste_reponses) {
+            db.chargerReponse(rep);
+        }
+    }
+
+    public void setSatisfactions(JSONArray donnees){
+
+        Type type_liste = new TypeToken<ArrayList<Satisfaction>>() {}.getType();
+        liste_satifs = gson.fromJson(donnees.toString(), type_liste);
+
+        for (Satisfaction sat : liste_satifs) {
+            db.chargerSatisfaction(sat);
+        }
+    }
 
     public static String RecupererChaineDepuisStream(InputStream flux) throws IOException{
 
-        int n = 0;
+        int n;
         char[] buffer = new char[1024*4];
 
         InputStreamReader lecteur = new InputStreamReader(flux, "UTF8");
 
         StringWriter ecrivain = new StringWriter();
 
-        while( -1 != (n = lecteur.read(buffer))) ecrivain.write(buffer, 0, n);
+        while( -1 != (n = lecteur.read(buffer)))
+            ecrivain.write(buffer, 0, n);
 
         return ecrivain.toString();
     }

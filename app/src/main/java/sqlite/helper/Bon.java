@@ -21,12 +21,20 @@ public class Bon {
     private String transporteur;
     private String auteur;
     private String date_changement;
+
     private List<LigneCommande> lignesBon;
+
     private Societe client;
     private Contact commercial;
 
+    private boolean ASupprimer;
+
     public Bon(String type) {
         this.type = type;
+        this.lignesBon = new ArrayList<LigneCommande>();
+    }
+
+    public Bon(){
         this.lignesBon = new ArrayList<LigneCommande>();
     }
 
@@ -112,5 +120,13 @@ public class Bon {
 
     public void setAuteur(String auteur) {
         this.auteur = auteur;
+    }
+
+    public boolean isASupprimer() {
+        return ASupprimer;
+    }
+
+    public void setASupprimer(boolean ASupprimer) {
+        this.ASupprimer = ASupprimer;
     }
 }

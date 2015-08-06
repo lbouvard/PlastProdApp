@@ -23,7 +23,9 @@ public class Contact implements Serializable{
     private String commentaire;
     private String auteur;
     private Societe societe;
+
     private boolean EstSelectionne;
+    private boolean ASupprimer;
 
     //Constructeurs
     public Contact(){
@@ -156,6 +158,14 @@ public class Contact implements Serializable{
 
     public void setIsSelectionne(boolean estSelectionne) {
         EstSelectionne = estSelectionne;
+    }
+
+    public boolean isASupprimer() {
+        return ASupprimer;
+    }
+
+    public void setASupprimer(boolean ASupprimer) {
+        this.ASupprimer = ASupprimer;
     }
 
     @Override
