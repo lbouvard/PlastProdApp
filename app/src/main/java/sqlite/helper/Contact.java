@@ -24,6 +24,9 @@ public class Contact implements Serializable{
     private String auteur;
     private Societe societe;
 
+    private int id_societe;
+    private int id_utilisateur;
+
     private boolean EstSelectionne;
     private boolean ASupprimer;
 
@@ -138,6 +141,7 @@ public class Contact implements Serializable{
 
     public void setSociete(Societe societe) {
         this.societe = societe;
+        this.id_societe = societe.getId();
     }
 
     public String getAuteur() {
@@ -171,5 +175,21 @@ public class Contact implements Serializable{
     @Override
     public String toString(){
         return this.nom + " " + this.prenom;
+    }
+
+    public int getId_societe() {
+        return id_societe;
+    }
+
+    public void setId_societe(int id_societe) {
+        this.id_societe = id_societe;
+    }
+
+    public int getId_utilisateur() {
+        return id_utilisateur;
+    }
+
+    public void setId_utilisateur(int id_utilisateur) {
+        this.id_utilisateur = id_utilisateur;
     }
 }

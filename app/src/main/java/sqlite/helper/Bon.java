@@ -16,11 +16,13 @@ public class Bon {
     private int id;
     private String date_commande;
     private String etat_commande;
+    private String commentaire;
     private String type;
     private String suivi;
     private String transporteur;
     private String auteur;
     private String date_changement;
+    private boolean aChange;
 
     private List<LigneCommande> lignesBon;
 
@@ -28,6 +30,8 @@ public class Bon {
     private Contact commercial;
 
     private boolean ASupprimer;
+    private int client_id;
+    private int commercial_id;
 
     public Bon(String type) {
         this.type = type;
@@ -128,5 +132,37 @@ public class Bon {
 
     public void setASupprimer(boolean ASupprimer) {
         this.ASupprimer = ASupprimer;
+    }
+
+    public boolean isAChange(){
+        return aChange;
+    }
+
+    public void setAChange(boolean aChange) {
+        this.aChange = aChange;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public void setCommentaire(String commentaire) {
+        this.commentaire = commentaire;
+    }
+
+    public int getClient_id() {
+        return client_id;
+    }
+
+    public void setClient_id(int client_id) {
+        this.client_id = client_id;
+    }
+
+    public int getCommercial_id() {
+        return commercial_id;
+    }
+
+    public void setCommercial_id(int commercial_id) {
+        this.commercial_id = commercial_id;
     }
 }

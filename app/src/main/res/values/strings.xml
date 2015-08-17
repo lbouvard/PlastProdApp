@@ -43,4 +43,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
+    <string name="titre_dialog_confirm">Synchronisation...</string>
+    <string name="text_dialog_confirm">Cette opération va synchroniser les données locales de votre smartphone.
+        Veuillez vérifier que la connexion Wifi est active.
+        Voulez-vous synchroniser vos données ?</string>
+    <string name="valider">Valider</string>
+    <string name="annuler">Annuler</string>
+
 </resources>

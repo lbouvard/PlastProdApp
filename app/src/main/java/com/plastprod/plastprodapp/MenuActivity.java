@@ -106,22 +106,6 @@ public class MenuActivity extends ActionBarActivity {
         return true;
     }
 
-    /*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-
     public void terminerSession(){
 
         Intent activite = new Intent(this, AccueilActivity.class);
@@ -164,72 +148,11 @@ public class MenuActivity extends ActionBarActivity {
 
     public int Synchroniser(View vue){
 
-        //List<Societe> liste_client; // = new ArrayList<Societe>();
-        /*List<Contact> liste_contact = new ArrayList<Contact>();
-        List<Bon> liste_bon = new ArrayList<Bon>();
-        List<LigneCommande> liste_lignecommande = new ArrayList<LigneCommande>();
-        List<Evenement> liste_evenement = new ArrayList<Evenement>();
-        List<Parametre> liste_parametre = new ArrayList<Parametre>();*/
-
-        //Appels au WebServices
-        //RestApi controleur = new RestApi(getApplicationContext());
         new RestApi().execute(getApplicationContext());
-
-        //accès base
-        //db = new DatabaseHelper(getApplicationContext());
-
-        // *******************************************
-        // **										**
-        // **              ETAPE 1                  **
-        // **		Récupération données locale	    **
-        // **										**
-        // *******************************************
-
-        //A : Données à ajouter
-        //liste_client = db.getSyncClient(true);
-
-        /*
-        //Contact
-        liste_contact = db.getSyncContact("AJOUT");
-        //Bon
-        liste_bon = db.getSyncBon("AJOUT");
-        //LigneCommande
-        liste_lignecommande = db.getSyncLigne("AJOUT");
-        //Evenement
-        liste_evenement = db.getSyncEvenement("AJOUT");*/
-
-        //Envoi des données
-        //controleur.envoyerClients(1, liste_client, db);
-
-        //attente de la réponse asynchrone
-
-        //B : Données à modifier
-        //liste_client = db.getSyncClient(false);
-
-        /*liste_contact = db.getSyncContact("MAJ");
-        liste_bon = db.getSyncBon("MAJ");
-        liste_lignecommande = db.getSyncLigne("MAJ");
-        liste_evenement = db.getSyncEvenement("MAJ");*/
-
-        //Envoi des données
-        //controleur.envoyerClients(2, liste_client);
-
-        // *******************************************
-        // **										**
-        // **              ETAPE 2                  **
-        // **		Vider les données looales		**
-        // **										**
-        // *******************************************
-        //db.viderTables();
-
-        // ********************************************
-        // **										**
-        // **              ETAPE 3                   **
-        // **		Importer les données serveurs	**
-        // **										**
-        // ********************************************
-        //controleur.recupererClients(db);
-
         return 0;
+    }
+
+    public void ConfirmerSynchro(View vue){
+
     }
 }

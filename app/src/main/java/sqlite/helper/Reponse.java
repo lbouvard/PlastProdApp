@@ -10,6 +10,7 @@ public class Reponse {
     String question;
     String reponse;
     String categorie;
+    String type;
 
     public Reponse() {
     }
@@ -54,5 +55,17 @@ public class Reponse {
 
     public void setId_satisfaction(int id_satisfaction) {
         this.id_satisfaction = id_satisfaction;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

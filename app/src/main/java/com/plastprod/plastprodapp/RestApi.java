@@ -20,6 +20,7 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import sqlite.helper.Bon;
@@ -46,6 +47,8 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 	Gson gson;
     //connexion base
     DatabaseHelper db;
+    //Contexte
+    Context context;
 
     //les données à envoyer/récupérer
     List<Societe> liste_clients;
@@ -61,6 +64,10 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
     List<Reponse> liste_reponses;
     List<Satisfaction> liste_satifs;
 
+    //Pour la correspondance des identité
+    Hashtable<Integer, Integer> corresp_client = null;
+    Hashtable<Integer, Integer> corresp_bon = null;
+
     //Adresse
 	private static final String API_CLIENT			= SVRPLASTPROD + "WebServices/api/societes";
 	private static final String API_CLIENT_AJT		= SVRPLASTPROD + "WebServices/api/societes/ajt";
@@ -74,18 +81,21 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 	private static final String API_BON_AJT 		= SVRPLASTPROD + "WebServices/api/bons/ajt";
 	private static final String API_BON_MAJ 		= SVRPLASTPROD + "WebServices/api/bons/maj";
 	
-	private static final String API_LIGNES			= SVRPLASTPROD + "WebServices/api/lignes";
-	private static final String API_LIGNES_AJT		= SVRPLASTPROD + "WebServices/api/lignes/ajt";
-	private static final String API_LIGNES_MAJ		= SVRPLASTPROD + "WebServices/api/lignes/maj";
+	private static final String API_LIGNES			= SVRPLASTPROD + "WebServices/api/articles";
+	private static final String API_LIGNES_AJT		= SVRPLASTPROD + "WebServices/api/articles/ajt";
+	private static final String API_LIGNES_MAJ		= SVRPLASTPROD + "WebServices/api/articles/maj";
 	
-	private static final String API_EVENEMENT 		= SVRPLASTPROD + "WebServices/api/evenements";
+	private static final String API_EVENEMENT 		= SVRPLASTPROD + "WebServices/api/evenements/id";
 	private static final String API_EVENEMENT_AJT 	= SVRPLASTPROD + "WebServices/api/evenements/ajt";
 	private static final String API_EVENEMENT_MAJ 	= SVRPLASTPROD + "WebServices/api/evenements/maj";
 	
-	private static final String API_UTILISATEUR = SVRPLASTPROD + "WebServices/api/utilisateurs";
-	private static final String API_PRODUIT 	= SVRPLASTPROD + "WebServices/api/produits";
-	private static final String API_PARAMETRE 	= SVRPLASTPROD + "WebServices/api/parametres";
-	private static final String API_OBJECTIF	= SVRPLASTPROD + "WebServices/api/objectifs";
+	private static final String API_UTILISATEUR     = SVRPLASTPROD + "WebServices/api/utilisateurs";
+	private static final String API_PRODUIT 	    = SVRPLASTPROD + "WebServices/api/produits";
+
+	private static final String API_PARAMETRE 	    = SVRPLASTPROD + "WebServices/api/parametres/id";
+    private static final String API_PARAMETRE_MAJ   = SVRPLASTPROD + "WebServices/api/parametres/maj";
+
+	private static final String API_OBJECTIF	= SVRPLASTPROD + "WebServices/api/objectifs/id";
 	private static final String API_STOCK 		= SVRPLASTPROD + "WebServices/api/stocks";
 	private static final String API_REPONSE		= SVRPLASTPROD + "WebServices/api/reponses";
 	private static final String API_SATISF 		= SVRPLASTPROD + "WebServices/api/satisfactions";
@@ -95,8 +105,8 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 
         //initialisation
         db = new DatabaseHelper(arg[0]);
+        context = arg[0];
         gson = new Gson();
-
 
         /*************************************
          *  Données à envoyer sur le serveur
@@ -119,7 +129,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         //bons à ajouter
         liste_bons = db.getSyncBon(true);
         envoyerBons(1, liste_bons);
-        //bons à modifier (modif et suppression)
+        //bons à modifier (annuulation ou suppression)
         liste_bons = db.getSyncBon(false);
         envoyerBons(2, liste_bons);
 
@@ -137,13 +147,14 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         liste_evenements = db.getSyncEvent(false);
         envoyerEvents(2, liste_evenements);
 
+        //paramètres à modifier
+        liste_parametres = db.getSyncParam();
+        envoyerParametres(liste_parametres);
 
         /*************************************
          *  Tables à vider
          *************************************/
-        //vide les tables à remplir
         db.viderTables();
-
 
         /*******************************************
          *  Données à récupérer depuis le serveur
@@ -160,7 +171,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         //événements
         recupererEvents();
         //utilisateurs
-        recupererComptes();
+        //recupererComptes();
         //produits
         recupererProduits();
         //paramètres
@@ -208,6 +219,18 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         if( liste_contacts.size() > 0 ) {
 
             try {
+
+                //seulement en cas d'ajout
+                if( methode == 1 ) {
+                    corresp_client = db.getCorrespondance("Client");
+
+                    if( corresp_client != null && corresp_client.size() > 0 ) {
+                        //mise en place des nouveaux indice pour l'ajout
+                        for (Contact con : liste_contacts) {
+                            con.setId_societe(corresp_client.get((con.getId_societe())));
+                        }
+                    }
+                }
 
                 Type type_liste = new TypeToken<ArrayList<Contact>>() {}.getType();
                 String contacts = gson.toJson(liste_contacts, type_liste);
@@ -261,6 +284,18 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 
             try {
 
+                //seulement en cas d'ajout
+                if( methode == 1 ) {
+                    corresp_bon = db.getCorrespondance("Bon");
+
+                    if( corresp_bon != null && corresp_bon.size() > 0 ) {
+                        //mise en place des nouveaux indice pour l'ajout
+                        for (LigneCommande ligne : liste_lignes) {
+                            ligne.setId_bon(corresp_bon.get((ligne.getId_bon())));
+                        }
+                    }
+                }
+
                 Type type_liste = new TypeToken<ArrayList<LigneCommande>>() {}.getType();
                 String lignes = gson.toJson(liste_lignes, type_liste);
 
@@ -304,6 +339,25 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
             }
         }
 
+        return 1;
+    }
+
+    public int envoyerParametres(List<Parametre> liste_params){
+
+        if( liste_params.size() > 0 ){
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Parametre>>() {}.getType();
+                String params = gson.toJson(liste_params, type_liste);
+
+                envoyerVersWS(API_PARAMETRE_MAJ, params, "Parametre");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
         return 1;
     }
 
@@ -406,8 +460,15 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
     }
 
     public void recupererEvents(){
+
+        final Global jeton = (Global)context;
+
+        //on remplace l'id du commercial
+        String url = API_EVENEMENT;
+        url = url.replace("id", String.valueOf(jeton.getUtilisateur().getId()) );
+
         //on intérroge le web service
-        recupererDepuisWS(API_EVENEMENT, "Evenements");
+        recupererDepuisWS(url, "Evenements");
     }
 
     public void recupererComptes(){
@@ -421,13 +482,25 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
     }
 
     public void recupererParametres(){
-        //on intérroge le web service
-        recupererDepuisWS(API_PARAMETRE, "Parametres");
+
+        final Global jeton = (Global)context;
+
+        //on remplace l'id du commercial
+        String url = API_PARAMETRE;
+        url = url.replace("id", String.valueOf(jeton.getUtilisateur().getId()) );
+
+        recupererDepuisWS(url, "Parametres");
     }
 
     public void recupererObjectifs(){
-        //on intérroge le web service
-        recupererDepuisWS(API_OBJECTIF, "Objectifs");
+
+        final Global jeton = (Global)context;
+
+        //on remplace l'id du commercial
+        String url = API_OBJECTIF;
+        url = url.replace("id", String.valueOf(jeton.getUtilisateur().getId()) );
+
+        recupererDepuisWS(url, "Objectifs");
     }
 
     public void recupererStocks(){
@@ -474,28 +547,40 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 
                 case "Societes":
                     setClients(obj);
+                    break;
                 case "Contacts":
                     setContacts(obj);
+                    break;
                 case "Bons":
                     setBons(obj);
+                    break;
                 case "Articles":
                     setLignes(obj);
+                    break;
                 case "Produits":
                     setProduits(obj);
+                    break;
                 case "Comptes":
                     setComptes(obj);
+                    break;
                 case "Objectifs":
                     setObjectifs(obj);
+                    break;
                 case "Satisfactions":
                     setSatisfactions(obj);
+                    break;
                 case "Reponses":
                     setReponses(obj);
+                    break;
                 case "Stocks":
                     setStocks(obj);
+                    break;
                 case "Parametres":
                     setParametres(obj);
+                    break;
                 case "Evenements":
                     setEvents(obj);
+                    break;
             }
         }
         catch (Exception ex){
@@ -549,7 +634,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         liste_articles = gson.fromJson(donnees.toString(), type_liste);
 
         for (LigneCommande ligne : liste_articles) {
-            db.chargerLignes(ligne);
+            db.chargerLigne(ligne);
         }
     }
 

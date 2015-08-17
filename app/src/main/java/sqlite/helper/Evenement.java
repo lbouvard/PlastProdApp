@@ -10,14 +10,14 @@ public class Evenement {
     private int id;
     private String date_debut;
     private String date_fin;
-    private String reccurent;
+    private String recurrent;
     private String frequence;
     private String titre;
     private String emplacement;
     private String disponibilite;
     private String commentaire;
-    private Boolean est_prive;
-    private Compte compte;
+    private int est_prive;
+    private int compte_id;
 
     private boolean ASupprimer;
 
@@ -37,7 +37,7 @@ public class Evenement {
     }
 
     public String getReccurent() {
-        return reccurent;
+        return recurrent;
     }
 
     public String getFrequence() {
@@ -60,7 +60,7 @@ public class Evenement {
         return commentaire;
     }
 
-    public Boolean getEst_prive() {
+    public int getEst_prive() {
         return est_prive;
     }
 
@@ -73,7 +73,7 @@ public class Evenement {
     }
 
     public void setReccurent(String reccurent) {
-        this.reccurent = reccurent;
+        this.recurrent = reccurent;
     }
 
     public void setFrequence(String frequence) {
@@ -96,17 +96,17 @@ public class Evenement {
         this.commentaire = commentaire;
     }
 
-    public void setEst_prive(Boolean est_prive) {
+    public void setEst_prive(int est_prive) {
         this.est_prive = est_prive;
     }
 
-    public Compte getCompte() {
+    /*public Compte getCompte() {
         return compte;
     }
 
     public void setCompte(Compte compte) {
         this.compte = compte;
-    }
+    }*/
 
     public void setId(int id) {
         this.id = id;
@@ -118,5 +118,13 @@ public class Evenement {
 
     public void setASupprimer(boolean ASupprimer) {
         this.ASupprimer = ASupprimer;
+    }
+
+    public int getCompte_id() {
+        return compte_id;
+    }
+
+    public void setCompte_id(int compte_id) {
+        this.compte_id = compte_id;
     }
 }

@@ -10,15 +10,10 @@ public class Satisfaction {
     int id;
     int id_societe;
     String nom;
-    Date date_envoi;
-    Date date_recu;
+    String date_envoi;
+    String date_recu;
 
     public Satisfaction() {
-    }
-
-    public Satisfaction(String nom, Date date_envoi) {
-        this.nom = nom;
-        this.date_envoi = date_envoi;
     }
 
     public int getId() {
@@ -29,11 +24,11 @@ public class Satisfaction {
         return nom;
     }
 
-    public Date getDate_envoi() {
+    public String getDate_envoi() {
         return date_envoi;
     }
 
-    public Date getDate_recu() {
+    public String getDate_recu() {
         return date_recu;
     }
 
@@ -41,11 +36,11 @@ public class Satisfaction {
         this.nom = nom;
     }
 
-    public void setDate_envoi(Date date_envoi) {
+    public void setDate_envoi(String date_envoi) {
         this.date_envoi = date_envoi;
     }
 
-    public void setDate_recu(Date date_recu) {
+    public void setDate_recu(String date_recu) {
         this.date_recu = date_recu;
     }
 

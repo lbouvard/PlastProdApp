@@ -11,13 +11,16 @@ public class Produit {
     private String categorie;
     private String code;
     private Double prix;
-    private Stock entree;
 
     public Produit() {
     }
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNom() {
@@ -58,17 +61,5 @@ public class Produit {
 
     public void setPrix(Double prix) {
         this.prix = prix;
-    }
-
-    public Stock getEntree() {
-        return entree;
-    }
-
-    public void setEntree(Stock entree) {
-        this.entree = entree;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

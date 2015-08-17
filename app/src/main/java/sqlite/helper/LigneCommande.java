@@ -111,10 +111,15 @@ public class LigneCommande {
 
     public void calculerPrixRemise(){
 
-        Double prix = this.prixUnitaire * this.remise;
+        if( this.remise > 0 ) {
+            Double prix = this.prixUnitaire - (this.prixUnitaire * this.remise);
 
-        this.prixRemise = new BigDecimal(prix.doubleValue());
-        this.prixRemise = this.prixRemise.setScale(2, BigDecimal.ROUND_HALF_UP);
+            this.prixRemise = new BigDecimal(prix.doubleValue());
+            this.prixRemise = this.prixRemise.setScale(2, BigDecimal.ROUND_HALF_UP);
+        }
+        else{
+            this.prixRemise = new BigDecimal(prixUnitaire.doubleValue());
+        }
     }
 
     public void calculerPrixTotal(){

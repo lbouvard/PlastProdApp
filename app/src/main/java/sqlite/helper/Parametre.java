@@ -12,6 +12,8 @@ public class Parametre {
     private String valeur;
     private Compte compte;
 
+    private int compte_id;
+
     public Parametre(){
         this.compte = null;
     }
@@ -56,11 +58,19 @@ public class Parametre {
         return compte;
     }
 
-    public void setCompte(Compte compte) {
+    /*public void setCompte(Compte compte) {
         this.compte = compte;
-    }
+    }*/
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getId_Compte() {
+        return compte_id;
+    }
+
+    public void setId_Compte(int idtCompte) {
+        this.compte_id = idtCompte;
     }
 }

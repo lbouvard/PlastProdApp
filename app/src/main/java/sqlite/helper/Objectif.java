@@ -10,7 +10,8 @@ public class Objectif {
     private String type;
     private String libelle;
     private String valeur;
-    private Compte compte;
+    //private Compte compte;
+    private int compte_id;
 
     public Objectif(){
     }
@@ -51,15 +52,23 @@ public class Objectif {
         this.valeur = valeur;
     }
 
-    public Compte getCompte() {
+    /*public Compte getCompte() {
         return compte;
     }
 
     public void setCompte(Compte compte) {
         this.compte = compte;
-    }
+    }*/
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getCompte_id() {
+        return compte_id;
+    }
+
+    public void setCompte_id(int compte_id) {
+        this.compte_id = compte_id;
     }
 }
