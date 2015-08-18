@@ -1,7 +1,10 @@
 package com.plastprod.plastprodapp;
 
+//import android.app.NotificationManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -41,7 +44,7 @@ import sqlite.helper.Synchro;
 public class RestApi extends AsyncTask<Context, Void, Void> {
 
     //Adresse du serveur plastprod
-    private final static String SVRPLASTPROD = "http://10.0.2.2/";
+    private final static String SVRPLASTPROD = "http://192.168.0.26/";
 
 	//pour serialiser / déserialiser les objets
 	Gson gson;
@@ -90,6 +93,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 	private static final String API_EVENEMENT_MAJ 	= SVRPLASTPROD + "WebServices/api/evenements/maj";
 	
 	private static final String API_UTILISATEUR     = SVRPLASTPROD + "WebServices/api/utilisateurs";
+    private static final String API_COMMERCIAL     = SVRPLASTPROD + "WebServices/api/commerciaux";
 	private static final String API_PRODUIT 	    = SVRPLASTPROD + "WebServices/api/produits";
 
 	private static final String API_PARAMETRE 	    = SVRPLASTPROD + "WebServices/api/parametres/id";
@@ -100,7 +104,6 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 	private static final String API_REPONSE		= SVRPLASTPROD + "WebServices/api/reponses";
 	private static final String API_SATISF 		= SVRPLASTPROD + "WebServices/api/satisfactions";
 
-    @Override
     protected Void doInBackground(Context... arg){
 
         //initialisation
@@ -108,9 +111,30 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         context = arg[0];
         gson = new Gson();
 
+        if( arg.length > 1 ){
+
+            db.viderTables();
+
+            //pour les comptes des commerciaux
+            recupererComptes();
+            recupererCommerciaux();
+
+            //Outils.afficherToast(context, "Récupération des comptes des commerciaux faite.");
+
+            return null;
+        }
+
+        NotificationManager mManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                .setContentTitle("Synchronisation PlastProdApp")
+                .setContentText("Synchronisation en cours...")
+                .setSmallIcon(R.drawable.ic_refresh_white_48dp);
+
         /*************************************
          *  Données à envoyer sur le serveur
          *************************************/
+        //mBuilder.setProgress(100, 0, false);
+        mManager.notify(1548741, mBuilder.build());
 
         //clients à ajouter
         liste_clients = db.getSyncClient(true);
@@ -126,6 +150,16 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         liste_contacts = db.getSyncContact(false);
         envoyerContacts(2, liste_contacts);
 
+        mBuilder.setProgress(100, 15, false);
+        mManager.notify(1548741, mBuilder.build());
+
+        try{
+            Thread.sleep(3*1000);
+        }
+        catch (InterruptedException e){
+            Log.d("Attente", "Erreur d'attente");
+        }
+
         //bons à ajouter
         liste_bons = db.getSyncBon(true);
         envoyerBons(1, liste_bons);
@@ -140,6 +174,16 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         liste_articles = db.getSyncLigneBon(false);
         envoyerLignes(2, liste_articles);
 
+        mBuilder.setProgress(100, 30, false);
+        mManager.notify(1548741, mBuilder.build());
+
+        try{
+            Thread.sleep(2*1000);
+        }
+        catch (InterruptedException e){
+            Log.d("Attente", "Erreur d'attente");
+        }
+
         //événements à ajouter
         liste_evenements = db.getSyncEvent(true);
         envoyerEvents(1, liste_evenements);
@@ -147,15 +191,37 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         liste_evenements = db.getSyncEvent(false);
         envoyerEvents(2, liste_evenements);
 
+        mBuilder.setProgress(100, 40, false);
+        mManager.notify(1548741, mBuilder.build());
+
         //paramètres à modifier
         liste_parametres = db.getSyncParam();
         envoyerParametres(liste_parametres);
+
+        mBuilder.setProgress(100, 45, false);
+        mManager.notify(1548741, mBuilder.build());
+
+        try{
+            Thread.sleep(2*1000);
+        }
+        catch (InterruptedException e){
+            Log.d("Attente", "Erreur d'attente");
+        }
 
         /*************************************
          *  Tables à vider
          *************************************/
         db.viderTables();
 
+        mBuilder.setProgress(100, 50, false);
+        mManager.notify(1548741, mBuilder.build());
+
+        try{
+            Thread.sleep(2*1000);
+        }
+        catch (InterruptedException e){
+            Log.d("Attente", "Erreur d'attente");
+        }
         /*******************************************
          *  Données à récupérer depuis le serveur
          *******************************************/
@@ -166,24 +232,47 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         recupererContacts();
         //bons
         recupererBons();
+
+        mBuilder.setProgress(100, 60, false);
+        mManager.notify(1548741, mBuilder.build());
+
         //lignes des bons
         recupererLignes();
         //événements
         recupererEvents();
-        //utilisateurs
-        //recupererComptes();
+
+        mBuilder.setProgress(100, 70, false);
+        mManager.notify(1548741, mBuilder.build());
+
         //produits
         recupererProduits();
         //paramètres
         recupererParametres();
-        //objectifs
-        recupererObjectifs();
         //info du stock
         recupererStocks();
+
+        mBuilder.setProgress(100, 80, false);
+        mManager.notify(1548741, mBuilder.build());
+
+        //objectifs
+        recupererObjectifs();
+
+        mBuilder.setProgress(100, 85, false);
+        mManager.notify(1548741, mBuilder.build());
+
         //réponse au questionnaire de satisfaction
         recupererReponses();
+
+        mBuilder.setProgress(100, 90, false);
+        mManager.notify(1548741, mBuilder.build());
+
         //info sur les questionnaires de satisfaction
         recupererQuestionnaires();
+
+        mBuilder.setContentText("Synchronisation terminé")
+                .setProgress(0, 0, false);
+
+        mManager.notify(1548741, mBuilder.build());
 
         return null;
     }
@@ -474,6 +563,10 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
     public void recupererComptes(){
         //on intérroge le web service
         recupererDepuisWS(API_UTILISATEUR, "Comptes");
+    }
+
+    public void recupererCommerciaux(){
+        recupererDepuisWS(API_COMMERCIAL, "Contacts");
     }
 
     public void recupererProduits(){

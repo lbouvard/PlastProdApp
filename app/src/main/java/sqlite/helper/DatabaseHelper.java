@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 54;
+    private static final int DATABASE_VERSION = 56;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -200,8 +200,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             id_contact = c.getInt(c.getColumnIndex("IdtContact"));
             c.close();
 
-            //Authentification r궳sie
-            info = getCommercial(id_contact);
+            //Authentification réussie
+            if( !login.equals("admin") ){
+                info = getCommercial(id_contact);
+            }
+            else{
+                info.setNom("ADMSYS");
+            }
         }
         else
             info = null;
@@ -1565,6 +1570,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("MotDePasse", compte.getMdp());
         valeurs.put("Mail", compte.getEmail());
         valeurs.put("Salt", compte.getSalt());
+        valeurs.put("Actif", true);
         valeurs.put("IdtContact", compte.getContact_id());
 
         db.insert(TABLE_COMPTE, null, valeurs);
@@ -1722,25 +1728,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void chargerTables(SQLiteDatabase db){
 
-        db.execSQL("INSERT INTO Societe (Nom, Adresse1, Adresse2, CodePostal, Ville, Pays, Type, Commentaire, Auteur, BitAjout, BitSup, ATraiter) VALUES ('PlastProd', '1 rue du comodo', '', '54600', 'Villers-Lès-Nancy', 'France', 'M', 'Société mère', '', 0, 0, 0),	('Societe1', '25 rue du ponant', 'ZI Fessel', '69000', 'Lyon', 'France', 'C', '', 'Bouvard Laurent', 0, 0, 0),('Societe2', '16 rue du clos', '', '93600', 'Bondy', 'France', 'C', '', 'Dupond Jean', 0, 0, 0),('Boite3', '20 avenue du général de Gaulle', '', '78000', 'Versailles', 'France', 'P', '', 'Bouvard Laurent', 0, 0, 0)");
-
-        db.execSQL("INSERT INTO Contact (Nom, Prenom, Poste, TelFixe, TelMobile, Fax, Mail, Adresse, CodePostal, Ville, Pays, Commentaire, Auteur, BitAjout, BitSup, ATraiter, IdtSociete) VALUES ('Bouvard', 'Laurent', 'Commercial', '+33383256594', '+33645986147', '', 'laurent.bouvard@plastprod.fr', '1 rue du comodo', '54600', 'Villers-Lès-Nancy', 'France', '', '', 0, 0, 0, 1),('Convenant', 'Claude', 'Commercial', '+33145328564', '+33610447251', '', 'convenant.claude@boite3.fr', '20 avenue du général de Gaulle', '78000', 'Versailles', 'France', '','Bouvard Laurent', 0, 0, 0, 7),('Dupond', 'Jean', 'Commercial', '+33383256598', '+33612356898', '', 'jean.dupond@plastprod.fr', '1 rue du comodo', '54600', 'Villers-Lès-Nancy', 'France', 'Commentaire', '', 0, 0, 0, 1),('Lemoine', 'Alain', 'Commercial', '+33133443002', '+33610447251', '', 'alain.lemoine@societe2.fr', '16 rue du clos', '93600', 'Bondy', 'France', '', 'Dupond Jean', 0, 0, 0, 6)");
-        db.execSQL("INSERT INTO Contact (Nom, Prenom, Poste, TelFixe, TelMobile, Fax, Mail, Adresse, CodePostal, Ville, Pays, Commentaire, Auteur, BitAjout, BitSup, ATraiter, IdtSociete) VALUES ('Morandi', 'Pierre', 'Directeur technique', '+33445238590', '+33645464724', '', 'pierre.morandi@societe1.fr', 'ZI Fessel', '69000', 'Lyon', 'France', '', 'Bouvard Laurent', 0, 0, 0, 5)");
-
-        db.execSQL("INSERT INTO Compte (Nom, MotDePasse, Mail, Salt, Actif, IdtContact) VALUES ('bouvard.laurent', 'ZQGi8N+qt7Rt0o1Z/4hFodTwaXrj8BIYtj5zCbXMtXg2j5CKpoaoveoKPQodBS1oTs3XC+0bjwGLfj9mHjiX6Q==', 'laurent.bouvard@plastprod.fr', '5703c8599affced67f20c76ff6ec0116', 1, 2),('dupond.jean', 'xs2y6GqgDMuy1G+jJxelOTeouwIeVwdad1/vUJi3U87fDNfpNiiNkFoLcGmt/pYHIVvjgs0Xb48Fys2zFjaAxQ==', 'jean.dupond@plasprod.fr', '5703c8599affgku67f20c76ff6ec0116', 1, 4),('super.admin', 'whqoSMIHm68/KSh1L4mvV/aWen4c4VlIQ9RBPYzCAFkDBwtJBgZcraI9at0uzqXyjda7n5LiJn5Nybd9NlP8Iw==', 'admin@plastprod.fr', '0575f5b5602389cf17daf9bbbc5b4e7a', 1, 9)");
-
-        db.execSQL("INSERT INTO Bon (DateCommande ,EtatCommande, Commentaire, Type, Suivi, Transporteur, Auteur, DateChg, BitChg  ,BitAjout, BitSup, ATraiter, IdtSociete, IdtContact) VALUES ('2015-03-17 18:59:05', 'Validée', '', 'CD', '', '', '', NULL, 0, 0, 0, 0, 5, 4),('2015-03-17 19:38:52', 'Validée', '', 'CD', '', '','', NULL, 0, 0, 0, 0, 7, 2),('2015-03-23 23:38:45', 'Validée', '', 'CD', '', '', '', NULL, 0, 0, 0, 0, 5, 2),('2015-05-15 15:25:10', 'En cours de préparation', '', 'CD', '', '', '','2015-05-17 16:14:15', 1, 0, 0, 0, 5, 4)");
-
-        db.execSQL("INSERT INTO LigneCommande (Quantite ,Code, Nom, Description, PrixUnitaire, Remise, BitAjout, BitSup, ATraiter, IdtBon) VALUES (4, 'RE15208', 'Comodo208', 'Boite à gant granuleux', 58, 0.05, 0, 0, 0, 1),(3, 'PE14542', 'Comodo542', 'Dock prise mobile', 18, 0.06, 0, 0, 0, 1),(4, 'FD13633', 'CommandeClim', 'Bloc commande climatisation', 85, 0, 0, 0, 0, 2),(2, 'PE14542', 'Comodo542', 'Dock prise mobile', 18, 0.02, 0, 0, 0, 2),(15, 'RE15208', 'Comodo208', 'Boite à gant granuleux', 58, 0, 0, 0, 0, 2),(5, 'RE15208', 'Comodo208', 'Boite à gant granuleux', 58, 0.05, 0, 0, 0, 3),(10, 'FD13633', 'CommandeClim', 'Bloc commande climatisation', 85, 0.1, 0, 0, 0, 4),(6, 'PE14542', 'Comodo542', 'Dock prise mobile', 18, 0.05, 0, 0, 0, 4)");
-
-        db.execSQL("INSERT INTO Produit	(Nom, Description, Categorie, Code ,Prix) VALUES	('Comodo208', 'Boite à gant granuleux', 'Automobile', 'RE15208', 58),('Comodo542', 'Dock prise mobile', 'Automobile', 'PE14542', 18),('CommandeClim', 'Bloc commande climatisation', 'Automobile', 'FD13633', 85),('Commande2', 'Bloc commande2', 'Automobile', 'KJ16233', 57),('Commande3', 'Bloc commande3', 'Automobile', 'CD25478', 100)");
-
-        db.execSQL("INSERT INTO Stock (Quantite, DelaisMoy, Delais) VALUES (10, 6, 0),(5, 4, 0),(2, 10, 0),(1, 10, 2),(4, 2, 0)");
-
-        db.execSQL("INSERT INTO Objectif ( Annee, Type , Libelle, Valeur, IdtCompte) VALUES	('2015', 'CA', 'Chiffre d''affaire', 85, 2),('2015','CD', 'Commandes', 150, 2),('2015', 'CL', 'Nouveaux clients', 10, 2),('2015','PR', 'Nouveaux prospects', 15, 2),('2015', 'PE', 'Perte de client', 3, 2),('2015','AN', 'Animations', 12, 2),('2015', 'CA', 'Chiffre d''affaire', 90, 4),('2015','CD', 'Commandes', 160, 4),('2015', 'CL', 'Nouveaux clients', 10, 4),('2015','PR', 'Nouveaux prospects', 15, 4),('2015', 'PE', 'Perte de client', 3, 4),('2015','AN', 'Animations', 10, 4)");
-
-        db.execSQL("INSERT INTO Parametre (Nom, Type, Libelle, Valeur, ATraiter, IdtCompte) VALUES	('Qauto', 'Booleen', 'Active mode auto', 1, 0, 2),('Qetape', 'Chaine', 'Envoyer à l''étape', 'Commande validée', 0, 2),('Qdelais', 'Heure', 'Envoyer après', 48, 0, 2),('QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 2),('Qauto', 'Booleen', 'Active mode auto', 1, 0, 4),('Qetape', 'Chaine', 'Envoyer à l''étape', 'Terminée', 0, 4),('Qdelais', 'Heure', 'Envoyer après', 24, 0, 4),('QModele', 'Chaine', 'Questionnaire', 'Version locale', 0, 4)");
-
+        db.execSQL("INSERT INTO Compte (Nom, MotDePasse, Mail, Salt, Actif, IdtContact) VALUES ('admin', 'xs2y6GqgDMuy1G+jJxelOTeouwIeVwdad1/vUJi3U87fDNfpNiiNkFoLcGmt/pYHIVvjgs0Xb48Fys2zFjaAxQ==', 'admin@plastprod.fr', '5703c8599affgku67f20c76ff6ec0116', 1, -1)");
         db.execSQL("INSERT INTO CorrespCouleur (Nom, Couleur) VALUES ('Bouvard Laurent', '#ff9e0e40' ),('Dupond Jean', '#ff00ff00'),('','ffff0000'),('', 'ffffff00'),('','ff77b5fe'),('','ffff00ff'),('','ff87e990'),('','ffc72c48'),('','ffffd700'),('','ff0f056b'),('','ff9683ec'),('','ff54f98d'),('','ff6d071a'),('','ff73c2fb'),('','ff791cf8')");
     }
 

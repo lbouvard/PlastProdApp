@@ -69,7 +69,7 @@
         android:textStyle="normal"
         android:textAllCaps="false"
         android:textSize="18sp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="8dp"
         android:drawableStart="@drawable/ic_sync_white_24dp"
         android:onClick="ConfirmerSynchro" />
 
@@ -81,14 +81,13 @@
         android:layout_below="@+id/liste_menu"
         android:layout_toEndOf="@+id/btn_syncro"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:paddingStart="10dp"
         android:background="@drawable/button_gris"
         android:clickable="true"
         android:textColor="@color/noir"
         android:textAllCaps="false"
         android:textSize="18sp"
-        android:layout_marginLeft="16dp"
         android:drawableStart="@drawable/ic_lock_open_black_24dp"
         android:onClick="Deconnecter" />
 

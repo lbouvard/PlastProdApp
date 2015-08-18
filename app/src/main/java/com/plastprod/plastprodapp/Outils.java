@@ -11,6 +11,7 @@ import java.util.Date;
 public class Outils {
 
     static int duree = Toast.LENGTH_LONG;
+    static final String SSID = "WiredSSID";
 
     //Pour vérifier si la session de l'utilisateur est toujours bonne
     public static Boolean VerifierSession(Context contexte){

@@ -1,9 +1,13 @@
 package com.plastprod.plastprodapp;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +27,7 @@ import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Societe;
 
 
-public class MenuActivity extends ActionBarActivity {
+public class MenuActivity extends ActionBarActivity implements ConfirmationSynchroDialog.RetourListener {
 
     Intent itActivite;
     Contact commercial;
@@ -106,6 +111,16 @@ public class MenuActivity extends ActionBarActivity {
         return true;
     }
 
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog){
+        Synchroniser();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog){
+        Outils.afficherToast(getApplicationContext(), "Synchronisation annulée.");
+    }
+
     public void terminerSession(){
 
         Intent activite = new Intent(this, AccueilActivity.class);
@@ -146,13 +161,23 @@ public class MenuActivity extends ActionBarActivity {
         startActivity(activite);
     }
 
-    public int Synchroniser(View vue){
-
+    public int Synchroniser(){
         new RestApi().execute(getApplicationContext());
         return 0;
     }
 
     public void ConfirmerSynchro(View vue){
 
+        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo active = cm.getActiveNetworkInfo();
+
+        if( active.isConnected() && active.getType() == ConnectivityManager.TYPE_WIFI && active.getExtraInfo().replace("\"","").equals(Outils.SSID) ) {
+            DialogFragment confirmation = new ConfirmationSynchroDialog();
+            confirmation.show(getSupportFragmentManager(), "confirmation_synchro");
+        }
+        else{
+            Outils.afficherToast(getApplicationContext(), "Vous devez être connecté en WIFI chez PlastProd.");
+        }
     }
 }

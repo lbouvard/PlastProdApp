@@ -53,28 +53,6 @@ public class AccueilActivity extends ActionBarActivity {
         return true;
     }
 
-    public void ByPass(View vue){
-
-        db = new DatabaseHelper(getApplicationContext());
-
-        //Vérification des données d'identification
-        Contact commercial = db.getCommercial(4);
-
-        //Réussite, on va au menu principal
-        if( commercial != null ) {
-
-            final Global jeton = (Global) getApplicationContext();
-            jeton.setNom_utilisateur("dupond.jean");
-            jeton.setUtilisateur(commercial);
-            jeton.setDate_connexion(new Date());
-
-            //nouvelle activité
-            Intent activite = new Intent(this, MenuActivity.class);
-            //on démarre la nouvelle activité
-            startActivity(activite);
-        }
-    }
-
     public void Authentifier(View vue){
 
         String identifiant;
@@ -118,11 +96,19 @@ public class AccueilActivity extends ActionBarActivity {
 
                     jeton.setDate_connexion(new Date());
 
-                    //nouvelle activité
-                    Intent activite = new Intent(this, MenuActivity.class);
+                    if( commercial.getNom().equals("ADMSYS") ){
+                        //administration
+                        Intent activite = new Intent(this, AdminActivity.class);
+                        //on démarre l'activite
+                        startActivity(activite);
+                    }
+                    else {
+                        //nouvelle activité
+                        Intent activite = new Intent(this, MenuActivity.class);
 
-                    //on démarre la nouvelle activité
-                    startActivity(activite);
+                        //on démarre la nouvelle activité
+                        startActivity(activite);
+                    }
                 }
                 else{
                     message = "Identifiant et/ou mot de passe incorrect";
