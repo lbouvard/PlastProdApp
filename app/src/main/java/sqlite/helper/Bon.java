@@ -1,5 +1,6 @@
 package sqlite.helper;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -164,5 +165,16 @@ public class Bon {
 
     public void setCommercial_id(int commercial_id) {
         this.commercial_id = commercial_id;
+    }
+
+    public BigDecimal calculerPrixTotal(){
+
+        BigDecimal total = new BigDecimal(0.00);
+
+        for(LigneCommande ligne : this.lignesBon){
+            total = total.add(ligne.getPrixTotal());
+        }
+
+        return total;
     }
 }

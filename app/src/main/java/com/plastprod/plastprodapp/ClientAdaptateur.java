@@ -284,6 +284,7 @@ public class ClientAdaptateur extends ArrayAdapter<Societe> {
 
                 case R.id.action_histo:
 
+                    ((ClientActivity) context).afficherCommandes(liste_selectionne.get(0));
                     return true;
 
                 default:

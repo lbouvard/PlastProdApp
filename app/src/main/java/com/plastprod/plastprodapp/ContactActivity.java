@@ -41,7 +41,7 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
             db = new DatabaseHelper(getApplicationContext());
 
             //récupération des clients
-            liste_contact = db.getContacts(client_en_cours.getId(), "");
+            liste_contact = db.getContacts(client_en_cours.getId(), null);
 
             lvContact = (ListView) findViewById(R.id.liste_contact);
             lvContact.setOnItemClickListener(this);
@@ -68,6 +68,8 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
         switch (item.getItemId()) {
 
             case R.id.action_ajout_contact:
+
+                ajouterContact();
             return true;
 
             case R.id.action_recherche :
@@ -96,7 +98,7 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
         startActivity(activite);
     }
 
-    public void ajouterContact(View vue){
+    public void ajouterContact(){
 /*
         //on recupère l'activité du formulaire client
         Intent activite = new Intent(this, FormulaireContact.class);

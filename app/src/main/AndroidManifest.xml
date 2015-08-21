@@ -97,6 +97,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.AccueilActivity" />
         </activity>
+        <activity
+            android:name=".HistocdActivity"
+            android:label="@string/title_activity_histocd"
+            android:parentActivityName=".ClientActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.ClientActivity" />
+        </activity>
+        <activity
+            android:name=".FormulaireContact"
+            android:label="@string/title_activity_formulaire_contact"
+            android:parentActivityName=".ContactActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.ContactActivity" />
+        </activity>
     </application>
 
 </manifest>

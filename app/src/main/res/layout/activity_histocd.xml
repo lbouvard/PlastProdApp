@@ -1,0 +1,15 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    tools:context="com.plastprod.plastprodapp.HistocdActivity">
+
+    <ExpandableListView
+        android:id="@+id/lvListeCommande"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:groupIndicator="@null"
+        android:childDivider="@android:drawable/divider_horizontal_dark"
+        android:divider="@android:drawable/divider_horizontal_dark" />
+
+</RelativeLayout>

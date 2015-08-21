@@ -16,10 +16,11 @@ import sqlite.helper.Societe;
 public class ClientActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
 
     List<Societe> liste_client = new ArrayList<Societe>();
-    List<Societe> liste_client_selectionnee = new ArrayList<Societe>();
     DatabaseHelper db;
     ListView lvClient;
     ClientAdaptateur adaptateur;
+
+    static final int RETOUR_MAJ = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +79,18 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         activite.putExtra("Client", client);
 
         //et on affiche le formulaire
-        startActivity(activite);
+        startActivityForResult(activite, RETOUR_MAJ);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == RETOUR_MAJ) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                majListe();
+            }
+        }
     }
 
     public void ajouterClient(View vue){
@@ -92,7 +104,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         activite.putExtra("Client", client );
 
         //et on affiche le formulaire
-        startActivity(activite);
+        startActivityForResult(activite, RETOUR_MAJ);
     }
 
     public void afficherContacts(Societe client){
@@ -107,13 +119,25 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         startActivity(activite);
     }
 
+    public void afficherCommandes(Societe client){
+
+        //on recupère l'activité du formulaire client
+        Intent activite = new Intent(this, HistocdActivity.class);
+
+        //on transmert l'objet à la nouvelle activité
+        activite.putExtra("Client", client);
+
+        //et on affiche le formulaire
+        startActivity(activite);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
 
             case R.id.action_recherche:
-
+                Outils.afficherToast(getApplicationContext(), "bouton recherche sélectionné.");
                 return true;
 
             default:

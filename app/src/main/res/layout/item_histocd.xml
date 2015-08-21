@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="35dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/entete_item_orange"
+        android:id="@+id/bordure"/>
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/table_liste">
+
+        <TableRow
+            android:id="@+id/ligne_table"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/nom_article"
+                android:textSize="14sp"
+                android:layout_marginTop="9dp"
+                android:width="110dp"
+                android:text="Article1"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prix_article"
+                android:textSize="14sp"
+                android:layout_marginTop="9dp"
+                android:width="70dp"
+                android:gravity="end"
+                android:text="1 000,00 €"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/quantite_article"
+                android:textSize="14sp"
+                android:layout_marginTop="9dp"
+                android:width="60dp"
+                android:gravity="end"
+                android:text="100 000"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/total_article"
+                android:textSize="14sp"
+                android:layout_marginTop="9dp"
+                android:width="100dp"
+                android:gravity="end"
+                android:text="1 000 000,00 €"/>
+        </TableRow>
+
+    </TableLayout>
+
+</RelativeLayout>

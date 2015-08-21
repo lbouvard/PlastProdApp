@@ -26,12 +26,24 @@
     <string name="title_activity_formulaire_client">Client</string>
 
     <string name="form_client_nom">Nom de la société</string>
+    <string name="form_contact_nom">Nom</string>
+    <string name="form_contact_prenom">Prénom</string>
+    <string name="form_contact_poste">Poste</string>
+    <string name="form_contact_fixe">Téléphone fixe</string>
+    <string name="form_contact_mobile">Téléphone mobile</string>
+    <string name="form_contact_fax">Numéro de fax</string>
+    <string name="form_contact_email">Adresse E-mail</string>
     <string name="form_client_adresse">Adresse</string>
+    <string name="form_contact_adresse">Adresse</string>
     <string name="form_client_complement">Complément adresse</string>
     <string name="form_client_cp">Code postal</string>
+    <string name="form_contact_cp">Code postal</string>
     <string name="form_client_ville">Ville</string>
+    <string name="form_contact_ville">Ville</string>
     <string name="form_client_pays">Pays</string>
+    <string name="form_contact_pays">Pays</string>
     <string name="form_client_commentaire">Commentaires</string>
+    <string name="form_contact_commentaire">Commentaires</string>
 
     <string name="btn_annuler">Annuler</string>
     <string name="btn_enregistre">Enregistrer</string>
@@ -50,6 +62,11 @@
         Voulez-vous synchroniser vos données ?</string>
     <string name="valider">Valider</string>
     <string name="annuler">Annuler</string>
-    <string name="title_activity_admin">Administrer</string>
+
+    <string name="title_activity_admin">Administration</string>
+    <string name="title_activity_histocd">Commandes</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_formulaire_contact">FormulaireContact</string>
 
 </resources>

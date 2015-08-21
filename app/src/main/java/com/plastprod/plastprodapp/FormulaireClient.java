@@ -61,9 +61,23 @@ public class FormulaireClient extends ActionBarActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+
+        getMenuInflater().inflate(R.menu.menu_formulaire_client, menu);
+
+        if( client_en_cours ==  null) {
+            for (int i = 0; i < menu.size(); i++) {
+                menu.getItem(i).setVisible(false);
+            }
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_formulaire_client, menu);
+        //getMenuInflater().inflate(R.menu.menu_formulaire_client, menu);
         return true;
     }
 
@@ -72,11 +86,34 @@ public class FormulaireClient extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch (item.getItemId()) {
 
+            case R.id.action_contact:
 
+                afficherContacts(client_en_cours);
+                return true;
 
-        return super.onOptionsItemSelected(item);
+            case R.id.action_histo:
+
+                afficherCommandes(client_en_cours);
+                return true;
+
+            case R.id.action_supprime:
+
+                db = new DatabaseHelper(context);
+
+                db.suppprimerSociete(client_en_cours, true);
+
+                Intent returnIntent = new Intent();
+                setResult(RESULT_OK, returnIntent);
+
+                finish();
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     //pour annuler les modification
@@ -158,5 +195,34 @@ public class FormulaireClient extends ActionBarActivity {
         }
 
         db.close();
+
+        Intent returnIntent = new Intent();
+        setResult(RESULT_OK,returnIntent);
+
+        finish();
+    }
+
+    public void afficherContacts(Societe client){
+
+        //on recupère l'activité du formulaire client
+        Intent activite = new Intent(this, ContactActivity.class);
+
+        //on transmert l'objet à la nouvelle activité
+        activite.putExtra("Client", client);
+
+        //et on affiche le formulaire
+        startActivity(activite);
+    }
+
+    public void afficherCommandes(Societe client){
+
+        //on recupère l'activité du formulaire client
+        Intent activite = new Intent(this, HistocdActivity.class);
+
+        //on transmert l'objet à la nouvelle activité
+        activite.putExtra("Client", client);
+
+        //et on affiche le formulaire
+        startActivity(activite);
     }
 }
