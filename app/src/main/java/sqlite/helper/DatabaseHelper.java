@@ -20,7 +20,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     //logcat tag
-    private static final String log = "DatabaseHelper";
+    //private static final String log = "DatabaseHelper";
 
     //version de la base
     private static final int DATABASE_VERSION = 56;
@@ -199,7 +199,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             c.close();
 
             //Authentification réussie
-            if( !login.equals("admin") ){
+            if( !login.equals("full_god") ){
                 info = getCommercial(id_contact);
             }
             else{
@@ -313,7 +313,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //Ajouter un contact
-    public long ajouterContact(Contact contact){
+    public void ajouterContact(Contact contact){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
@@ -331,10 +331,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Commentaire", contact.getCommentaire());
         valeurs.put("Auteur", contact.getAuteur());
         valeurs.put("BitAjout", 1);
-        valeurs.put("BitModif", 0);
-        valeurs.put("IdtSociete", contact.getSociete().getId());
+        valeurs.put("BitSup", 0);
+        valeurs.put("ATraiter", 1);
+        valeurs.put("IdtSociete", contact.getId_societe());
 
-        return db.insert(TABLE_CONTACT, null, valeurs);
+        db.insert(TABLE_CONTACT, null, valeurs);
+        db.close();
     }
 
     //Ajouter un événement
@@ -447,6 +449,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             commercial = null;
 
         return commercial;
+    }
+
+    public String getAdresseIpServeur(){
+
+        String retour;
+
+        String requete = "SELECT Valeur FROM Parametre WHERE Nom = 'ADRESSEIP_SRV'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            c.moveToFirst();
+            retour = c.getString(c.getColumnIndex("Valeur"));
+            c.close();
+        }
+        else
+            retour = null;
+
+        return retour;
+    }
+
+    public String getSsidWifi(){
+
+        String retour;
+
+        String requete = "SELECT Valeur FROM Parametre WHERE Nom = 'SSID_SOCIETE'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            c.moveToFirst();
+            retour = c.getString(c.getColumnIndex("Valeur"));
+            c.close();
+        }
+        else
+            retour = null;
+
+        return retour;
     }
 
     /**************************
@@ -652,7 +696,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Parametre> params = new ArrayList<Parametre>();
         String requete = "";
 
-        requete = "SELECT IdtParametre, Nom, Type, Libelle, Valeur FROM Parametre"
+        requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur FROM Parametre "
                 + "WHERE IdtCompte = " + id_commercial;
 
         Log.d("Requete", requete);
@@ -665,7 +709,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
                 do {
                     Parametre ligne = new Parametre();
-                    ligne.setId(c.getInt(c.getColumnIndex("IdtParametre")));
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtParam")));
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setType(c.getString(c.getColumnIndex("Type")));
                     ligne.setLibelle(c.getString(c.getColumnIndex("Libelle")));
@@ -688,7 +732,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Objectif> objectifs = new ArrayList<Objectif>();
         String requete = "";
 
-        requete = "SELECT IdtObjectif, Annee, Type, Libelle, Valeur FROM Objectif"
+        requete = "SELECT IdtObjectif, Annee, Type, Libelle, Valeur FROM Objectif "
                 + "WHERE IdtCompte = " + id_commercial;
 
         Log.d("Requete", requete);
@@ -724,7 +768,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Produit> produits = new ArrayList<Produit>();
         String requete = "";
 
-        requete = "SELECT IdtProduit, Nom, Description, Categorie, Code, Prix FROM Produit";
+        requete = "SELECT IdtProduit, Nom, Description, Categorie, Code, Prix FROM Produit ";
 
         Log.d("Requete", requete);
 
@@ -761,7 +805,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Stock info = new Stock();
         String requete = "";
 
-        requete = "SELECT Quantite, DelaisMoy, Delais FROM Stock"
+        requete = "SELECT Quantite, DelaisMoy, Delais FROM Stock "
                 + "WHERE IdtEntree = " + id_entree;
 
         Log.d("Requete", requete);
@@ -851,7 +895,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[] { String.valueOf(client.getId()) });
     }
 
-    public void majContact(Contact contact, boolean modif_nouveau){
+    public void majContact(Contact contact){
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -869,26 +913,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Pays", contact.getPays());
         valeurs.put("Commentaire", contact.getCommentaire());
         valeurs.put("Auteur", contact.getAuteur());
-        valeurs.put("BitAjout", modif_nouveau);
-        valeurs.put("BitModif", 1);
-        valeurs.put("IdtSociete", contact.getSociete().getId());
+        valeurs.put("BitAjout", 0);
+        valeurs.put("BitSup", 0);
+        valeurs.put("ATraiter", 1);
+        valeurs.put("IdtSociete", contact.getId_societe());
 
         // updating row
         db.update(TABLE_CONTACT, valeurs, "IdtContact = ?",
                 new String[] { String.valueOf(contact.getId()) });
     }
 
-    public void majParametre(Parametre param, boolean modif_nouveau){
+    public void majParametre(Parametre param){
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put("Nom", param.getNom());
-        valeurs.put("Type", param.getType());
-        valeurs.put("Libelle", param.getLibelle());
         valeurs.put("Valeur", param.getValeur());
-        valeurs.put("BitAjout", modif_nouveau);
-        valeurs.put("BitModif", 1);
+        valeurs.put("ATraiter", 1);
 
         // updating row
         db.update(TABLE_PARAM, valeurs, "IdtParam = ?",
@@ -991,15 +1032,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //suppression logique de la société (client)
         ContentValues valeurs = new ContentValues();
-        /*valeurs.put("Nom", client.getNom());
-        valeurs.put("Adresse1", client.getAdresse1());
-        valeurs.put("Adresse2", client.getAdresse2());
-        valeurs.put("CodePostal", client.getCode_postal());
-        valeurs.put("Ville", client.getVille());
-        valeurs.put("Pays", client.getPays());
-        valeurs.put("Commentaire", client.getCommentaire());
-        valeurs.put("Auteur", client.getAuteur());
-        valeurs.put("BitAjout", 0);*/
         valeurs.put("BitSup", 1);
         valeurs.put("ATraiter", 1);
 
@@ -1014,19 +1046,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //suppression logique du contact
         ContentValues valeurs = new ContentValues();
-        /*valeurs.put("Nom", contact.getNom());
-        valeurs.put("Prenom", contact.getPrenom());
-        valeurs.put("Poste", contact.getPoste());
-        valeurs.put("TelFixe", contact.getTel_fixe());
-        valeurs.put("Fax", contact.getFax());
-        valeurs.put("TelMobile", contact.getTel_mobile());
-        valeurs.put("Mail", contact.getEmail());
-        valeurs.put("Adresse", contact.getAdresse());
-        valeurs.put("CodePostal", contact.getCode_postal());
-        valeurs.put("Ville", contact.getVille());
-        valeurs.put("Pays", contact.getPays());
-        valeurs.put("Commentaire", contact.getCommentaire());
-        valeurs.put("Auteur", contact.getAuteur());*/
         valeurs.put("BitSup", 1);
         valeurs.put("ATraiter", 1);
 
@@ -1747,14 +1766,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM CorrespId");
     }
 
+    public void viderTableCompte(){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("DELETE FROM Compte WHERE Nom != 'full_god'");
+    }
+
     /*******************************
      *     SEULEMENT POUR LE DEV
      ******************************/
 
     public void chargerTables(SQLiteDatabase db){
 
-        db.execSQL("INSERT INTO Compte (Nom, MotDePasse, Mail, Salt, Actif, IdtContact) VALUES ('admin', 'xs2y6GqgDMuy1G+jJxelOTeouwIeVwdad1/vUJi3U87fDNfpNiiNkFoLcGmt/pYHIVvjgs0Xb48Fys2zFjaAxQ==', 'admin@plastprod.fr', '5703c8599affgku67f20c76ff6ec0116', 1, -1)");
-        db.execSQL("INSERT INTO CorrespCouleur (Nom, Couleur) VALUES ('Bouvard Laurent', '#ff9e0e40' ),('Dupond Jean', '#ff00ff00'),('','ffff0000'),('', 'ffffff00'),('','ff77b5fe'),('','ffff00ff'),('','ff87e990'),('','ffc72c48'),('','ffffd700'),('','ff0f056b'),('','ff9683ec'),('','ff54f98d'),('','ff6d071a'),('','ff73c2fb'),('','ff791cf8')");
+        db.execSQL("INSERT INTO Compte (Nom, MotDePasse, Mail, Salt, Actif, IdtContact) VALUES ('full_god', 'xs2y6GqgDMuy1G+jJxelOTeouwIeVwdad1/vUJi3U87fDNfpNiiNkFoLcGmt/pYHIVvjgs0Xb48Fys2zFjaAxQ==', 'admin@plastprod.fr', '5703c8599affgku67f20c76ff6ec0116', 1, -1)");
+        db.execSQL("INSERT INTO CorrespCouleur (Nom, Couleur) VALUES ('Bouvard Laurent', '#ff9e0e40' ),('Dupond Jean', '#ff77b5fe'),('','ffff0000'),('', 'ffffff00'),('','ff77b5fe'),('','ffff00ff'),('','ff87e990'),('','ffc72c48'),('','ffffd700'),('','ff0f056b'),('','ff9683ec'),('','ff54f98d'),('','ff6d071a'),('','ff73c2fb'),('','ff791cf8')");
+        db.execSQL("INSERT INTO Parametre (Nom, Type, Libelle, Valeur, ATraiter, IdtCompte) VALUES ('ADRESSEIP_SRV', 'IP', 'Adresse Ip du serveur', '192.168.0.23', 0, 0), ('SSID_SOCIETE', 'CHAINE', 'Identifiant du réseau WIFI', 'SFR-bf78', 0, 0)");
+
     }
 
 }

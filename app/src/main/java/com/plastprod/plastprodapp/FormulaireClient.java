@@ -176,6 +176,11 @@ public class FormulaireClient extends ActionBarActivity {
         }
 
         db.close();
+
+        Intent returnIntent = new Intent();
+        setResult(RESULT_OK,returnIntent);
+
+        finish();
     }
 
     //pour créer un nouveau client

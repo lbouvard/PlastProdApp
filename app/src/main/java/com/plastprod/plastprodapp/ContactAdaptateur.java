@@ -209,7 +209,7 @@ public class ContactAdaptateur extends ArrayAdapter<Contact> {
 
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.menu_client_select, menu);
+            inflater.inflate(R.menu.menu_contact_select, menu);
             return true;
         }
 
@@ -240,6 +240,10 @@ public class ContactAdaptateur extends ArrayAdapter<Contact> {
                     }
 
                     db.close();
+
+                    //maj listview
+                    ((ContactActivity) context).majListe();
+
                     mode.finish();
 
                     return true;

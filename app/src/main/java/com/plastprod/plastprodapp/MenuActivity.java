@@ -168,16 +168,21 @@ public class MenuActivity extends ActionBarActivity implements ConfirmationSynch
 
     public void ConfirmerSynchro(View vue){
 
+        db = new DatabaseHelper(getApplicationContext());
+        String ssid = db.getSsidWifi();
+
         ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo active = cm.getActiveNetworkInfo();
 
-        if( active.isConnected() && active.getType() == ConnectivityManager.TYPE_WIFI && active.getExtraInfo().replace("\"","").equals(Outils.SSID) ) {
+        if( active.isConnected() && active.getType() == ConnectivityManager.TYPE_WIFI && active.getExtraInfo().replace("\"","").equals(ssid) ) {
             DialogFragment confirmation = new ConfirmationSynchroDialog();
             confirmation.show(getSupportFragmentManager(), "confirmation_synchro");
         }
         else{
             Outils.afficherToast(getApplicationContext(), "Vous devez être connecté en WIFI chez PlastProd.");
         }
+
+        db.close();
     }
 }

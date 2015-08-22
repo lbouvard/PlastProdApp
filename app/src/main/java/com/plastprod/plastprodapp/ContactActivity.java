@@ -18,21 +18,32 @@ import sqlite.helper.Societe;
 public class ContactActivity extends ActionBarActivity implements AdapterView.OnItemClickListener{
 
     List<Contact> liste_contact = new ArrayList<Contact>();
-    List<Contact> liste_contact_selectionnee = new ArrayList<Contact>();
+    //List<Contact> liste_contact_selectionnee = new ArrayList<Contact>();
     DatabaseHelper db;
     ListView lvContact;
     ContactAdaptateur adaptateur;
+
     Societe client_en_cours;
+    int societe_id;
+
+    static final int RETOUR_MAJ = 2000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Intent intent = getIntent();
-        client_en_cours = (Societe) intent.getSerializableExtra("Client");
+        if( savedInstanceState != null ){
+            client_en_cours = (Societe) savedInstanceState.getSerializable("Client");
+        }
+        else {
+            if (client_en_cours == null) {
+                Intent intent = getIntent();
+                client_en_cours = (Societe) intent.getSerializableExtra("Client");
+            }
+        }
+
+        setContentView(R.layout.activity_contact);
 
         //utilisateur authentifié
         if( Outils.VerifierSession(getApplicationContext()) ){
@@ -59,7 +70,15 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_contact, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putSerializable("Client", client_en_cours);
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -70,36 +89,47 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
             case R.id.action_ajout_contact:
 
                 ajouterContact();
-            return true;
+                return true;
 
             case R.id.action_recherche :
-            return true;
 
-            case android.R.id.home:
-                finish();
                 return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return true;
     }
 
     @Override
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
         //on recupère l'activité du formulaire client
-        Intent activite = new Intent(this, FormulaireClient.class);
+        Intent activite = new Intent(this, FormulaireContact.class);
 
         //on récupère la classe qui contient les données du client
-        Societe client = (Societe)((ListView) arg0).getAdapter().getItem(arg2);
+        Contact personne = (Contact)((ListView) arg0).getAdapter().getItem(arg2);
 
-        //on transmert l'objet à la nouvelle activité
-        activite.putExtra("Client", client);
+        //on transmet l'objet à la nouvelle activité
+        activite.putExtra("Contact", personne);
+        activite.putExtra("IdtSociete", client_en_cours.getId());
 
         //et on affiche le formulaire
-        startActivity(activite);
+        startActivityForResult(activite, RETOUR_MAJ);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == RETOUR_MAJ) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                majListe();
+            }
+        }
     }
 
     public void ajouterContact(){
-/*
+
         //on recupère l'activité du formulaire client
         Intent activite = new Intent(this, FormulaireContact.class);
 
@@ -107,9 +137,18 @@ public class ContactActivity extends ActionBarActivity implements AdapterView.On
 
         //on transmert l'objet à la nouvelle activité
         activite.putExtra("Contact", contact );
+        activite.putExtra("IdtSociete", client_en_cours.getId());
 
         //et on affiche le formulaire
-        startActivity(activite);*/
+        startActivityForResult(activite, RETOUR_MAJ);
+    }
+
+    public void majListe(){
+
+        liste_contact = db.getContacts(client_en_cours.getId(), null);
+        adaptateur.clear();
+        adaptateur.addAll(liste_contact);
+        adaptateur.notifyDataSetChanged();
     }
 
     public void terminerSession(){

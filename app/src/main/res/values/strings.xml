@@ -52,7 +52,6 @@
     <string name="client_recherche_hint">Rechercher dans les clients</string>
     <string name="title_activity_rechecher">RechecherActivity</string>
 
-    <string name="synchro_admin">Première utilisation</string>
     <string name="action_settings">Paramètres</string>
 
     <string name="titre_dialog_confirm">Synchronisation</string>
@@ -64,9 +63,12 @@
     <string name="annuler">Annuler</string>
 
     <string name="title_activity_admin">Administration</string>
+    <string name="admin_intro">Paramètres de synchronisation</string>
+    <string name="adresse_serveur">Adresse du serveur</string>
+    <string name="ssid_wifi">SSID du réseau WIFI</string>
+
     <string name="title_activity_histocd">Commandes</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_formulaire_contact">FormulaireContact</string>
+    <string name="title_activity_formulaire_contact">Contact</string>
 
 </resources>

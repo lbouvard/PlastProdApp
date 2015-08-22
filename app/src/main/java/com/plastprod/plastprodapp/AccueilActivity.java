@@ -4,9 +4,12 @@ import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import java.util.Date;
 
@@ -22,6 +25,22 @@ public class AccueilActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accueil);
+
+        CheckBox affiche_mdp = (CheckBox) findViewById(R.id.checkBox);
+        final EditText mdp = (EditText) findViewById(R.id.edt_motdepasse);
+        affiche_mdp.setChecked(false);
+
+        //affiche ou masque le mot de passe
+        affiche_mdp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mdp.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                } else {
+                    mdp.setInputType(129);
+                }
+            }
+        });
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();

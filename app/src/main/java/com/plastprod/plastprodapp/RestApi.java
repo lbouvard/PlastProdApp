@@ -44,7 +44,7 @@ import sqlite.helper.Synchro;
 public class RestApi extends AsyncTask<Context, Void, Void> {
 
     //Adresse du serveur plastprod
-    private final static String SVRPLASTPROD = "http://192.168.0.26/";
+    private static String SVRPLASTPROD = "http://192.168.0.26/";
 
 	//pour serialiser / déserialiser les objets
 	Gson gson;
@@ -71,38 +71,32 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
     Hashtable<Integer, Integer> corresp_client = null;
     Hashtable<Integer, Integer> corresp_bon = null;
 
-    //Adresse
-	private static final String API_CLIENT			= SVRPLASTPROD + "WebServices/api/societes";
-	private static final String API_CLIENT_AJT		= SVRPLASTPROD + "WebServices/api/societes/ajt";
-	private static final String API_CLIENT_MAJ 		= SVRPLASTPROD + "WebServices/api/societes/maj";
-	
-	private static final String API_CONTACT 		= SVRPLASTPROD + "WebServices/api/contacts";
-	private static final String API_CONTACT_AJT 	= SVRPLASTPROD + "WebServices/api/contacts/ajt";
-	private static final String API_CONTACT_MAJ		= SVRPLASTPROD + "WebServices/api/contacts/maj";
-	
-	private static final String API_BON 			= SVRPLASTPROD + "WebServices/api/bons";
-	private static final String API_BON_AJT 		= SVRPLASTPROD + "WebServices/api/bons/ajt";
-	private static final String API_BON_MAJ 		= SVRPLASTPROD + "WebServices/api/bons/maj";
-	
-	private static final String API_LIGNES			= SVRPLASTPROD + "WebServices/api/articles";
-	private static final String API_LIGNES_AJT		= SVRPLASTPROD + "WebServices/api/articles/ajt";
-	private static final String API_LIGNES_MAJ		= SVRPLASTPROD + "WebServices/api/articles/maj";
-	
-	private static final String API_EVENEMENT 		= SVRPLASTPROD + "WebServices/api/evenements/id";
-	private static final String API_EVENEMENT_AJT 	= SVRPLASTPROD + "WebServices/api/evenements/ajt";
-	private static final String API_EVENEMENT_MAJ 	= SVRPLASTPROD + "WebServices/api/evenements/maj";
-	
-	private static final String API_UTILISATEUR     = SVRPLASTPROD + "WebServices/api/utilisateurs";
-    private static final String API_COMMERCIAL     = SVRPLASTPROD + "WebServices/api/commerciaux";
-	private static final String API_PRODUIT 	    = SVRPLASTPROD + "WebServices/api/produits";
-
-	private static final String API_PARAMETRE 	    = SVRPLASTPROD + "WebServices/api/parametres/id";
-    private static final String API_PARAMETRE_MAJ   = SVRPLASTPROD + "WebServices/api/parametres/maj";
-
-	private static final String API_OBJECTIF	= SVRPLASTPROD + "WebServices/api/objectifs/id";
-	private static final String API_STOCK 		= SVRPLASTPROD + "WebServices/api/stocks";
-	private static final String API_REPONSE		= SVRPLASTPROD + "WebServices/api/reponses";
-	private static final String API_SATISF 		= SVRPLASTPROD + "WebServices/api/satisfactions";
+    //Adresse web services
+	private static String API_CLIENT;
+	private static String API_CLIENT_AJT;
+	private static String API_CLIENT_MAJ;
+	private static String API_CONTACT;
+	private static String API_CONTACT_AJT;
+	private static String API_CONTACT_MAJ;
+	private static String API_BON;
+	private static String API_BON_AJT;
+	private static String API_BON_MAJ;
+	private static String API_LIGNES;
+	private static String API_LIGNES_AJT;
+	private static String API_LIGNES_MAJ;
+	private static String API_EVENEMENT;
+	private static String API_EVENEMENT_AJT;
+	private static String API_EVENEMENT_MAJ;
+	private static String API_UTILISATEUR;
+    private static String API_COMMERCIAL;
+	private static String API_PRODUIT;
+	private static String API_PARAMETRE;
+    private static String API_PARAMETRE_MAJ;
+    private static String API_PARAMADMIN_MAJ;
+	private static String API_OBJECTIF;
+	private static String API_STOCK;
+	private static String API_REPONSE;
+	private static String API_SATISF;
 
     protected Void doInBackground(Context... arg){
 
@@ -110,16 +104,27 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         db = new DatabaseHelper(arg[0]);
         context = arg[0];
         gson = new Gson();
+        int UID = 1254;
+
+        //recupération adresse ip du serveur pour synchroniser
+        SVRPLASTPROD = "http://" + db.getAdresseIpServeur() + "/";
+        alimenterConstantes();
 
         if( arg.length > 1 ){
 
+            //on enregistre les paramètre d'accès au web services
+            liste_parametres = db.getParametres(0);
+            envoyerParametresAdmin(liste_parametres);
+
             db.viderTables();
+            db.viderTableCompte();
 
             //pour les comptes des commerciaux
             recupererComptes();
             recupererCommerciaux();
+            recupererAdminParametres();
 
-            //Outils.afficherToast(context, "Récupération des comptes des commerciaux faite.");
+            db.close();
 
             return null;
         }
@@ -133,8 +138,9 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         /*************************************
          *  Données à envoyer sur le serveur
          *************************************/
-        //mBuilder.setProgress(100, 0, false);
-        mManager.notify(1548741, mBuilder.build());
+
+        //pour l'avancement
+        mManager.notify(UID, mBuilder.build());
 
         //clients à ajouter
         liste_clients = db.getSyncClient(true);
@@ -151,14 +157,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         envoyerContacts(2, liste_contacts);
 
         mBuilder.setProgress(100, 15, false);
-        mManager.notify(1548741, mBuilder.build());
-
-        try{
-            Thread.sleep(3*1000);
-        }
-        catch (InterruptedException e){
-            Log.d("Attente", "Erreur d'attente");
-        }
+        mManager.notify(UID, mBuilder.build());
 
         //bons à ajouter
         liste_bons = db.getSyncBon(true);
@@ -175,14 +174,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         envoyerLignes(2, liste_articles);
 
         mBuilder.setProgress(100, 30, false);
-        mManager.notify(1548741, mBuilder.build());
-
-        try{
-            Thread.sleep(2*1000);
-        }
-        catch (InterruptedException e){
-            Log.d("Attente", "Erreur d'attente");
-        }
+        mManager.notify(UID, mBuilder.build());
 
         //événements à ajouter
         liste_evenements = db.getSyncEvent(true);
@@ -192,21 +184,14 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         envoyerEvents(2, liste_evenements);
 
         mBuilder.setProgress(100, 40, false);
-        mManager.notify(1548741, mBuilder.build());
+        mManager.notify(UID, mBuilder.build());
 
         //paramètres à modifier
         liste_parametres = db.getSyncParam();
         envoyerParametres(liste_parametres);
 
         mBuilder.setProgress(100, 45, false);
-        mManager.notify(1548741, mBuilder.build());
-
-        try{
-            Thread.sleep(2*1000);
-        }
-        catch (InterruptedException e){
-            Log.d("Attente", "Erreur d'attente");
-        }
+        mManager.notify(UID, mBuilder.build());
 
         /*************************************
          *  Tables à vider
@@ -214,14 +199,8 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         db.viderTables();
 
         mBuilder.setProgress(100, 50, false);
-        mManager.notify(1548741, mBuilder.build());
+        mManager.notify(UID, mBuilder.build());
 
-        try{
-            Thread.sleep(2*1000);
-        }
-        catch (InterruptedException e){
-            Log.d("Attente", "Erreur d'attente");
-        }
         /*******************************************
          *  Données à récupérer depuis le serveur
          *******************************************/
@@ -234,7 +213,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         recupererBons();
 
         mBuilder.setProgress(100, 60, false);
-        mManager.notify(1548741, mBuilder.build());
+        mManager.notify(UID, mBuilder.build());
 
         //lignes des bons
         recupererLignes();
@@ -242,7 +221,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         recupererEvents();
 
         mBuilder.setProgress(100, 70, false);
-        mManager.notify(1548741, mBuilder.build());
+        mManager.notify(UID, mBuilder.build());
 
         //produits
         recupererProduits();
@@ -252,29 +231,66 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         recupererStocks();
 
         mBuilder.setProgress(100, 80, false);
-        mManager.notify(1548741, mBuilder.build());
+        mManager.notify(UID, mBuilder.build());
 
         //objectifs
         recupererObjectifs();
 
         mBuilder.setProgress(100, 85, false);
-        mManager.notify(1548741, mBuilder.build());
+        mManager.notify(UID, mBuilder.build());
 
         //réponse au questionnaire de satisfaction
         recupererReponses();
 
         mBuilder.setProgress(100, 90, false);
-        mManager.notify(1548741, mBuilder.build());
+        mManager.notify(UID, mBuilder.build());
 
         //info sur les questionnaires de satisfaction
         recupererQuestionnaires();
 
         mBuilder.setContentText("Synchronisation terminé")
                 .setProgress(0, 0, false);
+        mManager.notify(UID, mBuilder.build());
 
-        mManager.notify(1548741, mBuilder.build());
+        db.close();
 
         return null;
+    }
+
+    public void alimenterConstantes(){
+
+        API_CLIENT   		= SVRPLASTPROD + "WebServices/api/societes";
+        API_CLIENT_AJT		= SVRPLASTPROD + "WebServices/api/societes/ajt";
+        API_CLIENT_MAJ 		= SVRPLASTPROD + "WebServices/api/societes/maj";
+
+        API_CONTACT 		= SVRPLASTPROD + "WebServices/api/contacts";
+        API_CONTACT_AJT 	= SVRPLASTPROD + "WebServices/api/contacts/ajt";
+        API_CONTACT_MAJ		= SVRPLASTPROD + "WebServices/api/contacts/maj";
+
+        API_BON 			= SVRPLASTPROD + "WebServices/api/bons";
+        API_BON_AJT 		= SVRPLASTPROD + "WebServices/api/bons/ajt";
+        API_BON_MAJ 		= SVRPLASTPROD + "WebServices/api/bons/maj";
+
+        API_LIGNES			= SVRPLASTPROD + "WebServices/api/articles";
+        API_LIGNES_AJT		= SVRPLASTPROD + "WebServices/api/articles/ajt";
+        API_LIGNES_MAJ		= SVRPLASTPROD + "WebServices/api/articles/maj";
+
+        API_EVENEMENT 		= SVRPLASTPROD + "WebServices/api/evenements/id";
+        API_EVENEMENT_AJT 	= SVRPLASTPROD + "WebServices/api/evenements/ajt";
+        API_EVENEMENT_MAJ 	= SVRPLASTPROD + "WebServices/api/evenements/maj";
+
+        API_UTILISATEUR     = SVRPLASTPROD + "WebServices/api/utilisateurs";
+        API_COMMERCIAL      = SVRPLASTPROD + "WebServices/api/commerciaux";
+        API_PRODUIT 	    = SVRPLASTPROD + "WebServices/api/produits";
+
+        API_PARAMETRE 	    = SVRPLASTPROD + "WebServices/api/parametres/id";
+        API_PARAMETRE_MAJ   = SVRPLASTPROD + "WebServices/api/parametres/maj";
+        API_PARAMADMIN_MAJ  = SVRPLASTPROD + "WebServices/api/paramadmin/maj";
+
+        API_OBJECTIF	    = SVRPLASTPROD + "WebServices/api/objectifs/id";
+        API_STOCK 		    = SVRPLASTPROD + "WebServices/api/stocks";
+        API_REPONSE		    = SVRPLASTPROD + "WebServices/api/reponses";
+        API_SATISF 		    = SVRPLASTPROD + "WebServices/api/satisfactions";
     }
 
     public int envoyerClients(int methode, List<Societe> liste_clients) {
@@ -450,6 +466,25 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         return 1;
     }
 
+    public int envoyerParametresAdmin(List<Parametre> liste_params){
+
+        if( liste_params.size() > 0 ){
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Parametre>>() {}.getType();
+                String params = gson.toJson(liste_params, type_liste);
+
+                envoyerVersWS(API_PARAMADMIN_MAJ, params, "Parametre");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+        return 1;
+    }
+
     public void envoyerVersWS(String url, String donnees, final String type ){
 
         URL adresse;
@@ -581,6 +616,14 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         //on remplace l'id du commercial
         String url = API_PARAMETRE;
         url = url.replace("id", String.valueOf(jeton.getUtilisateur().getId()) );
+
+        recupererDepuisWS(url, "Parametres");
+    }
+
+    public void recupererAdminParametres(){
+
+        String url = API_PARAMETRE;
+        url = url.replace("id", String.valueOf(0));
 
         recupererDepuisWS(url, "Parametres");
     }

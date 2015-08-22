@@ -6,27 +6,87 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.plastprod.plastprodapp.AdminActivity">
 
-    <TextView android:text="@string/synchro_admin"
-        android:id="@+id/textpremier"
+    <TextView android:text="@string/admin_intro"
+        android:id="@+id/admin_intro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/adresse_serveur"
+        android:textColor="@color/noir"
+        android:id="@+id/tvAdresse"
+        android:layout_below="@id/admin_intro"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text=""
+        android:ems="10"
+        android:id="@+id/etAdresseIp"
+        android:layout_below="@+id/tvAdresse"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/ssid_wifi"
+        android:textColor="@color/noir"
+        android:id="@+id/tvSsid"
+        android:layout_below="@+id/etAdresseIp"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="10dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text=""
+        android:ems="10"
+        android:id="@+id/etSsid"
+        android:layout_below="@+id/tvSsid"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="5dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:text="@string/synchroniser"
         android:id="@+id/btn_syncro"
-        android:layout_below="@+id/textpremier"
+        android:layout_below="@+id/etSsid"
         android:layout_marginTop="40dp"
-        android:paddingStart="10dp"
         android:background="@drawable/button"
         android:clickable="true"
         android:textColor="@color/blanc"
         android:textStyle="normal"
         android:textAllCaps="false"
         android:textSize="18sp"
-        android:layout_marginStart="80dp"
-        android:drawableStart="@drawable/ic_sync_white_24dp"
+        android:layout_toEndOf="@+id/btn_enregistrer"
+        android:layout_marginStart="10dp"
         android:onClick="synchroniser_first" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/btn_enregistre"
+        android:id="@+id/btn_enregistrer"
+        android:layout_below="@+id/etSsid"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/button"
+        android:clickable="true"
+        android:textColor="@color/blanc"
+        android:textStyle="normal"
+        android:textAllCaps="false"
+        android:textSize="18sp"
+        android:layout_marginStart="1dp"
+        android:onClick="enregistrer" />
 
 </RelativeLayout>
