@@ -1,11 +1,12 @@
 package sqlite.helper;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
  * Created by Laurent on 10/06/2015.
  */
-public class LigneCommande {
+public class LigneCommande implements Serializable{
 
     private int id;
     private int id_bon;

@@ -1,5 +1,6 @@
 package sqlite.helper;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by Laurent on 10/06/2015.
  */
-public class Bon {
+public class Bon implements Serializable{
 
     public void setId(int id) {
         this.id = id;

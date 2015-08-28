@@ -497,28 +497,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * RECUPERATION MULTIPLE
      **************************/
 
-    public List<Bon> getBons(String type, int id_societe, int id_commercial) {
+    public List<Bon> getBons(String type, int id_societe, int id_commercial, boolean tout) {
 
         List<Bon> bons = new ArrayList<Bon>();
         String requete = "";
 
-        if( id_societe == -1 && id_commercial == -1 ){
-            //tous les bons ou les commandes
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, IdtContact, IdtSociete "
+        if( id_societe == -1 && id_commercial == -1 && !tout){
+            //tous les devis ou les commandes
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
                            + "FROM Bon "
-                           + "WHERE Type = '" + type + "'";
+                           + "WHERE Type = '" + type + "' AND BitChg = 0 AND BitSup = 0";
         }
-        else if( id_commercial == -1 ){
-            //les bons ou les commandes d'un client
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, IdtContact, IdtSociete "
+        else if( id_societe == -1 && id_commercial == -1 && tout){
+            //tous les types de bon
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
                     + "FROM Bon "
-                    + "WHERE Type = '" + type + "' AND IdtSociete = " + id_societe;
+                    + "WHERE BitChg = 0 AND BitSup = 0";
+        }
+        else if( id_commercial == -1 && !tout ){
+            //les devis ou les commandes d'un client
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+                    + "FROM Bon "
+                    + "WHERE Type = '" + type + "' AND IdtSociete = " + id_societe + " AND BitChg = 0 AND BitSup = 0";
+        }
+        else if( id_commercial == -1 && tout ){
+            //les devis et les commandes d'un client
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+                    + "FROM Bon "
+                    + "WHERE IdtSociete = " + id_societe + " AND BitChg = 0 AND BitSup = 0";
+        }
+        else if( !tout ){
+            //les bons ou les commandes d'un commercial
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+                    + "FROM Bon "
+                    + "WHERE Type = '" + type + "' AND IdtContact = " + id_commercial + " AND BitChg = 0 AND BitSup = 0";
         }
         else {
-            //les bons ou les commandes d'un commercial
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, IdtContact, IdtSociete "
+            //tout les types de bon d'un commercial
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
                     + "FROM Bon "
-                    + "WHERE Type = '" + type + "' AND IdtContact = " + id_commercial;
+                    + "WHERE IdtContact = " + id_commercial + " AND BitChg = 0 AND BitSup = 0";
         }
 
         Log.d("Requete", requete);
@@ -538,6 +556,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setTransporteur(c.getString(c.getColumnIndex("Transporteur")));
                     ligne.setCommercial(getCommercial(c.getInt(c.getColumnIndex("IdtContact"))));
                     ligne.setClient(getClient(c.getInt(c.getColumnIndex("IdtSociete"))));
+                    ligne.setAuteur(c.getString(c.getColumnIndex("Auteur")));
                     ligne.setLignesBon(getLignesCommande(c.getInt(c.getColumnIndex("IdtBon"))));
 
                     //On ajoute la commande
@@ -593,7 +612,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return lignes;
     }
 
-    public List<Societe> getSocietes(String clauseWhere){
+    public List<Societe> getSocietes(String type){
 
         List<Societe> societes = new ArrayList<Societe>();
         String requete = "";
@@ -602,7 +621,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "soc.Auteur, cc.Couleur, ifnull(COUNT(con.IdtContact),0) AS Nb " +
                 "FROM Societe soc LEFT JOIN Contact con ON soc.IdtSociete = con.IdtSociete AND con.BitSup = 0 " +
                 "INNER JOIN CorrespCouleur cc ON soc.Auteur = cc.Nom " +
-                "WHERE soc.Type = 'C' AND soc.BitSup = 0 GROUP BY soc.IdtSociete ORDER BY soc.Nom";
+                "WHERE soc.Type = '" + type + "' AND soc.BitSup = 0 GROUP BY soc.IdtSociete ORDER BY soc.Nom";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
@@ -636,6 +655,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return societes;
+    }
+
+    public Cursor getCurseurClient(){
+
+        String requete = "";
+
+        requete = "SELECT soc.IdtSociete as _id, soc.Nom, soc.Adresse1, soc.Adresse2, soc.CodePostal, soc.Ville, soc.Pays, soc.Type, soc.Commentaire, " +
+                "soc.Auteur, cc.Couleur, ifnull(COUNT(con.IdtContact),0) AS Nb " +
+                "FROM Societe soc LEFT JOIN Contact con ON soc.IdtSociete = con.IdtSociete AND con.BitSup = 0 " +
+                "INNER JOIN CorrespCouleur cc ON soc.Auteur = cc.Nom " +
+                "WHERE soc.BitSup = 0 GROUP BY soc.IdtSociete ORDER BY soc.Nom";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        return c;
     }
 
     public List<Contact> getContacts(int id_societe, String clauseWhere){
@@ -829,6 +864,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             info = null;
 
         return info;
+    }
+
+    /**********************************
+     * RECHERCHES
+     *********************************/
+
+    public List<Societe> rechercherSociete(String type, String recherche){
+        List<Societe> societes = new ArrayList<Societe>();
+        String requete = "";
+
+        requete = "SELECT soc.IdtSociete, soc.Nom, soc.Adresse1, soc.Adresse2, soc.CodePostal, soc.Ville, soc.Pays, soc.Type, soc.Commentaire, " +
+                "soc.Auteur, cc.Couleur, ifnull(COUNT(con.IdtContact),0) AS Nb " +
+                "FROM Societe soc LEFT JOIN Contact con ON soc.IdtSociete = con.IdtSociete AND con.BitSup = 0 " +
+                "INNER JOIN CorrespCouleur cc ON soc.Auteur = cc.Nom " +
+                "WHERE soc.Type = '" + type + "' AND soc.Nom LIKE '%" + recherche + "%' AND soc.BitSup = 0 GROUP BY soc.IdtSociete ORDER BY soc.Nom";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les sociétés pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+                do {
+
+                    Societe ligne = new Societe();
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtSociete")));
+                    ligne.setNom(c.getString(c.getColumnIndex("Nom")));
+                    ligne.setAdresse1(c.getString(c.getColumnIndex("Adresse1")));
+                    ligne.setAdresse2(c.getString(c.getColumnIndex("Adresse2")));
+                    ligne.setCodePostal(c.getString(c.getColumnIndex("CodePostal")));
+                    ligne.setVille(c.getString(c.getColumnIndex("Ville")));
+                    ligne.setPays(c.getString(c.getColumnIndex("Pays")));
+                    ligne.setType(c.getString(c.getColumnIndex("Type")));
+                    ligne.setCommentaire(c.getString(c.getColumnIndex("Commentaire")));
+                    ligne.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+                    ligne.setNb_contact(c.getInt(c.getColumnIndex("Nb")));
+                    ligne.setCouleur(c.getString(c.getColumnIndex("Couleur")));
+
+                    //On ajoute la société
+                    societes.add(ligne);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return societes;
     }
 
     /***************************
@@ -1750,7 +1833,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void viderTables(){
 
-        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteDatabase db = this.getWritableDatabase();
 
         db.execSQL("DELETE FROM Societe");
         db.execSQL("DELETE FROM Contact");
@@ -1760,7 +1843,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM Produit");
         db.execSQL("DELETE FROM Stock");
         db.execSQL("DELETE FROM Objectif");
-        db.execSQL("DELETE FROM Parametre");
+        db.execSQL("DELETE FROM Parametre WHERE IdtCompte != 0");
         db.execSQL("DELETE FROM Reponse");
         db.execSQL("DELETE FROM Satisfaction");
         db.execSQL("DELETE FROM CorrespId");

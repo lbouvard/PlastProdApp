@@ -137,17 +137,26 @@ public class MenuActivity extends ActionBarActivity implements ConfirmationSynch
     }
 
     public void ouvrirClient(){
+
         Intent activite = new Intent(this, ClientActivity.class);
+
+        activite.putExtra("Type", "C");
+
         startActivity(activite);
     }
 
     public void ouvrirProspect(){
-        Intent activite = new Intent(this, ProspectActivity.class);
+
+        Intent activite = new Intent(this, ClientActivity.class);
+
+        activite.putExtra("Type", "P");
+
         startActivity(activite);
     }
 
     public void ouvrirBon(){
-        Intent activite = new Intent(this, BonActivity.class);
+
+        Intent activite = new Intent(this, ChoixClientActivity.class);
         startActivity(activite);
     }
 

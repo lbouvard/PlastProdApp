@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Contact;
-import sqlite.helper.Societe;
 
 public class FormulaireContact extends ActionBarActivity {
 
@@ -71,6 +70,11 @@ public class FormulaireContact extends ActionBarActivity {
             //commentaire
             etGenerique = (EditText) findViewById(R.id.etCommentaire);
             etGenerique.setText(contact_en_cours.getCommentaire());
+        }
+        else{
+            //code postal
+            etGenerique = (EditText) findViewById(R.id.etPays);
+            etGenerique.setText("FRANCE");
         }
     }
 
@@ -133,17 +137,47 @@ public class FormulaireContact extends ActionBarActivity {
 
         Contact contact = new Contact();
 
-        contact.setNom(((EditText) findViewById(R.id.etNom)).getText().toString());
-        contact.setPrenom(((EditText) findViewById(R.id.etPrenom)).getText().toString());
-        contact.setPoste(((EditText) findViewById(R.id.etPoste)).getText().toString());
+        contact.setNom(Outils.miseEnMajuscule(((EditText) findViewById(R.id.etNom)).getText().toString()));
+        contact.setPrenom( Outils.premiereLettreEnMajuscule(((EditText) findViewById(R.id.etPrenom)).getText().toString()) );
+        contact.setPoste( Outils.premiereLettreEnMajuscule(((EditText) findViewById(R.id.etPoste)).getText().toString()) );
+
+        if( !Outils.verifierNumero( ((EditText) findViewById(R.id.etFixe)).getText().toString()) ){
+            Toast notification = Toast.makeText(context, "Veuillez entrer un numéro au format international (Ex : +33321457891).", duree);
+            notification.show();
+            return;
+        }
         contact.setTel_fixe(((EditText) findViewById(R.id.etFixe)).getText().toString());
+
+        if( !Outils.verifierNumero( ((EditText) findViewById(R.id.etMobile)).getText().toString()) ){
+            Toast notification = Toast.makeText(context, "Veuillez entrer un numéro au format international (Ex : +33621457891).", duree);
+            notification.show();
+            return;
+        }
         contact.setTel_mobile(((EditText) findViewById(R.id.etMobile)).getText().toString());
+
+        if( !Outils.verifierNumero( ((EditText) findViewById(R.id.etFax)).getText().toString()) ){
+            Toast notification = Toast.makeText(context, "Veuillez entrer un numéro au format international (Ex : +33321457891).", duree);
+            notification.show();
+            return;
+        }
         contact.setFax(((EditText) findViewById(R.id.etFax)).getText().toString());
-        contact.setEmail(((EditText) findViewById(R.id.etMail)).getText().toString());
-        contact.setAdresse(((EditText) findViewById(R.id.etAdresse)).getText().toString());
+
+        if( !Outils.verifierEmail(((EditText) findViewById(R.id.etMail)).getText().toString()) ){
+            Toast notification = Toast.makeText(context, "Veuillez entrer une adresse Email valide.", duree);
+            notification.show();
+            return;
+        }
+        contact.setEmail( (((EditText) findViewById(R.id.etMail)).getText().toString()).toLowerCase() );
+        contact.setAdresse( (((EditText) findViewById(R.id.etAdresse)).getText().toString()).toUpperCase() );
+
+        if( !Outils.verifierCodePostal( ((EditText) findViewById(R.id.etCodePostal)).getText().toString()) ){
+            Toast notification = Toast.makeText(context, "Veuillez entrer un code postal valide.", duree);
+            notification.show();
+            return;
+        }
         contact.setCode_postal(((EditText) findViewById(R.id.etCodePostal)).getText().toString());
-        contact.setVille(((EditText) findViewById(R.id.etVille)).getText().toString());
-        contact.setPays(((EditText) findViewById(R.id.etPays)).getText().toString());
+        contact.setVille( Outils.miseEnMajuscule(((EditText) findViewById(R.id.etVille)).getText().toString()) );
+        contact.setPays( Outils.miseEnMajuscule(((EditText) findViewById(R.id.etPays)).getText().toString()) );
         contact.setCommentaire(((EditText) findViewById(R.id.etCommentaire)).getText().toString());
         contact.setId_societe(societe_id);
 

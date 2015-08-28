@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,7 +47,7 @@ public class HistocdAdaptateur extends BaseExpandableListAdapter{
             LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            convertView = infalInflater.inflate(R.layout.item_histocd, null);
+            convertView = infalInflater.inflate(R.layout.item_histobon, null);
         }
 
         TextView txtNomArticle = (TextView) convertView.findViewById(R.id.nom_article);
@@ -96,7 +95,7 @@ public class HistocdAdaptateur extends BaseExpandableListAdapter{
 
             LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = infalInflater.inflate(R.layout.liste_histocd, null);
+            convertView = infalInflater.inflate(R.layout.liste_histobon, null);
         }
 
         TextView txtIdtCommande = (TextView) convertView.findViewById(R.id.id_commande);

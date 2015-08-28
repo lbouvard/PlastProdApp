@@ -31,24 +31,24 @@
         <activity
             android:name=".ClientActivity"
             android:label="@string/title_activity_client"
+            android:launchMode="singleTop"
             android:parentActivityName=".MenuActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.MenuActivity" />
-        </activity>
-        <activity
-            android:name=".ProspectActivity"
-            android:label="@string/title_activity_prospect"
-            android:parentActivityName=".MenuActivity" >
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.plastprod.plastprodapp.MenuActivity" />
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
             android:name=".ContactActivity"
             android:label="@string/title_activity_contact"
-            android:parentActivityName=".ClientActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".ClientActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.ClientActivity" />
@@ -56,10 +56,11 @@
         <activity
             android:name=".BonActivity"
             android:label="@string/title_activity_bon"
-            android:parentActivityName=".MenuActivity" >
+            android:launchMode="singleTop"
+            android:parentActivityName=".ChoixClientActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.plastprod.plastprodapp.MenuActivity" />
+                android:value="com.plastprod.plastprodapp.ChoixClientActivity" />
         </activity>
         <activity
             android:name=".SuiviActivity"
@@ -85,15 +86,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.ClientActivity" />
         </activity>
-        <activity android:name=".RechercherActivity" >
+        <!--
+        <activity
+            android:name=".RechercherActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
+        -->
         <activity
             android:name=".AdminActivity"
             android:label="@string/title_activity_admin"
@@ -103,7 +107,7 @@
                 android:value="com.plastprod.plastprodapp.AccueilActivity" />
         </activity>
         <activity
-            android:name=".HistocdActivity"
+            android:name=".HistoBonActivity"
             android:label="@string/title_activity_histocd"
             android:parentActivityName=".ClientActivity" >
             <meta-data
@@ -117,6 +121,22 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.ContactActivity" />
+        </activity>
+        <activity
+            android:name=".FormulaireBon"
+            android:label="@string/title_activity_affcommande"
+            android:parentActivityName=".BonActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.BonActivity" />
+        </activity>
+        <activity
+            android:name=".ChoixClientActivity"
+            android:label="@string/title_activity_choix_client"
+            android:parentActivityName=".MenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.MenuActivity" />
         </activity>
     </application>
 

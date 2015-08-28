@@ -22,6 +22,14 @@ public class FormulaireClient extends ActionBarActivity {
 
     Context context;
     int duree = Toast.LENGTH_LONG;
+    String type;
+
+    private static boolean TOUT_BON;
+    private static String TYPE_BON;
+    private static String MSG_PROP;
+    private static String MSG_MDF;
+    private static String MSG_AJT;
+    private static String MSG_EXISTE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +41,16 @@ public class FormulaireClient extends ActionBarActivity {
         //on recupère les données
         Intent intent = getIntent();
         client_en_cours = (Societe) intent.getSerializableExtra("Client");
+        type = intent.getStringExtra("Type");
+
+        //on initialise les message selon client/prospect
+        initialiserConstante(type);
 
         //Seulement si on est en modification/consultation
         if( client_en_cours != null ) {
+            //titre de l'activité
+            setTitle("Modification");
+
             //nom
             etGenerique = (EditText) findViewById(R.id.etNom);
             etGenerique.setText(client_en_cours.getNom());
@@ -57,6 +72,13 @@ public class FormulaireClient extends ActionBarActivity {
             //commentaire
             etGenerique = (EditText) findViewById(R.id.etCommentaire);
             etGenerique.setText(client_en_cours.getCommentaire());
+        }
+        else{
+            //titre de l'activité
+            setTitle("Ajout");
+
+            etGenerique = (EditText) findViewById(R.id.etPays);
+            etGenerique.setText("FRANCE");
         }
     }
 
@@ -129,14 +151,20 @@ public class FormulaireClient extends ActionBarActivity {
 
         Societe client = new Societe();
 
-        client.setNom(((EditText) findViewById(R.id.etNom)).getText().toString());
-        client.setAdresse1(((EditText) findViewById(R.id.etAdresse)).getText().toString());
-        client.setAdresse2(((EditText) findViewById(R.id.etComplement)).getText().toString());
+        client.setNom(Outils.miseEnMajuscule(((EditText) findViewById(R.id.etNom)).getText().toString()));
+        client.setAdresse1( Outils.miseEnMajuscule(((EditText) findViewById(R.id.etAdresse)).getText().toString()) );
+        client.setAdresse2( Outils.miseEnMajuscule(((EditText) findViewById(R.id.etComplement)).getText().toString()) );
+
+        if( !Outils.verifierCodePostal( ((EditText) findViewById(R.id.etCodePostal)).getText().toString()) ){
+            Toast notification = Toast.makeText(context, "Veuillez entrer un code postal valide.", duree);
+            notification.show();
+            return;
+        }
         client.setCodePostal(((EditText) findViewById(R.id.etCodePostal)).getText().toString());
-        client.setVille(((EditText) findViewById(R.id.etVille)).getText().toString());
-        client.setPays(((EditText) findViewById(R.id.etPays)).getText().toString());
+        client.setVille(Outils.miseEnMajuscule(((EditText) findViewById(R.id.etVille)).getText().toString()));
+        client.setPays(Outils.miseEnMajuscule(((EditText) findViewById(R.id.etPays)).getText().toString()));
         client.setCommentaire(((EditText) findViewById(R.id.etCommentaire)).getText().toString());
-        client.setType("C");
+        client.setType(type);
 
         if( client_en_cours != null ){
 
@@ -148,7 +176,7 @@ public class FormulaireClient extends ActionBarActivity {
             }
             else{
                 //Message d'erreur à afficher
-                Toast notification = Toast.makeText(context, "Vous devez être le propriétaire de ce client pour le modifier.", duree);
+                Toast notification = Toast.makeText(context, MSG_PROP, duree);
                 notification.show();
             }
         }
@@ -167,18 +195,18 @@ public class FormulaireClient extends ActionBarActivity {
         if( !db.clientExiste(client.getNom(), client.getId()) ) {
             db.majSociete(client);
 
-            Toast notification = Toast.makeText(context, "Le client a été modifié avec succès.", duree);
+            Toast notification = Toast.makeText(context, MSG_MDF, duree);
             notification.show();
         }
         else {
-            Toast notification = Toast.makeText(context, "Attention, un client existe déjà sous ce nom.", duree);
+            Toast notification = Toast.makeText(context, MSG_EXISTE, duree);
             notification.show();
         }
 
         db.close();
 
         Intent returnIntent = new Intent();
-        setResult(RESULT_OK,returnIntent);
+        setResult(RESULT_OK, returnIntent);
 
         finish();
     }
@@ -191,11 +219,11 @@ public class FormulaireClient extends ActionBarActivity {
         if( !db.clientExiste(client.getNom(), -1) ) {
             db.ajouterClient(client, "C");
 
-            Toast notification = Toast.makeText(context, "Le client a été ajouté avec succès.", duree);
+            Toast notification = Toast.makeText(context, MSG_AJT, duree);
             notification.show();
         }
         else{
-            Toast notification = Toast.makeText(context, "Attention, un client existe déjà sous ce nom.", duree);
+            Toast notification = Toast.makeText(context, MSG_EXISTE, duree);
             notification.show();
         }
 
@@ -222,12 +250,35 @@ public class FormulaireClient extends ActionBarActivity {
     public void afficherCommandes(Societe client){
 
         //on recupère l'activité du formulaire client
-        Intent activite = new Intent(this, HistocdActivity.class);
+        Intent activite = new Intent(this, HistoBonActivity.class);
 
         //on transmert l'objet à la nouvelle activité
         activite.putExtra("Client", client);
+        activite.putExtra("Type", TYPE_BON);
+        activite.putExtra("Bons", TOUT_BON);
 
         //et on affiche le formulaire
         startActivity(activite);
+    }
+
+    public void initialiserConstante(String type){
+
+        if( type.equals("C")){
+            TYPE_BON = "CD";
+            TOUT_BON = true;
+            MSG_PROP = "Vous devez être le propriétaire de ce client pour le modifier.";
+            MSG_MDF = "Le client a été modifié avec succès.";
+            MSG_AJT = "Le client a été ajouté avec succès.";
+            MSG_EXISTE = "Attention, un client existe déjà sous ce nom.";
+        }
+        else{
+            TYPE_BON = "DE";
+            TOUT_BON = false;
+            MSG_PROP = "Vous devez être le propriétaire de ce prospect pour le modifier.";
+            MSG_MDF = "Le prospect a été modifié avec succès.";
+            MSG_AJT = "Le prospect a été ajouté avec succès.";
+            MSG_EXISTE = "Attention, un prospect existe déjà sous ce nom.";
+        }
+
     }
 }

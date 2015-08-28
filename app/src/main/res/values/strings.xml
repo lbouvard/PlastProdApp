@@ -17,7 +17,10 @@
     <string name="title_activity_contact">Contacts</string>
     <string name="title_activity_bon">Bons</string>
     <string name="title_activity_suivi">Suivi commercial</string>
+	
     <string name="title_activity_perf">Suivi des performances</string>
+    <string name="title_activity_affcommande">Commandes</string>
+    <string name="title_activity_devis">Devis</string>
     <string name="action_ajout">Ajouter un contact</string>
     <string name="action_contact">Liste des contacts</string>
     <string name="action_histo">Historique des commandes</string>
@@ -47,6 +50,7 @@
 
     <string name="btn_annuler">Annuler</string>
     <string name="btn_enregistre">Enregistrer</string>
+    <string name="btn_ok">OK</string>
 
     <string name="client_recherche_label">PlastProd</string>
     <string name="client_recherche_hint">Rechercher dans les clients</string>
@@ -70,5 +74,12 @@
     <string name="title_activity_histocd">Commandes</string>
 
     <string name="title_activity_formulaire_contact">Contact</string>
+    <string name="recherche">.RechercherActivity</string>
 
+    <string name="titre_dialog_choix_client">Choississez un client</string>
+    <string name="title_activity_choix_client">Gestion des bons</string>
+
+    <string name="btn_devis">Devis</string>
+    <string name="btn_commande">Commandes</string>
+    <string name="action_ajout_bon">Ajouter</string>
 </resources>

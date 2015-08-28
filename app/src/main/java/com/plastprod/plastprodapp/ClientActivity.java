@@ -1,5 +1,7 @@
 package com.plastprod.plastprodapp;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -8,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.support.v7.widget.SearchView;
+
 import java.util.ArrayList;
 import java.util.List;
 import sqlite.helper.DatabaseHelper;
@@ -19,13 +23,27 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
     DatabaseHelper db;
     ListView lvClient;
     ClientAdaptateur adaptateur;
+    String type;
 
     static final int RETOUR_MAJ = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        type = intent.getStringExtra("Type");
+
         setContentView(R.layout.activity_client);
+
+        //client
+        if( type.equals("C") ) {
+            setTitle("Clients");
+        }
+        else{
+            setTitle("Prospects");
+        }
 
         //utilisateur authentifié
         if( Outils.VerifierSession(getApplicationContext()) ){
@@ -34,7 +52,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
             db = new DatabaseHelper(getApplicationContext());
 
             //récupération des clients
-            liste_client = db.getSocietes(null);
+            liste_client = db.getSocietes(type);
 
             lvClient = (ListView) findViewById(R.id.liste_client);
             lvClient.setOnItemClickListener(this);
@@ -52,6 +70,13 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_client, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_recherche)
+                .getActionView();
+        searchView.setSearchableInfo(searchManager
+                .getSearchableInfo(getComponentName()));
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -77,6 +102,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
 
         //on transmert l'objet à la nouvelle activité
         activite.putExtra("Client", client);
+        activite.putExtra("Type", type);
 
         //et on affiche le formulaire
         startActivityForResult(activite, RETOUR_MAJ);
@@ -93,6 +119,21 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         }
     }
 
+    @Override
+    protected void onNewIntent(Intent intent){
+        setIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //use the query to search
+            majRecherche(query);
+        }
+    }
+
     public void ajouterClient(View vue){
 
         //on recupère l'activité du formulaire client
@@ -102,6 +143,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
 
         //on transmert l'objet à la nouvelle activité
         activite.putExtra("Client", client );
+        activite.putExtra("Type", type);
 
         //et on affiche le formulaire
         startActivityForResult(activite, RETOUR_MAJ);
@@ -122,10 +164,19 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
     public void afficherCommandes(Societe client){
 
         //on recupère l'activité du formulaire client
-        Intent activite = new Intent(this, HistocdActivity.class);
+        Intent activite = new Intent(this, HistoBonActivity.class);
 
         //on transmert l'objet à la nouvelle activité
         activite.putExtra("Client", client);
+
+        if( type.equals("C") ){
+            activite.putExtra("Type", "CD");
+            activite.putExtra("Bons", true);
+        }
+        else{
+            activite.putExtra("Type", "DE");
+            activite.putExtra("Bons", false);
+        }
 
         //et on affiche le formulaire
         startActivity(activite);
@@ -137,7 +188,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         switch (item.getItemId()) {
 
             case R.id.action_recherche:
-                Outils.afficherToast(getApplicationContext(), "bouton recherche sélectionné.");
+                //Outils.afficherToast(getApplicationContext(), "bouton recherche sélectionné.");
                 return true;
 
             default:
@@ -147,7 +198,15 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
 
     public void majListe(){
 
-        liste_client = db.getSocietes(null);
+        liste_client = db.getSocietes(type);
+        adaptateur.clear();
+        adaptateur.addAll(liste_client);
+        adaptateur.notifyDataSetChanged();
+    }
+
+    public void majRecherche(String recherche){
+
+        liste_client = db.rechercherSociete(type, recherche);
         adaptateur.clear();
         adaptateur.addAll(liste_client);
         adaptateur.notifyDataSetChanged();

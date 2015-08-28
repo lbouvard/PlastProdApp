@@ -3,4 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.plastprod.plastprodapp.BonActivity">
 
+    <item android:id="@+id/action_ajout_bon"
+        android:title="@string/action_ajout_bon"
+        android:icon="@drawable/ic_add_shopping_cart_white_48dp"
+        app:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_recherche"
+        android:title="@string/action_recherche"
+        android:icon="@drawable/ic_search_white_48dp"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
 </menu>

@@ -5,7 +5,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 
 import java.util.ArrayList;
@@ -16,13 +15,16 @@ import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Societe;
 
 
-public class HistocdActivity extends ActionBarActivity {
+public class HistoBonActivity extends ActionBarActivity {
 
     HistocdAdaptateur adaptateur;
     ExpandableListView vue;
     List<Bon> liste_bons = new ArrayList<Bon>();
     Societe client_en_cours;
     DatabaseHelper db;
+
+    boolean recupererTousTypeBon;
+    String typeBon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +33,18 @@ public class HistocdActivity extends ActionBarActivity {
         //on récupère la société passé en paramètre
         Intent intent = getIntent();
         client_en_cours = (Societe) intent.getSerializableExtra("Client");
+        recupererTousTypeBon = intent.getBooleanExtra("Bons", false);
+        typeBon = intent.getStringExtra("Type");
 
         //on utilise le layout de l'activité
-        setContentView(R.layout.activity_histocd);
+        setContentView(R.layout.activity_histobon);
 
         //on récupère la liste
         vue = (ExpandableListView) findViewById(R.id.lvListeCommande);
 
         //recupération des bons du client demandé
         db = new DatabaseHelper(getApplicationContext());
-        liste_bons = db.getBons("CD", client_en_cours.getId(), -1);
+        liste_bons = db.getBons(typeBon, client_en_cours.getId(), -1, recupererTousTypeBon);
 
         //et on alimente la liste
         adaptateur = new HistocdAdaptateur(this, liste_bons);

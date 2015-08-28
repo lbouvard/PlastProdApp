@@ -6,6 +6,7 @@
     <item android:id="@+id/action_recherche"
         android:title="@string/action_recherche"
         android:icon="@drawable/ic_search_white_48dp"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
 
 </menu>
