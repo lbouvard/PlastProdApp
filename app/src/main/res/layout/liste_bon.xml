@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="5dp" >
+
+    <!-- Nom du module -->
+    <TextView android:text="Date" android:id="@+id/datecommande"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/aDate"
+        android:layout_toStartOf="@+id/imageView"
+        android:layout_marginEnd="42dp"
+        android:textColor="@color/noir">
+    </TextView>
+
+    <!--<TextView android:text="Etat" android:id="@+id/aDate"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:layout_alignTop="@+id/aContact"
+        android:layout_toStartOf="@+id/aEtat"
+        android:textColor="@color/noir">
+    </TextView>-->
+
+    <TextView android:text="CD1254" android:id="@+id/idbon"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/aDate"
+        android:layout_weight="1"
+        android:textColor="@color/noir">
+    </TextView>
+
+    <ImageView android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_play_arrow_black_36dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/imageView" />
+</RelativeLayout>
