@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 56;
+    private static final int DATABASE_VERSION = 57;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -94,7 +94,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_LIGNE = "CREATE TABLE LigneCommande (Idt INTEGER PRIMARY KEY, Quantite INTEGER NOT NULL, "
-            + "Code TEXT, Nom TEXT NOT NULL, Description TEXT, PrixUnitaire REAL NOT NULL, Remise REAL NOT NULL, "
+            + "Code TEXT, Nom TEXT NOT NULL, Description TEXT, PrixUnitaire REAL NOT NULL, Remise INTEGER NOT NULL, "
             + "BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL, IdtBon INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtBon) REFERENCES Bon(IdtBon))";
 
@@ -451,6 +451,43 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return commercial;
     }
 
+    public LigneCommande getArticle(int id_article){
+
+        LigneCommande ligne = new LigneCommande();
+
+        String requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtBon "
+                + "FROM LigneCommande "
+                + "WHERE Idt = " + id_article ;
+
+        Log.d("Requete", requete);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        //On parcours toutes les lignes d'articles.
+        if( c != null ) {
+
+            if (c.moveToFirst()) {
+
+                    ligne.setId(c.getInt(c.getColumnIndex("Idt")));
+                    ligne.setCode(c.getString(c.getColumnIndex("Code")));
+                    ligne.setDescription(c.getString(c.getColumnIndex("Description")));
+                    ligne.setId_bon(c.getInt(c.getColumnIndex("IdtBon")));
+                    ligne.setNom(c.getString(c.getColumnIndex("Nom")));
+                    ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex("PrixUnitaire")));
+                    ligne.setQuantite(c.getInt(c.getColumnIndex("Quantite")));
+                    ligne.setRemise(c.getInt(c.getColumnIndex("Remise")));
+
+                    ligne.calculerPrixRemise();
+                    ligne.calculerPrixTotal();
+            }
+
+            c.close();
+        }
+
+        return ligne;
+    }
+
     public String getAdresseIpServeur(){
 
         String retour;
@@ -596,7 +633,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex("PrixUnitaire")));
                     ligne.setQuantite(c.getInt(c.getColumnIndex("Quantite")));
-                    ligne.setRemise(c.getDouble(c.getColumnIndex("Remise")));
+                    ligne.setRemise(c.getInt(c.getColumnIndex("Remise")));
 
                     ligne.calculerPrixRemise();
                     ligne.calculerPrixTotal();
@@ -803,7 +840,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Produit> produits = new ArrayList<Produit>();
         String requete = "";
 
-        requete = "SELECT IdtProduit, Nom, Description, Categorie, Code, Prix FROM Produit ";
+        requete = "SELECT prod.IdtProduit _id, prod.Nom, prod.Description, prod.Categorie, prod.Code, prod.Prix, st.Delais "
+                + "FROM Produit prod "
+                + "INNER JOIN Stock st ON prod.IdtProduit = st.IdtEntree";
 
         Log.d("Requete", requete);
 
@@ -816,12 +855,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     Produit ligne = new Produit();
 
-                    ligne.setId(c.getInt(c.getColumnIndex("IdtProduit")));
+                    ligne.setId(c.getInt(c.getColumnIndex("_id")));
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setDescription(c.getString(c.getColumnIndex("Description")));
                     ligne.setCategorie(c.getString(c.getColumnIndex("Categorie")));
                     ligne.setCode(c.getString(c.getColumnIndex("Code")));
                     ligne.setPrix(c.getDouble(c.getColumnIndex("Prix")));
+                    ligne.setDelais(c.getInt(c.getColumnIndex("Delais")));
 
                     //On ajoute un produit à la liste
                     produits.add(ligne);
@@ -1078,11 +1118,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         ContentValues valeurs = new ContentValues();
         valeurs.put("Quantite", ligne.getQuantite());
-        valeurs.put("Code", ligne.getCode());
+        valeurs.put("Remise", ligne.getRemise() );
+        /*valeurs.put("Code", ligne.getCode());
         valeurs.put("Nom", ligne.getNom() );
         valeurs.put("Description", ligne.getDescription() );
-        valeurs.put("Remise", ligne.getRemise() );
-        valeurs.put("PrixUnitaire", ligne.getPrixUnitaire() );
+        valeurs.put("PrixUnitaire", ligne.getPrixUnitaire() );*/
 
         // updating row
         db.update(TABLE_LIGNE, valeurs, "Idt = ?",
@@ -1413,7 +1453,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setNom(c.getString(c.getColumnIndex("Nom")));
                     ligne.setDescription(c.getString(c.getColumnIndex("Description")));
                     ligne.setPrixUnitaire(c.getDouble(c.getColumnIndex("PrixUnitaire")));
-                    ligne.setRemise(c.getDouble(c.getColumnIndex("Remise")));
+                    ligne.setRemise(c.getInt(c.getColumnIndex("Remise")));
                     ligne.setId_bon(c.getInt(c.getColumnIndex("IdtBon")));
 
                     if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {

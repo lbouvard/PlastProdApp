@@ -82,4 +82,14 @@
     <string name="btn_devis">Devis</string>
     <string name="btn_commande">Commandes</string>
     <string name="action_ajout_bon">Ajouter</string>
+    <string name="title_activity_article_dialog">ArticleDialog</string>
+
+    <string name="article_ajout">Ajouter un produit</string>
+    <string name="article_modification">Modification</string>
+
+    <string name="btn_stats">Statistiques</string>
+    <string name="btn_livraison">Suivi des livraisons</string>
+    <string name="btn_calendrier">Calendrier</string>
+    <string name="btn_satisfaction">Satisfaction client</string>
+
 </resources>

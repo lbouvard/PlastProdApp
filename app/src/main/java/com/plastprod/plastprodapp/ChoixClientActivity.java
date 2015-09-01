@@ -19,7 +19,7 @@ public class ChoixClientActivity extends ActionBarActivity implements ChoixClien
 
         setContentView(R.layout.activity_choix_client);
 
-        //utilisateur authentifié
+        //utilisateur authentifiÃ©
         if( Outils.VerifierSession(getApplicationContext()) ) {
             //Dialogue pour choisir le client
             DialogFragment choix_client = new ChoixClientDialog();

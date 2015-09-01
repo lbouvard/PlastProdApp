@@ -1,9 +1,14 @@
 package com.plastprod.plastprodapp;
 
+import android.content.ContentUris;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.CalendarContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 public class SuiviActivity extends ActionBarActivity {
@@ -34,5 +39,19 @@ public class SuiviActivity extends ActionBarActivity {
         }*/
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void lancerGoogleCalendar(View vue){
+
+        // A date-time specified in milliseconds since the epoch.
+        long startMillis = System.currentTimeMillis();
+
+        Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
+        builder.appendPath("time");
+        ContentUris.appendId(builder, startMillis);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW).setData(builder.build());
+
+        startActivity(intent);
     }
 }

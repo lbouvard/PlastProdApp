@@ -11,6 +11,7 @@ public class Produit {
     private String categorie;
     private String code;
     private Double prix;
+    private int delais;
 
     public Produit() {
     }
@@ -61,5 +62,18 @@ public class Produit {
 
     public void setPrix(Double prix) {
         this.prix = prix;
+    }
+
+    public int getDelais() {
+        return delais;
+    }
+
+    public void setDelais(int delais) {
+        this.delais = delais;
+    }
+
+    @Override
+    public String toString(){
+        return code + " - " + nom;
     }
 }

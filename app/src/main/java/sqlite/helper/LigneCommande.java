@@ -14,7 +14,7 @@ public class LigneCommande implements Serializable{
     private String code;
     private String nom;
     private String description;
-    private Double remise;
+    private int remise;
     private Double prixUnitaire;
     private BigDecimal prixRemise;
     private BigDecimal prixTotal;
@@ -22,16 +22,6 @@ public class LigneCommande implements Serializable{
     private boolean ASupprimer;
 
     public LigneCommande() {
-    }
-
-    public LigneCommande(int quantite, String code, String nom, String description, Double prix_unitaire) {
-        this.quantite = quantite;
-        this.code = code;
-        this.nom = nom;
-        this.description = description;
-        this.remise = 0.0;
-        this.prixUnitaire = prix_unitaire;
-        calculerPrixTotal();
     }
 
     public int getId() {
@@ -78,11 +68,11 @@ public class LigneCommande implements Serializable{
         this.id_bon = id_bon;
     }
 
-    public Double getRemise() {
+    public int getRemise() {
         return remise;
     }
 
-    public void setRemise(Double remise) {
+    public void setRemise(int remise) {
         this.remise = remise;
     }
 
@@ -125,7 +115,7 @@ public class LigneCommande implements Serializable{
 
     public void calculerPrixTotal(){
 
-        if( remise != 0.0 ){
+        if( remise > 0 ){
             calculerPrixRemise();
         }
 

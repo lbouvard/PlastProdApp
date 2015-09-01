@@ -1,0 +1,183 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.plastprod.plastprodapp.ArticleDialog">
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:contentDescription="Entête"
+        android:background="@drawable/btn_carre_orange"
+        android:id="@+id/entete_article_dialog"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ajouter un produit"
+        android:id="@+id/titre_article_dialog"
+        android:textColor="@color/blanc"
+        android:textSize="18sp"
+        android:layout_marginTop="8sp"
+        android:layout_marginStart="10sp"
+        android:textStyle="bold"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dropdown_article"
+        android:layout_below="@+id/entete_article_dialog"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10sp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/code_produit"
+        android:text="Code"
+        android:textColor="@color/gris_clair"
+        android:textSize="13sp"
+        android:paddingTop="5sp"
+        android:layout_below="@+id/dropdown_article"
+        android:layout_marginStart="20sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Produit"
+        android:textColor="@color/gris_clair"
+        android:textSize="13sp"
+        android:paddingTop="5sp"
+        android:layout_below="@+id/dropdown_article"
+        android:layout_toRightOf="@+id/code_produit"
+        android:layout_marginEnd="20sp"
+        android:id="@+id/nom_produit"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textColor="@color/gris_clair"
+        android:textSize="13sp"
+        android:paddingTop="5sp"
+        android:layout_below="@+id/nom_produit"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:id="@+id/description_produit"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prix"
+        android:textColor="@color/gris_clair"
+        android:textSize="13sp"
+        android:paddingTop="5sp"
+        android:layout_below="@+id/description_produit"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:id="@+id/prix_produit"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Disponibilité"
+        android:textColor="@color/gris_clair"
+        android:textSize="13sp"
+        android:paddingTop="5sp"
+        android:layout_below="@+id/prix_produit"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:id="@+id/disponibilite"/>
+
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/table_egal"
+            android:layout_below="@+id/disponibilite"
+            android:stretchColumns="*"
+            android:layout_marginStart="20sp"
+            android:layout_marginEnd="20sp"
+            android:paddingTop="10sp">
+
+            <TableRow
+                android:id="@+id/ligne_table"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remise (%)"
+                    android:width="100sp"
+                    android:id="@+id/remise_produit"
+                    android:textSize="16sp"
+                    android:labelFor="@+id/edt_remise"
+                    android:textColor="@color/noir" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:inputType="number"
+                    android:text="0"
+                    android:gravity="center"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/edt_remise"
+                    android:textSize="16sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/ligne_quantite"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Quantité"
+                    android:id="@+id/quantite_produit"
+                    android:textSize="16sp"
+                    android:labelFor="@+id/edt_quantite"
+                    android:textColor="@color/noir" />
+
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:text="1"
+                    android:id="@+id/edt_quantite"
+                    android:textSize="16sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/ligne_total"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="35sp"
+                    android:text="Total"
+                    android:id="@+id/lbl_prix_total"
+                    android:textSize="16sp"
+                    android:paddingTop="10sp"
+                    android:textColor="@color/noir" />
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/prix_total"
+                    android:text="0,00 €"
+                    android:gravity="center"
+                    android:textSize="16sp" />
+
+            </TableRow>
+
+         </TableLayout>
+
+</RelativeLayout>
