@@ -32,6 +32,7 @@ public class Bon implements Serializable{
     private Contact commercial;
 
     private boolean ASupprimer;
+    private int devis_id = 0;
     private int client_id;
     private int commercial_id;
 
@@ -177,5 +178,13 @@ public class Bon implements Serializable{
         }
 
         return total;
+    }
+
+    public int getDevis_id() {
+        return devis_id;
+    }
+
+    public void setDevis_id(int devis_id) {
+        this.devis_id = devis_id;
     }
 }

@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 57;
+    private static final int DATABASE_VERSION = 61;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -60,9 +60,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_BON = "CREATE TABLE Bon (IdtBon INTEGER PRIMARY KEY, DateCommande TEXT NOT NULL, "
             + "EtatCommande TEXT NOT NULL, Commentaire TEXT, Type TEXT NOT NULL, Suivi TEXT NOT NULL, Transporteur TEXT NOT NULL, Auteur TEXT NOT NULL, DateChg TEXT, BitChg  INTEGER NOT NULL, "
-            + "BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, IdtContact INTEGER NOT NULL, "
-            + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete),"
-            + "FOREIGN KEY (IdtContact) REFERENCES Contact(IdtContact))";
+            + "BitAjout INTEGER NOT NULL, BitSup INTEGER NOT NULL, ATraiter INTEGER NOT NULL, Devis_id INTEGER, Societe_id INTEGER NOT NULL, Contact_id INTEGER NOT NULL, "
+            + "FOREIGN KEY (Societe_id) REFERENCES Societe(IdtSociete),"
+            + "FOREIGN KEY (Contact_id) REFERENCES Contact(IdtContact))";
 
     private static final String CREATE_TABLE_STOCK = "CREATE TABLE Stock (IdtEntree INTEGER PRIMARY KEY, "
             + "Quantite INTEGER NOT NULL, DelaisMoy INTEGER NOT NULL, Delais INTEGER NOT NULL)";
@@ -231,8 +231,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("BitChg", 0);
         valeurs.put("BitAjout", 1);
         valeurs.put("BitModif", 0);
-        valeurs.put("IdtSociete", devis.getClient().getId());
-        valeurs.put("IdtContact", devis.getCommercial().getId());
+        valeurs.put("Societe_id", devis.getClient().getId());
+        valeurs.put("Contact_id", devis.getCommercial().getId());
 
         //insertion du devis
         long devis_id = db.insert(TABLE_BON, null, valeurs);
@@ -246,7 +246,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //Ajouter un bon de commande
-    public long ajouterBonCommande(Bon bon, LigneCommande[] lignes){
+    public long ajouterBonCommande(Bon bon, LigneCommande[] lignes, int devis_id){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
@@ -260,8 +260,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("BitChg", 0);
         valeurs.put("BitAjout", 1);
         valeurs.put("BitModif", 0);
-        valeurs.put("IdtSociete", bon.getClient().getId());
-        valeurs.put("IdtContact", bon.getCommercial().getId());
+
+        if( devis_id != -1 )
+            valeurs.put("Devis_id", devis_id);
+
+        valeurs.put("Societe_id", bon.getClient().getId());
+        valeurs.put("Contact_id", bon.getCommercial().getId());
 
         //insertion du bon de commande
         long bon_id = db.insert(TABLE_BON, null, valeurs);
@@ -541,39 +545,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if( id_societe == -1 && id_commercial == -1 && !tout){
             //tous les devis ou les commandes
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, Contact_id, Societe_id "
                            + "FROM Bon "
                            + "WHERE Type = '" + type + "' AND BitChg = 0 AND BitSup = 0";
         }
         else if( id_societe == -1 && id_commercial == -1 && tout){
             //tous les types de bon
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, Contact_id, Societe_id "
                     + "FROM Bon "
                     + "WHERE BitChg = 0 AND BitSup = 0";
         }
         else if( id_commercial == -1 && !tout ){
             //les devis ou les commandes d'un client
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, Contact_id, Societe_id "
                     + "FROM Bon "
-                    + "WHERE Type = '" + type + "' AND IdtSociete = " + id_societe + " AND BitChg = 0 AND BitSup = 0";
+                    + "WHERE Type = '" + type + "' AND Societe_id = " + id_societe + " AND BitChg = 0 AND BitSup = 0";
         }
         else if( id_commercial == -1 && tout ){
             //les devis et les commandes d'un client
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, Contact_id, Societe_id "
                     + "FROM Bon "
-                    + "WHERE IdtSociete = " + id_societe + " AND BitChg = 0 AND BitSup = 0";
+                    + "WHERE Societe_id = " + id_societe + " AND BitChg = 0 AND BitSup = 0";
         }
         else if( !tout ){
             //les bons ou les commandes d'un commercial
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, Contact_id, Societe_id "
                     + "FROM Bon "
-                    + "WHERE Type = '" + type + "' AND IdtContact = " + id_commercial + " AND BitChg = 0 AND BitSup = 0";
+                    + "WHERE Type = '" + type + "' AND Contact_id = " + id_commercial + " AND BitChg = 0 AND BitSup = 0";
         }
         else {
             //tout les types de bon d'un commercial
-            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, IdtContact, IdtSociete "
+            requete = "SELECT IdtBon, DateCommande, EtatCommande, Suivi, Transporteur, Auteur, Contact_id, Societe_id "
                     + "FROM Bon "
-                    + "WHERE IdtContact = " + id_commercial + " AND BitChg = 0 AND BitSup = 0";
+                    + "WHERE Contact_id = " + id_commercial + " AND BitChg = 0 AND BitSup = 0";
         }
 
         Log.d("Requete", requete);
@@ -591,8 +595,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     ligne.setEtat_commande(c.getString(c.getColumnIndex("EtatCommande")));
                     ligne.setSuivi(c.getString(c.getColumnIndex("Suivi")));
                     ligne.setTransporteur(c.getString(c.getColumnIndex("Transporteur")));
-                    ligne.setCommercial(getCommercial(c.getInt(c.getColumnIndex("IdtContact"))));
-                    ligne.setClient(getClient(c.getInt(c.getColumnIndex("IdtSociete"))));
+                    ligne.setCommercial(getCommercial(c.getInt(c.getColumnIndex("Contact_id"))));
+                    ligne.setClient(getClient(c.getInt(c.getColumnIndex("Societe_id"))));
                     ligne.setAuteur(c.getString(c.getColumnIndex("Auteur")));
                     ligne.setLignesBon(getLignesCommande(c.getInt(c.getColumnIndex("IdtBon"))));
 
@@ -906,6 +910,126 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return info;
     }
 
+    public List<StatParClient> getStatsParClient(){
+
+        List<StatParClient> stats_client = new ArrayList<StatParClient>();
+        String requete = "";
+
+        requete = "SELECT Nom, COALESCE(cmd1.nb,0) NbCommande, COALESCE(cmd2.nb, 0) NbDevis, COALESCE(cmd3.nb, 0) NbCommandeTermine, COALESCE(cmd4.nb, 0) NbCommandePrepare, COALESCE(cmd5.nb,0) NbDevisTransformeCommande\n" +
+                "FROM Societe\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT Societe_id, COUNT(*) as nb\n" +
+                "    FROM Bon\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD'\n" +
+                "    GROUP BY (Societe_id)\n" +
+                "    ) AS cmd1 ON cmd1.Societe_id = IdtSociete\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT Societe_id, COUNT(*) as nb\n" +
+                "    FROM Bon\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'DE'\n" +
+                "    GROUP BY (Societe_id)\n" +
+                "    ) AS cmd2 ON cmd2.Societe_id = IdtSociete\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT Societe_id, COUNT(*) as nb\n" +
+                "    FROM Bon\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND EtatCommande = 'Terminée'\n" +
+                "    GROUP BY (Societe_id)\n" +
+                "    ) AS cmd3 ON cmd3.Societe_id = IdtSociete\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT Societe_id, COUNT(*) as nb\n" +
+                "    FROM Bon\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND EtatCommande = 'Préparation'\n" +
+                "    GROUP BY (Societe_id)\n" +
+                "    ) AS cmd4 ON cmd4.Societe_id = IdtSociete\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT Societe_id, COUNT(*) as nb\n" +
+                "    FROM Bon\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND NOT Devis_id is NULL\n" +
+                "    GROUP BY (Societe_id)\n" +
+                "    ) AS cmd5 ON cmd5.Societe_id = IdtSociete\n" +
+                "WHERE BitSup = 0 AND Type IN ('C', 'P')\n" +
+                "ORDER BY Nom";
+
+
+        Log.d("Requete", requete);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            if (c.moveToFirst()) {
+
+                do {
+                    StatParClient client = new StatParClient();
+                    client.setNom(c.getString(c.getColumnIndex("Nom")));
+
+                    Statistique stat = new Statistique();
+                    stat.setNbCommande(c.getInt(c.getColumnIndex("NbCommande")));
+                    stat.setNbDevis(c.getInt(c.getColumnIndex("NbDevis")));
+                    stat.setNbCommandeTermine(c.getInt(c.getColumnIndex("NbCommandeTermine")));
+                    stat.setNbCommandePrepare(c.getInt(c.getColumnIndex("NbCommandePrepare")));
+                    stat.setNbDevisEtCommande(c.getInt(c.getColumnIndex("NbDevisTransformeCommande")));
+
+                    client.setStat(stat);
+
+                    //On ajoute la commande
+                    stats_client.add(client);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return stats_client;
+    }
+
+    public List<StatProduit> getStatsProduit(){
+
+        List<StatProduit> stats_produit = new ArrayList<StatProduit>();
+        String requete;
+
+        requete = "SELECT prd.Code, prd.Nom, COALESCE(articles.nb, 0) NbVente \n" +
+                "FROM Produit prd\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT Code, SUM(Quantite) nb\n" +
+                "    FROM LigneCommande\n" +
+                "    WHERE IdtBon IN (\n" +
+                "        SELECT IdtBon\n" +
+                "        FROM Bon\n" +
+                "        WHERE Type = 'CD')\n" +
+                "    GROUP BY Code\n" +
+                "    ) AS articles ON articles.Code = prd.Code\n";
+
+        Log.d("Requete", requete);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            if (c.moveToFirst()) {
+
+                do {
+                    StatProduit produit = new StatProduit();
+
+                    produit.setNomProduit(c.getString(c.getColumnIndex("Nom")));
+                    produit.setCodeProduit(c.getString(c.getColumnIndex("Code")));
+                    produit.setNbProduitVendu(c.getInt(c.getColumnIndex("NbVente")));
+
+                    //On ajoute le produit
+                    stats_produit.add(produit);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return stats_produit;
+    }
+
     /**********************************
      * RECHERCHES
      *********************************/
@@ -1094,9 +1218,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues valeurs = new ContentValues();
-        valeurs.put("DateCommande", bon.getDate_commande());
+        //valeurs.put("DateCommande", bon.getDate_commande());
         valeurs.put("EtatCommande", bon.getEtat_commande());
-        valeurs.put("Type", bon.getType());
+        //valeurs.put("Type", bon.getType());
         valeurs.put("Suivi", bon.getSuivi());
         valeurs.put("Transporteur", bon.getTransporteur());
         valeurs.put("Auteur", bon.getAuteur());
@@ -1104,8 +1228,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("BitChg", 1);
         valeurs.put("BitAjout", modif_nouveau);
         valeurs.put("BitModif", 1);
-        valeurs.put("IdtSociete", bon.getClient().getId());
-        valeurs.put("IdtContact", bon.getCommercial().getId());
+        //valeurs.put("IdtSociete", bon.getClient().getId());
+        //valeurs.put("IdtContact", bon.getCommercial().getId());
 
         // updating row
         db.update(TABLE_BON, valeurs, "IdtBon = ?",
@@ -1367,13 +1491,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if( ajout ){
             requete = "SELECT IdtBon, DateCommande, EtatCommande, Commentaire, Type, Suivi, Transporteur, Auteur, "
-                    + "BitSup, IdtSociete, IdtContact "
+                    + "BitSup, Devis_id, Societe_id, Contact_id "
                     + "FROM Bon "
                     + "WHERE BitAjout = 1 AND ATraiter = 1 AND BitSup = 0";
         }
         else {
             requete = "SELECT IdtBon, DateCommande, EtatCommande, Commentaire, Type, Suivi, Transporteur, Auteur, "
-                    + "BitSup, IdtSociete, IdtContact "
+                    + "BitSup, Devis_id, Societe_id, Contact_id "
                     + "FROM Bon "
                     + "WHERE ATraiter = 1 AND BitAjout = 0";
         }
@@ -1398,6 +1522,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     bon.setSuivi(c.getString(c.getColumnIndex("Suivi")));
                     bon.setTransporteur(c.getString(c.getColumnIndex("Transporteur")));
                     bon.setAuteur(c.getString(c.getColumnIndex("Auteur")));
+                    bon.setDevis_id(c.getInt(c.getColumnIndex("Devis_id")));
 
                     if( c.getInt(c.getColumnIndex("BitSup")) == 1 ) {
                         bon.setASupprimer(true);
@@ -1406,8 +1531,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         bon.setASupprimer(false);
                     }
 
-                    bon.setClient_id(c.getInt(c.getColumnIndex("IdtSociete")));
-                    bon.setCommercial_id(c.getInt(c.getColumnIndex("IdtContact")));
+                    bon.setClient_id(c.getInt(c.getColumnIndex("Societe_id")));
+                    bon.setCommercial_id(c.getInt(c.getColumnIndex("Contact_id")));
 
                     //On ajoute le bon
                     bons.add(bon);
@@ -1659,8 +1784,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("BitAjout", 0);
         valeurs.put("BitSup", 0);
         valeurs.put("ATraiter", 0);
-        valeurs.put("IdtSociete", bon.getClient_id());
-        valeurs.put("IdtContact", bon.getCommercial_id());
+
+        if( bon.getDevis_id() > 0 )
+            valeurs.put("Devis_id", bon.getDevis_id());
+
+        valeurs.put("Societe_id", bon.getClient_id());
+        valeurs.put("Contact_id", bon.getCommercial_id());
 
         db.insert(TABLE_BON, null, valeurs);
         db.close();

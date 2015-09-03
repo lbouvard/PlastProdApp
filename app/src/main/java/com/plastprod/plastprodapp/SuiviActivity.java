@@ -54,4 +54,10 @@ public class SuiviActivity extends ActionBarActivity {
 
         startActivity(intent);
     }
+
+    public void afficherStats(View vue){
+
+        Intent activite = new Intent(this, StatistiqueActivity.class);
+        startActivity(activite);
+    }
 }

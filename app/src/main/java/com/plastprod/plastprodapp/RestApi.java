@@ -122,7 +122,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
             //pour les comptes des commerciaux
             recupererComptes();
             recupererCommerciaux();
-            recupererAdminParametres();
+            //recupererAdminParametres();
 
             db.close();
 

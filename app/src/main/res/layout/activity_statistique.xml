@@ -1,0 +1,115 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.plastprod.plastprodapp.StatistiqueActivity">
+
+    <TextView
+        android:layout_width="50sp"
+        android:layout_height="wrap_content"
+        android:text="Client"
+        android:id="@+id/tvStatsClient"
+        android:textColor="@color/noir"
+        android:textSize="16sp"
+        android:layout_marginTop="30sp"
+        android:layout_marginStart="20sp"
+        android:textStyle="bold"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="60sp"
+        android:id="@+id/spStatsClient"
+        android:layout_toEndOf="@+id/tvStatsClient"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_marginTop="10sp"/>
+
+    <TextView
+        android:layout_width="50sp"
+        android:layout_height="wrap_content"
+        android:text="Début"
+        android:id="@+id/tvStatsDateDeb"
+        android:textColor="@color/noir"
+        android:textSize="16sp"
+        android:labelFor="@+id/edStatsDateDeb"
+        android:layout_marginTop="30sp"
+        android:layout_marginStart="20sp"
+        android:layout_below="@+id/tvStatsClient"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:layout_width="190sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edStatsDateDeb"
+        android:inputType="datetime"
+        android:layout_marginStart="20sp"
+        android:layout_below="@+id/spStatsClient"
+        android:layout_toEndOf="@+id/tvStatsDateDeb"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivStatsDateDeb"
+        android:layout_toEndOf="@+id/edStatsDateDeb"
+        android:layout_below="@+id/spStatsClient"
+        android:contentDescription="Choisir une date de début"
+        android:layout_marginStart="10sp"
+        android:src="@drawable/ic_today_black_36dp"
+        android:onClick="recupererDateDebut"/>
+
+
+    <TextView
+        android:layout_width="50sp"
+        android:layout_height="wrap_content"
+        android:text="Fin"
+        android:id="@+id/tvStatsDateFin"
+        android:textColor="@color/noir"
+        android:textSize="16sp"
+        android:labelFor="@+id/edStatsDateFin"
+        android:layout_marginTop="25sp"
+        android:layout_marginStart="20sp"
+        android:layout_below="@+id/tvStatsDateDeb"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:layout_width="190sp"
+        android:layout_height="wrap_content"
+        android:id="@+id/edStatsDateFin"
+        android:inputType="datetime"
+        android:layout_marginStart="20sp"
+        android:layout_below="@+id/edStatsDateDeb"
+        android:layout_toEndOf="@+id/tvStatsDateDeb"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivStatsDateFin"
+        android:layout_toEndOf="@+id/edStatsDateFin"
+        android:layout_below="@+id/ivStatsDateDeb"
+        android:contentDescription="Choisir une date de début"
+        android:layout_marginTop="8sp"
+        android:layout_marginStart="10sp"
+        android:src="@drawable/ic_today_black_36dp"
+        android:onClick="recupererDateFin"/>
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/valider"
+        android:id="@+id/button_valider_critere"
+        android:onClick="recupererStat"
+        android:layout_marginTop="10sp"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:paddingStart="20sp"
+        android:paddingEnd="20sp"
+        android:gravity="center"
+        android:textColor="@color/noir"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textAllCaps="false"
+        android:background="@drawable/btn_carre_blanc"
+        android:layout_below="@+id/edStatsDateFin"/>
+
+</RelativeLayout>

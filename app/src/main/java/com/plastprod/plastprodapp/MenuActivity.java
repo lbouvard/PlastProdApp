@@ -182,19 +182,26 @@ public class MenuActivity extends ActionBarActivity implements ConfirmationSynch
         db = new DatabaseHelper(getApplicationContext());
         String ssid = db.getSsidWifi();
 
-        ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        try{
+            ConnectivityManager cm = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 
-        NetworkInfo active = cm.getActiveNetworkInfo();
+            NetworkInfo active = cm.getActiveNetworkInfo();
 
-        if( active.isConnected() && active.getType() == ConnectivityManager.TYPE_WIFI && active.getExtraInfo().replace("\"","").equals(ssid) ) {
-            DialogFragment confirmation = new ConfirmationSynchroDialog();
-            confirmation.show(getSupportFragmentManager(), "confirmation_synchro");
+            if( active.isConnected() && active.getType() == ConnectivityManager.TYPE_WIFI && active.getExtraInfo().replace("\"","").equals(ssid) ) {
+                DialogFragment confirmation = new ConfirmationSynchroDialog();
+                confirmation.show(getSupportFragmentManager(), "confirmation_synchro");
+            }
+            else{
+                Outils.afficherToast(getApplicationContext(), "Vous devez être connecté en WIFI chez PlastProd.");
+            }
         }
-        else{
-            Outils.afficherToast(getApplicationContext(), "Vous devez être connecté en WIFI chez PlastProd.");
+        catch (Exception ex){
+            Outils.afficherToast(getApplicationContext(), "Un problème réseau est survenu. Veuillez vérifier votre connectivité.");
+        }
+        finally {
+            db.close();
         }
 
-        db.close();
     }
 
    /* public void afficherdialog(View vue){

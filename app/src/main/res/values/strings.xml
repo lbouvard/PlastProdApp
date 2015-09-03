@@ -92,4 +92,6 @@
     <string name="btn_calendrier">Calendrier</string>
     <string name="btn_satisfaction">Satisfaction client</string>
 
+    <string name="title_activity_statistique">Statistiques</string>
+
 </resources>

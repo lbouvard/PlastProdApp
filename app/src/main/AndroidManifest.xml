@@ -138,6 +138,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.MenuActivity" />
         </activity>
+        <activity
+            android:name=".StatistiqueActivity"
+            android:label="@string/title_activity_statistique"
+            android:parentActivityName=".SuiviActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.SuiviActivity" />
+        </activity>
     </application>
 
 </manifest>
