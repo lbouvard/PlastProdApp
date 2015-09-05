@@ -7,6 +7,7 @@ public class StatParClient {
 
     String nom;
     Statistique stat;
+    String type;        // 'C' pour client, 'P' pour prospect
 
     public String getNom() {
         return nom;
@@ -22,5 +23,13 @@ public class StatParClient {
 
     public void setStat(Statistique stat) {
         this.stat = stat;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

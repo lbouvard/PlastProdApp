@@ -166,8 +166,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String requete = "SELECT Salt FROM Compte "
                 + "WHERE Nom = '" + login + "' OR Mail = '" + login + "'";
 
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -391,8 +389,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                        + "FROM Societe "
                        + "WHERE IdtSociete = " + id_client;
 
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -463,8 +459,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FROM LigneCommande "
                 + "WHERE Idt = " + id_article ;
 
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -495,7 +489,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public String getAdresseIpServeur(){
 
         String retour;
-
         String requete = "SELECT Valeur FROM Parametre WHERE Nom = 'ADRESSEIP_SRV'";
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -516,7 +509,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public String getSsidWifi(){
 
         String retour;
-
         String requete = "SELECT Valeur FROM Parametre WHERE Nom = 'SSID_SOCIETE'";
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -580,8 +572,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + "WHERE Contact_id = " + id_commercial + " AND BitChg = 0 AND BitSup = 0";
         }
 
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -618,8 +608,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String requete = "SELECT Idt, Quantite, Code, Nom, Description, PrixUnitaire, Remise, IdtBon "
                 + "FROM LigneCommande "
                 + "WHERE IdtBon = " + id_bon ;
-
-        Log.d("Requete", requete);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
@@ -729,8 +717,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     + "Commentaire, Auteur FROM Contact " + clauseWhere;
         }
 
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -775,8 +761,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur FROM Parametre "
                 + "WHERE IdtCompte = " + id_commercial;
 
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -810,8 +794,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         requete = "SELECT IdtObjectif, Annee, Type, Libelle, Valeur FROM Objectif "
                 + "WHERE IdtCompte = " + id_commercial;
-
-        Log.d("Requete", requete);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
@@ -847,8 +829,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         requete = "SELECT prod.IdtProduit _id, prod.Nom, prod.Description, prod.Categorie, prod.Code, prod.Prix, st.Delais "
                 + "FROM Produit prod "
                 + "INNER JOIN Stock st ON prod.IdtProduit = st.IdtEntree";
-
-        Log.d("Requete", requete);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
@@ -887,8 +867,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         requete = "SELECT Quantite, DelaisMoy, Delais FROM Stock "
                 + "WHERE IdtEntree = " + id_entree;
 
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -915,7 +893,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<StatParClient> stats_client = new ArrayList<StatParClient>();
         String requete = "";
 
-        requete = "SELECT Nom, COALESCE(cmd1.nb,0) NbCommande, COALESCE(cmd2.nb, 0) NbDevis, COALESCE(cmd3.nb, 0) NbCommandeTermine, COALESCE(cmd4.nb, 0) NbCommandePrepare, COALESCE(cmd5.nb,0) NbDevisTransformeCommande\n" +
+        requete = "SELECT Nom, Type, COALESCE(cmd1.nb,0) NbCommande, COALESCE(cmd2.nb, 0) NbDevis, COALESCE(cmd3.nb, 0) NbCommandeTermine, COALESCE(cmd4.nb, 0) NbCommandePrepare, COALESCE(cmd5.nb,0) NbDevisTransformeCommande\n" +
                 "FROM Societe\n" +
                 "LEFT JOIN (\n" +
                 "    SELECT Societe_id, COUNT(*) as nb\n" +
@@ -950,9 +928,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "WHERE BitSup = 0 AND Type IN ('C', 'P')\n" +
                 "ORDER BY Nom";
 
-
-        Log.d("Requete", requete);
-
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
@@ -963,6 +938,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 do {
                     StatParClient client = new StatParClient();
                     client.setNom(c.getString(c.getColumnIndex("Nom")));
+                    client.setType(c.getString(c.getColumnIndex("Type")));
 
                     Statistique stat = new Statistique();
                     stat.setNbCommande(c.getInt(c.getColumnIndex("NbCommande")));
@@ -1001,8 +977,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "        WHERE Type = 'CD')\n" +
                 "    GROUP BY Code\n" +
                 "    ) AS articles ON articles.Code = prd.Code\n";
-
-        Log.d("Requete", requete);
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
@@ -1943,8 +1917,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         ContentValues valeurs = new ContentValues();
         valeurs.put("IdtSatisfaction", sat.getId());
         valeurs.put("Nom", sat.getNom());
-        valeurs.put("DateEnvoi", sat.getDate_envoi().toString());
-        valeurs.put("DateRecu", sat.getDate_recu().toString());
+        valeurs.put("DateEnvoi", sat.getDate_envoi());
+        valeurs.put("DateRecu", sat.getDate_recu());
         valeurs.put("IdtSociete", sat.getId_societe());
 
         db.insert(TABLE_SATISF, null, valeurs);
