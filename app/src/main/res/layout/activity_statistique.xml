@@ -44,7 +44,7 @@
                 android:textColor="@color/noir"
                 android:textSize="16sp"
                 android:labelFor="@+id/edStatsDateDeb"
-                android:layout_marginTop="30sp"
+                android:layout_marginTop="20sp"
                 android:layout_marginStart="20sp"
                 android:textStyle="bold"/>
 
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/edStatsDateDeb"
                 android:inputType="datetime"
-                android:layout_marginTop="20sp"
+                android:layout_marginTop="10sp"
                 android:layout_marginStart="20sp"
                 android:layout_toEndOf="@+id/tvStatsDateDeb"/>
 
@@ -63,7 +63,7 @@
                 android:id="@+id/ivStatsDateDeb"
                 android:layout_toEndOf="@+id/edStatsDateDeb"
                 android:contentDescription="Choisir une date de début"
-                android:layout_marginTop="20sp"
+                android:layout_marginTop="10sp"
                 android:layout_marginStart="10sp"
                 android:src="@drawable/ic_today_black_36dp"
                 android:onClick="recupererDateDebut"/>
@@ -121,48 +121,100 @@
                 android:background="@drawable/btn_carre_blanc"
                 android:layout_below="@+id/edStatsDateFin"/>
 
-            <com.github.mikephil.charting.charts.PieChart
+            <TableLayout style="@style/Tableau"
+                android:id="@+id/tableau_donnees"
+                android:layout_below="@+id/button_valider_critere">
+
+                <TableRow style="@style/EnTete_Tableau">
+                    <TextView style="@style/Cellule_EnTete_Tableau"
+                        android:text="@string/libelle"
+                        android:layout_marginStart="-2dp"/>
+                    <TextView style="@style/Cellule_EnTete_Tableau"
+                        android:text="@string/valeur"/>
+                </TableRow>
+
+                <TableRow style="@style/Ligne_Tableau">
+                    <TextView style="@style/Cellule_Ligne_Tableau"
+                        android:text="@string/nb_total_commande"/>
+                    <TextView style="@style/Cellule_Ligne_Tableau_Centre"
+                        android:id="@+id/nb_total_commande"/>
+                </TableRow>
+
+                <TableRow style="@style/Ligne_Tableau">
+                    <TextView style="@style/Cellule_Ligne_Tableau"
+                        android:text="@string/nb_total_devis"/>
+                    <TextView style="@style/Cellule_Ligne_Tableau_Centre"
+                        android:id="@+id/nb_total_devis"/>
+                </TableRow>
+
+                <TableRow style="@style/Ligne_Tableau">
+                    <TextView style="@style/Cellule_Ligne_Tableau"
+                        android:text="@string/nb_commande_termine"/>
+                    <TextView style="@style/Cellule_Ligne_Tableau_Centre"
+                        android:id="@+id/nb_commande_termine"/>
+                </TableRow>
+
+                <TableRow style="@style/Derniere_Ligne_Tableau">
+                    <TextView style="@style/Cellule_Ligne_Tableau"
+                        android:text="@string/nb_commande_prepare"/>
+                    <TextView style="@style/Cellule_Ligne_Tableau_Centre"
+                        android:id="@+id/nb_commande_prepare"/>
+                </TableRow>
+            </TableLayout>
+
+            <ImageView style="@style/separateur"
+                android:layout_below="@+id/tableau_donnees"
+                android:id="@+id/separateur0"/>
+
+            <com.github.mikephil.charting.charts.PieChart style="@style/Graphique_Layout"
                 android:id="@+id/graphique_nb_cd_client"
-                android:layout_width="fill_parent"
-                android:layout_height="400sp"
-                android:layout_marginTop="20sp"
-                android:layout_marginBottom="20sp"
-                android:layout_below="@+id/button_valider_critere" />
+                android:layout_below="@+id/separateur0"/>
 
-            <com.github.mikephil.charting.charts.PieChart
+            <ImageView style="@style/separateur"
+                android:layout_below="@+id/graphique_nb_cd_client"
+                android:id="@+id/separateur1"/>
+
+            <com.github.mikephil.charting.charts.PieChart style="@style/Graphique_Layout"
                 android:id="@+id/graphique_nb_de_client"
-                android:layout_width="fill_parent"
-                android:layout_height="400sp"
-                android:layout_marginBottom="20sp"
-                android:layout_below="@+id/graphique_nb_cd_client" />
+                android:layout_below="@+id/separateur1" />
 
-            <com.github.mikephil.charting.charts.PieChart
+            <ImageView style="@style/separateur"
+                android:layout_below="@+id/graphique_nb_de_client"
+                android:id="@+id/separateur2"/>
+
+            <com.github.mikephil.charting.charts.PieChart style="@style/Graphique_Layout"
                 android:id="@+id/graphique_nb_de_prospect"
-                android:layout_width="fill_parent"
-                android:layout_height="400sp"
-                android:layout_marginBottom="20sp"
-                android:layout_below="@+id/graphique_nb_de_client" />
+                android:layout_below="@+id/separateur2" />
+
+            <ImageView style="@style/separateur"
+                android:layout_below="@+id/graphique_nb_de_prospect"
+                android:id="@+id/separateur3"/>
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/graphique_top_meilleure_vente"
                 android:layout_width="fill_parent"
                 android:layout_height="400sp"
-                android:layout_marginBottom="20sp"
-                android:layout_below="@+id/graphique_nb_de_prospect" />
+                android:layout_below="@+id/separateur3" />
+
+            <ImageView style="@style/separateur"
+                android:layout_below="@+id/graphique_top_meilleure_vente"
+                android:id="@+id/separateur4"/>
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/graphique_top_pire_vente"
                 android:layout_width="fill_parent"
                 android:layout_height="400sp"
-                android:layout_marginBottom="20sp"
-                android:layout_below="@+id/graphique_top_meilleure_vente" />
+                android:layout_below="@+id/separateur4" />
 
-            <com.github.mikephil.charting.charts.BarChart
+            <ImageView style="@style/separateur"
+                android:layout_below="@+id/graphique_top_pire_vente"
+                android:id="@+id/separateur5"/>
+
+            <com.github.mikephil.charting.charts.HorizontalBarChart
                 android:id="@+id/graphique_de_vers_cd"
                 android:layout_width="fill_parent"
-                android:layout_height="400sp"
-                android:layout_marginBottom="20sp"
-                android:layout_below="@+id/graphique_top_pire_vente" />
+                android:layout_height="450sp"
+                android:layout_below="@+id/separateur5" />
 
         </RelativeLayout>
 

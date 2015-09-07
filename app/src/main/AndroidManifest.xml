@@ -146,6 +146,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.SuiviActivity" />
         </activity>
+        <activity
+            android:name=".LivraisonActivity"
+            android:label="@string/title_activity_livraison"
+            android:parentActivityName=".SuiviActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.SuiviActivity" />
+        </activity>
     </application>
 
 </manifest>

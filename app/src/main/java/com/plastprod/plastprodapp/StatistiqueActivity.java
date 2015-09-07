@@ -9,17 +9,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.PercentFormatter;
+import com.github.mikephil.charting.utils.ValueFormatter;
 
+import org.w3c.dom.Text;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -35,16 +46,32 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
     DatabaseHelper db;
     List<StatParClient> liste_stats_client = new ArrayList<StatParClient>();
     List<StatProduit> liste_stats_produit = new ArrayList<StatProduit>();
+
+    int nb_total_commande;
+    int nb_total_devis;
+    int nb_commande_prepare;
+    int nb_commande_termine;
+
     int[] couleurs = new int[]{ Color.rgb(211,88,247), Color.rgb(0,64,255), Color.rgb(1,223,215),
                                 Color.rgb(58,223,0), Color.rgb(128,255,0), Color.rgb(134,180,4),
                                 Color.rgb(255,255,0), Color.rgb(250,204,46), Color.rgb(255,128,0),
                                 Color.rgb(245,218,129), Color.rgb(180,4,4), Color.rgb(255,0,0),
                                 Color.rgb(247,129,243), Color.rgb(255,0,64), Color.rgb(8,138,8)};
 
+    // pour le dernier graphique (barres horizontale devis ayant conduit à une commande ferme
+    BarData donnees_devis_donne_commande = new BarData();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistique);
+
+        EditText generique = (EditText) findViewById(R.id.edStatsDateDeb);
+        //generique.setEnabled(false);
+        generique.setFocusable(false);
+        generique = (EditText) findViewById(R.id.edStatsDateFin);
+        //generique.setEnabled(false);
+        generique.setFocusable(false);
     }
 
     @Override
@@ -126,22 +153,34 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         liste_stats_client = db.getStatsParClient();
         liste_stats_produit = db.getStatsProduit();
 
-        afficherStat();
+        afficherStatClient();
+        afficherStatProduit();
 
         db.close();
 
     }
 
-    public void afficherStat(){
+    public void afficherStatClient(){
 
-        int index = 0;
+        // on récupère les données formatées
+        List<PieData> liste_donnees = new ArrayList<PieData>();
+        liste_donnees = genererDonnees();
+
+        // Remplissage du tableau
+        TextView generique = (TextView) findViewById(R.id.nb_total_commande);
+        generique.setText(String.valueOf(nb_total_commande));
+        generique = (TextView) findViewById(R.id.nb_total_devis);
+        generique.setText(String.valueOf(nb_total_devis));
+        generique = (TextView) findViewById(R.id.nb_commande_termine);
+        generique.setText(String.valueOf(nb_commande_termine));
+        generique = (TextView) findViewById(R.id.nb_commande_prepare);
+        generique.setText(String.valueOf(nb_commande_prepare));
 
         // Répartition des commandes par client
         PieChart chart = (PieChart) findViewById(R.id.graphique_nb_cd_client);
         mefCammenbert(chart);
         chart.setCenterText("Répartition des commandes par client");
-
-        chart.setData(genererDonneesCommandesClient());
+        chart.setData(liste_donnees.get(0));
         // undo all highlights
         chart.highlightValues(null);
         chart.invalidate();
@@ -150,9 +189,7 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         chart = (PieChart) findViewById(R.id.graphique_nb_de_client);
         mefCammenbert(chart);
         chart.setCenterText("Répartition des devis par client");
-
-        chart.setData(genererDonneesDevis("C"));
-        // undo all highlights
+        chart.setData(liste_donnees.get(1));
         chart.highlightValues(null);
         chart.invalidate();
 
@@ -160,10 +197,41 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         chart = (PieChart) findViewById(R.id.graphique_nb_de_prospect);
         mefCammenbert(chart);
         chart.setCenterText("Répartition des devis par prospect");
-
-        chart.setData(genererDonneesDevis("P"));
-        // undo all highlights
+        chart.setData(liste_donnees.get(2));
         chart.highlightValues(null);
+        chart.invalidate();
+
+        //Devis transformé en commande
+        HorizontalBarChart horizontal_barres = (HorizontalBarChart) findViewById(R.id.graphique_de_vers_cd);
+        mefHorizontalBarres(horizontal_barres);
+        String titre = "Répartitions des devis validés";
+        horizontal_barres.setDescription(titre);
+        horizontal_barres.setDescriptionPosition(horizontal_barres.getWidth() / 2 + ((titre.length() / 2) * 12), 30);
+        horizontal_barres.setData(donnees_devis_donne_commande);
+        horizontal_barres.invalidate();
+
+    }
+
+    public void afficherStatProduit(){
+
+        String titre = "";
+        List<BarData> liste_donnees = new ArrayList<BarData>();
+        liste_donnees = genererDonneesProduit();
+
+        BarChart chart = (BarChart) findViewById(R.id.graphique_top_meilleure_vente);
+        titre = "TOP 5 Produit le plus vendu";
+        mefBarres(chart);
+        chart.setDescription(titre);
+        chart.setDescriptionPosition(chart.getWidth() / 2 + ((titre.length() / 2) * 12), 30);
+        chart.setData(liste_donnees.get(0));
+        chart.invalidate();
+
+        chart = (BarChart) findViewById(R.id.graphique_top_pire_vente);
+        titre = "TOP 5 - Produit le moins vendu";
+        mefBarres(chart);
+        chart.setDescription(titre);
+        chart.setDescriptionPosition(chart.getWidth() / 2 + ((titre.length() / 2)  * 12), 30);
+        chart.setData(liste_donnees.get(1));
         chart.invalidate();
     }
 
@@ -179,6 +247,7 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         graph.setHoleRadius(50f);
         graph.setTransparentCircleRadius(55f);
         graph.setDrawCenterText(true);
+        graph.setCenterTextSize(12f);
         graph.setDescription("");
         graph.setRotationAngle(0);
         // enable rotation of the chart by touch
@@ -198,6 +267,73 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
 
     private void mefBarres(BarChart graph){
 
+        graph.setDrawBarShadow(false);
+        graph.setDrawValueAboveBar(true);
+
+        graph.setDescription("");
+        graph.setDescriptionTextSize(12f);
+
+        graph.setMaxVisibleValueCount(30);
+        // draw shadows for each bar that show the maximum value
+        // graph.setDrawBarShadow(true);
+        graph.setDrawGridBackground(false);
+
+        XAxis xAxis = graph.getXAxis();
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setSpaceBetweenLabels(2);
+        //xAxis.setAvoidFirstLastClipping(true);
+
+        ValueFormatter custom = new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float v) {
+                return new DecimalFormat("###").format(v);
+            }
+        };
+
+        YAxis leftAxis = graph.getAxisLeft();
+        leftAxis.setLabelCount(8, false);
+        leftAxis.setValueFormatter(custom);
+        leftAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        leftAxis.setSpaceTop(15f);
+
+        // Pas d'axe à droite
+        graph.getAxisRight().setEnabled(false);
+        // Pas de légende
+        graph.getLegend().setEnabled(false);
+
+    }
+
+    private void mefHorizontalBarres(HorizontalBarChart graph){
+
+        graph.setDrawBarShadow(false);
+        graph.setDrawValueAboveBar(true);
+
+        graph.setDescriptionTextSize(12f);
+        graph.setMaxVisibleValueCount(30);
+
+        graph.setDrawGridBackground(false);
+
+
+        XAxis xl = graph.getXAxis();
+        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xl.setDrawAxisLine(true);
+        xl.setDrawGridLines(false);
+        //xl.setGridLineWidth(0.3f);
+
+        YAxis yl = graph.getAxisRight();
+        yl.setDrawAxisLine(true);
+        yl.setDrawGridLines(true);
+        yl.setGridLineWidth(0.3f);
+
+        graph.getAxisLeft().setEnabled(false);
+
+        Legend l = graph.getLegend();
+        l.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
+        l.setForm(Legend.LegendForm.SQUARE);
+        l.setFormSize(9f);
+        l.setTextSize(11f);
+        l.setXEntrySpace(4f);
     }
 
     private ArrayList<Integer> recupererCouleur(){
@@ -213,72 +349,186 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         return colors;
     }
 
-    private PieData genererDonneesCommandesClient(){
+    private List<PieData> genererDonnees(){
+
+        // SORTIE
+        List<PieData> liste_donnee = new ArrayList<PieData>();
 
         // DONNEES DU GRAPHIQUE
-        ArrayList<Entry> yValeur = new ArrayList<Entry>();
-        ArrayList<String> xValeur = new ArrayList<String>();
-        int index = 0;
+        ArrayList<Entry> yCommandeClient = new ArrayList<Entry>();
+        ArrayList<Entry> yDevisClient = new ArrayList<Entry>();
+        ArrayList<String> xClient = new ArrayList<String>();
+
+        ArrayList<Entry> yDevisProspect = new ArrayList<Entry>();
+        ArrayList<String> xDevisProspect = new ArrayList<String>();
+
+        ArrayList<BarEntry> yDevisVersCommande = new ArrayList<BarEntry>();
+        ArrayList<BarEntry> yDevisClientBar = new ArrayList<BarEntry>();
+
+        int indexCL = 0;
+        int indexDEPR = 0;
 
         // insertion des données
         for( StatParClient i : liste_stats_client){
 
-            //on prend seulement les sociétés clientes
             if( i.getType().equals("C") ) {
-                yValeur.add(new Entry((float) i.getStat().getNbCommande(), index));
-                xValeur.add(index, i.getNom());
-                index++;
+                yCommandeClient.add(new Entry((float) i.getStat().getNbCommande(), indexCL));
+                yDevisClient.add(new Entry((float) i.getStat().getNbDevis(), indexCL));
+
+                yDevisClientBar.add(new BarEntry((float) i.getStat().getNbDevis(), indexCL));
+                yDevisVersCommande.add(new BarEntry((float) i.getStat().getNbDevisEtCommande(), indexCL));
+
+                xClient.add(indexCL, i.getNom());
+                indexCL++;
+
+                nb_commande_prepare += i.getStat().getNbCommandePrepare();
+                nb_commande_termine += i.getStat().getNbCommandeTermine();
+                nb_total_commande += i.getStat().getNbCommande();
+                nb_total_devis += i.getStat().getNbDevis();
+            }
+            // devis prospect
+            else {
+
+                if( i.getType().equals("P") ){
+                    yDevisProspect.add(new Entry((float) i.getStat().getNbDevis(), indexDEPR));
+                    xDevisProspect.add(indexDEPR, i.getNom());
+                    indexDEPR++;
+
+                    nb_total_devis += i.getStat().getNbDevis();
+                }
             }
         }
 
-        //Données du graphique
-        PieDataSet dataSet = new PieDataSet(yValeur, "");
+        //Données du graphique 1
+        PieDataSet dataSet = new PieDataSet(yCommandeClient, "");
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);
         // on applique les couleurs
         dataSet.setColors(recupererCouleur());
-
-        //abscisses
-        PieData data = new PieData(xValeur, dataSet);
+        // abscisses
+        PieData data = new PieData(xClient, dataSet);
         data.setValueFormatter(new PercentFormatter());
         data.setValueTextSize(11f);
         data.setValueTextColor(Color.BLACK);
+        // ajout
+        liste_donnee.add(data);
 
-        return data;
+        //Données du graphique 2
+        dataSet = new PieDataSet(yDevisClient, "");
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(5f);
+        dataSet.setColors(recupererCouleur());
+        // abscisses
+        data = new PieData(xClient, dataSet);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(11f);
+        data.setValueTextColor(Color.BLACK);
+        // ajout
+        liste_donnee.add(data);
+
+        //Données du graphique 3
+        dataSet = new PieDataSet(yDevisProspect, "");
+        dataSet.setSliceSpace(3f);
+        dataSet.setSelectionShift(5f);
+        dataSet.setColors(recupererCouleur());
+        // abscisses
+        data = new PieData(xDevisProspect, dataSet);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(11f);
+        data.setValueTextColor(Color.BLACK);
+        // ajout
+        liste_donnee.add(data);
+
+        /*****************************************
+        * Données du graphique devis ayant conduit à une commande
+        */
+        ArrayList<BarDataSet> liste_barre_donnees = new ArrayList<BarDataSet>();
+
+        //devis ayant conduit à une commande
+        BarDataSet barData = new BarDataSet(yDevisVersCommande, "Commandes");
+        barData.setColor(Color.rgb(237, 125, 49));
+        liste_barre_donnees.add(barData);
+
+        //nb devis
+        barData = new BarDataSet(yDevisClientBar, "Devis");
+        barData.setColor(Color.rgb(255, 192, 0));
+        liste_barre_donnees.add(barData);
+
+        // données en globale
+        donnees_devis_donne_commande = new BarData(xClient, liste_barre_donnees);
+        donnees_devis_donne_commande.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float v) {
+                return new DecimalFormat("###").format(v);
+            }
+        });
+        donnees_devis_donne_commande.setValueTextSize(10f);
+        donnees_devis_donne_commande.setGroupSpace(80f);
+
+        /*********************************************/
+
+        return liste_donnee;
     }
 
-    private PieData genererDonneesDevis(String type){
+    private List<BarData> genererDonneesProduit(){
 
-        // DONNEES DU GRAPHIQUE
-        ArrayList<Entry> yValeur = new ArrayList<Entry>();
-        ArrayList<String> xValeur = new ArrayList<String>();
+        List<BarData> liste_donnees = new ArrayList<BarData>();
+
+        // MEILLEURES VENTES
+        ArrayList<String> xValPlus = new ArrayList<String>();
+        ArrayList<BarEntry> yValPlus = new ArrayList<BarEntry>();
+
+        StatProduit stat;
         int index = 0;
+        int finListe = liste_stats_produit.size();
 
-        // insertion des données
-        for( StatParClient i : liste_stats_client){
+        for (index = 0; index < 5; index++) {
+            stat = liste_stats_produit.get(index);
 
-            //on différencie le type (client ou prospect)
-            if( i.getType().equals(type) ) {
-                yValeur.add(new Entry((float) i.getStat().getNbDevis(), index));
-                xValeur.add(index, i.getNom());
-                index++;
-            }
+            xValPlus.add(stat.getCodeProduit());
+            yValPlus.add(new BarEntry((float) stat.getNbProduitVendu(), index));
         }
 
-        //Données du graphique
-        PieDataSet dataSet = new PieDataSet(yValeur, "");
-        dataSet.setSliceSpace(3f);
-        dataSet.setSelectionShift(5f);
-        // on applique les couleurs
-        dataSet.setColors(recupererCouleur());
+        // MOINS DE VENTES
+        ArrayList<String> xValMoins = new ArrayList<String>();
+        ArrayList<BarEntry> yValMoins = new ArrayList<BarEntry>();
 
-        //abscisses
-        PieData data = new PieData(xValeur, dataSet);
-        data.setValueFormatter(new PercentFormatter());
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.BLACK);
+        for (index = finListe; index > finListe - 5; index--) {
+            stat = liste_stats_produit.get(finListe - index);
 
-        return data;
+            xValMoins.add(stat.getCodeProduit());
+            yValMoins.add(new BarEntry((float) stat.getNbProduitVendu(), finListe - index));
+        }
+
+        // Données du 1er graphique
+        BarDataSet donnees = new BarDataSet(yValPlus, "");
+        donnees.setBarSpacePercent(35f);
+        donnees.setColors(new int[] {Color.GREEN});
+        BarData data = new BarData(xValPlus, donnees);
+        data.setValueFormatter( new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float v) {
+                return new DecimalFormat("###").format(v);
+            }
+        });
+        data.setValueTextSize(10f);
+        // on ajoute les données à la liste
+        liste_donnees.add(data);
+
+        // Données du 2ème graphique
+        donnees = new BarDataSet(yValMoins, "");
+        donnees.setBarSpacePercent(35f);
+        donnees.setColors(new int[]{Color.RED});
+        data = new BarData(xValMoins, donnees);
+        data.setValueTextSize(10f);
+        data.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float v) {
+                return new DecimalFormat("###").format(v);
+            }
+        });
+        liste_donnees.add(data);
+
+        return liste_donnees;
     }
-
 }

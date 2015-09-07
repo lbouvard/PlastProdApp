@@ -93,5 +93,14 @@
     <string name="btn_satisfaction">Satisfaction client</string>
 
     <string name="title_activity_statistique">Statistiques</string>
+    <string name="libelle">Libellé</string>
+    <string name="valeur">Valeur</string>
+    <string name="nb_total_commande">Nombre total de commande</string>
+    <string name="nb_total_devis">Nombre total de devis</string>
+    <string name="nb_commande_termine">Nombre de commande terminée</string>
+    <string name="nb_commande_prepare">Nombre de commande préparée</string>
+    <string name="title_activity_livraison">Suivi des livraisons</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

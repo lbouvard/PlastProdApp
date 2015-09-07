@@ -976,7 +976,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "        FROM Bon\n" +
                 "        WHERE Type = 'CD')\n" +
                 "    GROUP BY Code\n" +
-                "    ) AS articles ON articles.Code = prd.Code\n";
+                "    ) AS articles ON articles.Code = prd.Code\n" +
+                "ORDER BY NbVente DESC ";
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
