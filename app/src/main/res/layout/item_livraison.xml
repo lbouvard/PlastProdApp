@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/decors_item_liste_expensive"
+                android:background="@drawable/entete_item_orange"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical|start"
+                android:textSize="12sp"
+                android:paddingEnd="1sp"
+                android:paddingStart="5sp"
+                android:text="@string/depart_usine"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/deux_points"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/depart_societe"
+                android:textSize="12sp"
+                android:paddingStart="10sp"
+                android:paddingEnd="1sp"
+                android:gravity="center_vertical|end"
+                android:text="@string/date_test"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/decors_item_liste_expensive"
+                android:background="@drawable/entete_item_orange" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical|start"
+                android:paddingStart="5sp"
+                android:paddingEnd="10sp"
+                android:textSize="12sp"
+                android:text="@string/mise_disposition_transporteur"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/deux_points"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/arrive_transporteur"
+                android:textSize="12sp"
+                android:paddingStart="10sp"
+                android:paddingEnd="1sp"
+                android:gravity="center_vertical|end"
+                android:text="@string/date_test"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/decors_item_liste_expensive"
+                android:background="@drawable/entete_item_orange" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical|start"
+                android:paddingStart="5sp"
+                android:paddingEnd="10sp"
+                android:textSize="12sp"
+                android:text="@string/arrive_prevu"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center_vertical|end"
+                android:text="@string/deux_points"/>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/arrive_prevu"
+                android:textSize="12sp"
+                android:gravity="center_vertical|end"
+                android:paddingStart="10sp"
+                android:paddingEnd="1sp"
+                android:text="@string/date_test"/>
+        </TableRow>
+
+    </TableLayout>
+
+    <TableRow
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/decors_item_liste_expensive"
+            android:background="@drawable/entete_item_orange" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical|start"
+            android:paddingStart="5sp"
+            android:paddingEnd="1sp"
+            android:textSize="12sp"
+            android:text="@string/lien_suivi"/>
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:autoLink="web"
+            android:id="@+id/lien_suivi"
+            android:textSize="12sp"
+            android:paddingStart="5sp"
+            android:paddingEnd="1sp"
+            android:gravity="center_vertical|start"
+            android:text="@string/lien_suivi_test"/>
+    </TableRow>
+
+</LinearLayout>

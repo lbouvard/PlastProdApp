@@ -8,7 +8,11 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import sqlite.helper.Bon;
 import sqlite.helper.LigneCommande;
@@ -21,6 +25,10 @@ public class LivraisonAdaptateur extends BaseExpandableListAdapter{
 
     private Context context;
     private List<Livraison> liste_suivi;
+    private SimpleDateFormat date_base = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private SimpleDateFormat date_ihm = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+    private Date date_util = new Date();
+    private String date_chaine = "";
 
     public LivraisonAdaptateur(Context context, List<Livraison> liste ) {
         this.context = context;
@@ -41,27 +49,50 @@ public class LivraisonAdaptateur extends BaseExpandableListAdapter{
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
 
-        final LigneCommande ligne = (LigneCommande)getChild(groupPosition, childPosition);
+        final Livraison info = (Livraison)getChild(groupPosition, childPosition);
 
         if (convertView == null) {
 
             LayoutInflater infalInflater = (LayoutInflater) this.context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            convertView = infalInflater.inflate(R.layout.item_histobon, null);
+            convertView = infalInflater.inflate(R.layout.item_livraison, null);
         }
 
-        TextView txtNomArticle = (TextView) convertView.findViewById(R.id.nom_article);
-        txtNomArticle.setText(ligne.getNom());
 
-        TextView txtPrixUnitaire = (TextView) convertView.findViewById(R.id.prix_article);
-        txtPrixUnitaire.setText(ligne.getPrixRemise().toString() + " €");
 
-        TextView txtQuantite = (TextView) convertView.findViewById(R.id.quantite_article);
-        txtQuantite.setText(String.valueOf(ligne.getQuantite()) );
+        TextView txtDepartUsine = (TextView) convertView.findViewById(R.id.depart_societe);
+        try {
+            this.date_util = date_base.parse(info.getDateDispo());
+            this.date_chaine = date_ihm.format(this.date_util);
+            txtDepartUsine.setText(this.date_chaine);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
 
-        TextView txtPrixTotal = (TextView) convertView.findViewById(R.id.total_article);
-        txtPrixTotal.setText(ligne.getPrixTotal().toString() + " €");
+        TextView txtDispoTransporteur = (TextView) convertView.findViewById(R.id.arrive_transporteur);
+        try {
+            this.date_util = date_base.parse(info.getDateEnvoi());
+            this.date_chaine = date_ihm.format(this.date_util);
+            txtDispoTransporteur.setText(this.date_chaine);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        TextView txtArrivePrevu = (TextView) convertView.findViewById(R.id.arrive_prevu);
+        try {
+            this.date_util = date_base.parse(info.getDateRecu());
+            this.date_chaine = date_ihm.format(this.date_util);
+            txtArrivePrevu.setText(this.date_chaine);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+        TextView txtLienSuivi = (TextView) convertView.findViewById(R.id.lien_suivi);
+        txtLienSuivi.setText(info.getTrack());
 
         return convertView;
     }

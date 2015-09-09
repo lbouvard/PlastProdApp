@@ -3,8 +3,6 @@
     <string name="action_recherche">Rechercher</string>
     <string name="edit_message">Entrer un message</string>
     <string name="button_send">Valider</string>
-    <string name="title_activity_afficher_message">Message</string>
-    <string name="title_activity_menu">Menu</string>
     <string name="nom_utilisateur">Nom d\'utilisateur</string>
     <string name="mdp">Mot de passe</string>
     <string name="afficher_mdp">Montrer le mot de passe</string>
@@ -12,21 +10,34 @@
     <string name="synchroniser">Synchroniser</string>
     <string name="deconnexion">Déconnexion</string>
     <string name="logo">Entreprise PlastProd</string>
+
     <string name="title_activity_client">Clients</string>
     <string name="title_activity_prospect">Prospects</string>
     <string name="title_activity_contact">Contacts</string>
     <string name="title_activity_bon">Bons</string>
     <string name="title_activity_suivi">Suivi commercial</string>
-	
     <string name="title_activity_perf">Suivi des performances</string>
     <string name="title_activity_affcommande">Commandes</string>
     <string name="title_activity_devis">Devis</string>
+    <string name="title_activity_formulaire_client">Client</string>
+    <string name="title_activity_statistique">Statistiques</string>
+    <string name="title_activity_afficher_message">Message</string>
+    <string name="title_activity_menu">Menu</string>
+    <string name="title_activity_admin">Administration</string>
+    <string name="title_activity_histocd">Commandes</string>
+    <string name="title_activity_formulaire_contact">Contact</string>
+    <string name="title_activity_choix_client">Gestion des bons</string>
+    <string name="title_activity_article_dialog">ArticleDialog</string>
+    <string name="title_activity_livraison">Suivi des livraisons</string>
+    <string name="title_activity_rechecher">RechecherActivity</string>
+
+
     <string name="action_ajout">Ajouter un contact</string>
     <string name="action_contact">Liste des contacts</string>
     <string name="action_histo">Historique des commandes</string>
     <string name="action_supprime">Supprimer un client</string>
     <string name="action_supprime_contact">Supprimer un contact</string>
-    <string name="title_activity_formulaire_client">Client</string>
+
 
     <string name="form_client_nom">Nom de la société</string>
     <string name="form_contact_nom">Nom</string>
@@ -54,7 +65,7 @@
 
     <string name="client_recherche_label">PlastProd</string>
     <string name="client_recherche_hint">Rechercher dans les clients</string>
-    <string name="title_activity_rechecher">RechecherActivity</string>
+
 
     <string name="action_settings">Paramètres</string>
 
@@ -66,41 +77,47 @@
     <string name="valider">Valider</string>
     <string name="annuler">Annuler</string>
 
-    <string name="title_activity_admin">Administration</string>
+
     <string name="admin_intro">Paramètres de synchronisation</string>
     <string name="adresse_serveur">Adresse du serveur</string>
     <string name="ssid_wifi">SSID du réseau WIFI</string>
 
-    <string name="title_activity_histocd">Commandes</string>
 
-    <string name="title_activity_formulaire_contact">Contact</string>
     <string name="recherche">.RechercherActivity</string>
 
     <string name="titre_dialog_choix_client">Choississez un client</string>
-    <string name="title_activity_choix_client">Gestion des bons</string>
+
 
     <string name="btn_devis">Devis</string>
     <string name="btn_commande">Commandes</string>
     <string name="action_ajout_bon">Ajouter</string>
-    <string name="title_activity_article_dialog">ArticleDialog</string>
-
     <string name="article_ajout">Ajouter un produit</string>
     <string name="article_modification">Modification</string>
 
+    <!-- Menu Suivi Client -->
     <string name="btn_stats">Statistiques</string>
     <string name="btn_livraison">Suivi des livraisons</string>
     <string name="btn_calendrier">Calendrier</string>
     <string name="btn_satisfaction">Satisfaction client</string>
 
-    <string name="title_activity_statistique">Statistiques</string>
+    <!-- Statistiques -->
     <string name="libelle">Libellé</string>
     <string name="valeur">Valeur</string>
     <string name="nb_total_commande">Nombre total de commande</string>
     <string name="nb_total_devis">Nombre total de devis</string>
     <string name="nb_commande_termine">Nombre de commande terminée</string>
     <string name="nb_commande_prepare">Nombre de commande préparée</string>
-    <string name="title_activity_livraison">Suivi des livraisons</string>
 
-    <string name="hello_world">Hello world!</string>
+    <!-- Suivi des livraisons -->
+    <string name="depart_usine">Départ de l\'usine le</string>
+    <string name="mise_disposition_transporteur">Reçu par le transporteur le</string>
+    <string name="arrive_prevu">Livraison prévue le</string>
+    <string name="lien_suivi">Suivi :</string>
+
+    <!-- Divers -->
+    <string name="decors_item_liste_expensive">Décors</string>
+    <string name="deux_points">:</string>
+    <string name="date_test">12/08/2015 16:12:25</string>
+    <string name="lien_suivi_test">https://track.dhl.fr/2555645485152</string>
 
 </resources>

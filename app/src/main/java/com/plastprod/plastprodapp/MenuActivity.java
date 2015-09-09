@@ -91,6 +91,9 @@ public class MenuActivity extends ActionBarActivity implements ConfirmationSynch
                 }
             });
 
+            // tâche de fond pour récupérer les événements du calendrier paramétré
+            verifierRendezVousCalendrier();
+
         }
         else {
             terminerSession();
@@ -170,6 +173,11 @@ public class MenuActivity extends ActionBarActivity implements ConfirmationSynch
     public void ouvrirPerf(){
         Intent activite = new Intent(this, PerfActivity.class);
         startActivity(activite);
+    }
+
+    public int verifierRendezVousCalendrier(){
+        new CalendrierApi().execute(getApplicationContext());
+        return 0;
     }
 
     public int Synchroniser(){

@@ -12,50 +12,41 @@ import java.util.List;
 
 import sqlite.helper.Bon;
 import sqlite.helper.DatabaseHelper;
+import sqlite.helper.Livraison;
 import sqlite.helper.Societe;
 
 
 public class LivraisonActivity extends ActionBarActivity {
 
-    HistocdAdaptateur adaptateur;
+    LivraisonAdaptateur adaptateur;
     ExpandableListView vue;
-    List<Bon> liste_bons = new ArrayList<Bon>();
-    Societe client_en_cours;
+    List<Livraison> liste_suivi = new ArrayList<Livraison>();
     DatabaseHelper db;
-
-    boolean recupererTousTypeBon;
-    String typeBon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //on récupère la société passé en paramètre
-        Intent intent = getIntent();
-        client_en_cours = (Societe) intent.getSerializableExtra("Client");
-        recupererTousTypeBon = intent.getBooleanExtra("Bons", false);
-        typeBon = intent.getStringExtra("Type");
+        //on utilise le layout de l'activitÃ©
+        setContentView(R.layout.activity_livraison);
 
-        //on utilise le layout de l'activité
-        setContentView(R.layout.activity_histobon);
+        //on rÃ©cupÃ¨re la liste
+        vue = (ExpandableListView) findViewById(R.id.lvListeLivraison);
 
-        //on récupère la liste
-        vue = (ExpandableListView) findViewById(R.id.lvListeCommande);
-
-        //recupération des bons du client demandé
+        //recupÃ©ration des bons du client demandÃ©
         db = new DatabaseHelper(getApplicationContext());
-        liste_bons = db.getBons(typeBon, client_en_cours.getId(), -1, recupererTousTypeBon);
+        liste_suivi = db.getSuiviLivraison();
 
         //et on alimente la liste
-        adaptateur = new HistocdAdaptateur(this, liste_bons);
-        //on lie l'adaptateur à la liste expensive
+        adaptateur = new LivraisonAdaptateur(this, liste_suivi);
+        //on lie l'adaptateur Ã  la liste expensive
         vue.setAdapter(adaptateur);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_livraison, menu);
+        //getMenuInflater().inflate(R.menu.menu_livraison, menu);
         return true;
     }
 

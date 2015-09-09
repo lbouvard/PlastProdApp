@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 61;
+    private static final int DATABASE_VERSION = 62;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -43,6 +43,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_STOCK = "Stock";
     private static final String TABLE_CORRESP_COULEUR = "CorrespCouleur";
     private static final String TABLE_CORRESP_ID = "CorrespId";
+    private static final String TABLE_CALENDRIER = "MajCalendrier";
 
 
     private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
@@ -104,6 +105,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_TABLE_CORRESP_ID = "CREATE TABLE CorrespId (Idt INTEGER PRIMARY KEY, Type TEXT NOT NULL, "
             + "IdtAndroid INTEGER NOT NULL, IdtServeur INTEGER NOT NULL)";
 
+    private static final String CREATE_TABLE_CALENDRIER = "CREATE TABLE MajCalendrier (Idt INTEGER PRIMARY KEY, DateDerniereMaj TEXT, IdtParamCompte INTEGER NOT NULL )";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -126,6 +129,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_SOCIETE);
         db.execSQL(CREATE_TABLE_CORRESP_COULEUR);
         db.execSQL(CREATE_TABLE_CORRESP_ID);
+        db.execSQL(CREATE_TABLE_CALENDRIER);
 
         chargerTables(db);
     }
@@ -148,6 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STOCK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CORRESP_COULEUR);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CORRESP_ID);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CALENDRIER);
 
         // create new tables
         onCreate(db);
@@ -160,6 +165,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * AUTHENTIFICATION COMMERCIAL
      ******************************/
 
+    // permet de récupérer le salt pour le cryptage du mot de passe
     public String getSalt(String login){
 
         String salt = "";
@@ -180,6 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return salt;
     }
 
+    // permet de contrôler les identifiants
     public Contact verifierIdentifiantCommercial(String login, String motDePasse){
 
         Contact info = new Contact();
@@ -208,6 +215,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             info = null;
 
         return info;
+    }
+
+    // récupère les paramètres du calendrier du commercial (compte google, hotmail...)
+    public List<Parametre> getParamCalendrier(int id_contact){
+
+        List<Parametre> paramCalendrier = new ArrayList<Parametre>();
+        String requete = "";
+
+        requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur FROM Parametre "
+                + "WHERE IdtCompte = " + id_contact + " AND ( Nom = 'TYPE_COMPTE' OR Nom = 'ADRESSE_COMPTE' ) "
+                + "ORDER BY Nom";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les paramètres
+            if (c.moveToFirst()) {
+
+                do {
+                    Parametre ligne = new Parametre();
+                    ligne.setId(c.getInt(c.getColumnIndex("IdtParam")));
+                    ligne.setNom(c.getString(c.getColumnIndex("Nom")));
+                    ligne.setType(c.getString(c.getColumnIndex("Type")));
+                    ligne.setLibelle(c.getString(c.getColumnIndex("Libelle")));
+                    ligne.setValeur(c.getString(c.getColumnIndex("Valeur")));
+
+                    //On ajoute la commande
+                    paramCalendrier.add(ligne);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return paramCalendrier;
+    }
+
+    // renvoi la date + 1 jour de la dernière synchro avec le calendrier
+    public String getDerniereRecuperationEvenements(int idt_param){
+
+        String datePlusUn = "";
+        String requete;
+
+        requete = "SELECT datetime( DateDerniereMaj, '+1 days') Date "
+                + "FROM MajCalendrier "
+                + "WHERE IdtParamCompte = " + String.valueOf(idt_param);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null){
+            if( c.moveToFirst()){
+                datePlusUn = c.getString(c.getColumnIndex("Date"));
+            }
+
+            c.close();
+        }
+
+        return datePlusUn;
     }
 
     /***********************
@@ -1005,6 +1073,48 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return stats_produit;
     }
 
+    public List<Livraison> getSuiviLivraison(){
+
+        List<Livraison> suivi = new ArrayList<Livraison>();
+        String requete;
+
+        requete = "SELECT cmd.IdtBon, soc.Nom, cmd.Transporteur, cmd.Suivi, hdispo.DateChg Depart, hsuivi.DateChg ArriveTransporteur, datetime(hsuivi.DateChg, '+2 days', '+6 hours') ArrivePrevue\n" +
+                "FROM Bon cmd\n" +
+                "INNER JOIN Societe soc ON cmd.Societe_id = soc.IdtSociete\n" +
+                "JOIN Bon hdispo ON cmd.DateCommande = hdispo.DateCommande AND hdispo.BitChg = 1 AND hdispo.Suivi = \"\" AND hdispo.EtatCommande = \"En cours de préparation\"\n" +
+                "JOIN Bon hsuivi ON cmd.DateCommande = hsuivi.DateCommande AND hsuivi.BitChg = 1 AND hsuivi.Suivi = \"\" AND hsuivi.EtatCommande = \"Mise à disposition\"\n" +
+                "WHERE cmd.EtatCommande = \"En cours de livraison\" \n" +
+                "AND cmd.BitSup = 0 AND cmd.BitChg = 0";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            if (c.moveToFirst()) {
+
+                do {
+                    Livraison info = new Livraison();
+
+                    info.setIdt(c.getInt(c.getColumnIndex("IdtBon")));
+                    info.setNomSociete(c.getString(c.getColumnIndex("Nom")));
+                    info.setTransporteur(c.getString(c.getColumnIndex("Transporteur")));
+                    info.setTrack(c.getString(c.getColumnIndex("Suivi")));
+                    info.setDateDispo(c.getString(c.getColumnIndex("Depart")));
+                    info.setDateEnvoi(c.getString(c.getColumnIndex("ArriveTransporteur")));
+                    info.setDateRecu(c.getString(c.getColumnIndex("ArrivePrevue")));
+
+                    //On ajoute le suivi de livraison
+                    suivi.add(info);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return suivi;
+    }
     /**********************************
      * RECHERCHES
      *********************************/
@@ -1749,7 +1859,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Auteur", bon.getAuteur());
         valeurs.put("DateChg", bon.getDate_changement());
 
-        if( bon.isAChange() ){
+        if( bon.getDate_changement() != null ){
             valeurs.put("BitChg", 1);
         }
         else{
@@ -2008,7 +2118,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("INSERT INTO Compte (Nom, MotDePasse, Mail, Salt, Actif, IdtContact) VALUES ('full_god', 'xs2y6GqgDMuy1G+jJxelOTeouwIeVwdad1/vUJi3U87fDNfpNiiNkFoLcGmt/pYHIVvjgs0Xb48Fys2zFjaAxQ==', 'admin@plastprod.fr', '5703c8599affgku67f20c76ff6ec0116', 1, -1)");
         db.execSQL("INSERT INTO CorrespCouleur (Nom, Couleur) VALUES ('Bouvard Laurent', '#ff9e0e40' ),('Dupond Jean', '#ff77b5fe'),('','ffff0000'),('', 'ffffff00'),('','ff77b5fe'),('','ffff00ff'),('','ff87e990'),('','ffc72c48'),('','ffffd700'),('','ff0f056b'),('','ff9683ec'),('','ff54f98d'),('','ff6d071a'),('','ff73c2fb'),('','ff791cf8')");
-        db.execSQL("INSERT INTO Parametre (Nom, Type, Libelle, Valeur, ATraiter, IdtCompte) VALUES ('ADRESSEIP_SRV', 'IP', 'Adresse Ip du serveur', '192.168.0.23', 0, 0), ('SSID_SOCIETE', 'CHAINE', 'Identifiant du réseau WIFI', 'SFR-bf78', 0, 0)");
+        db.execSQL("INSERT INTO Parametre (Nom, Type, Libelle, Valeur, ATraiter, IdtCompte) VALUES ('ADRESSEIP_SRV', 'IP', 'Adresse Ip du serveur', '192.168.0.23', 0, 0),('SSID_SOCIETE', 'CHAINE', 'Identifiant du réseau WIFI', 'SFR-bf78', 0, 0)");
 
     }
 
