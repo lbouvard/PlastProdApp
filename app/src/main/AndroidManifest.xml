@@ -155,6 +155,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.SuiviActivity" />
         </activity>
+        <activity
+            android:name=".SatisfactionActivity"
+            android:label="@string/title_activity_satisfaction"
+            android:parentActivityName=".SuiviActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.SuiviActivity" />
+        </activity>
     </application>
 
 </manifest>

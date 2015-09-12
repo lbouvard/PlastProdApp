@@ -12,6 +12,9 @@ public class Satisfaction {
     String nom;
     String date_envoi;
     String date_recu;
+    String corps;
+    String lien;
+    String contact;
 
     public Satisfaction() {
     }
@@ -50,5 +53,29 @@ public class Satisfaction {
 
     public void setId_societe(int id_societe) {
         this.id_societe = id_societe;
+    }
+
+    public String getCorps() {
+        return corps;
+    }
+
+    public void setCorps(String corps) {
+        this.corps = corps;
+    }
+
+    public String getLien() {
+        return lien;
+    }
+
+    public void setLien(String lien) {
+        this.lien = lien;
+    }
+
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
     }
 }

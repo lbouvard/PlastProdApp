@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.plastprod.plastprodapp.SatisfactionActivity">
+
+    <item android:id="@+id/action_stats" android:title="@string/action_stats"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_commentaire" android:title="@string/action_commentaire"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+    <item android:id="@+id/action_config" android:title="@string/action_gestion"
+        android:orderInCategory="100" app:showAsAction="never" />
+</menu>

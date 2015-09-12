@@ -11,6 +11,7 @@ public class Reponse {
     String reponse;
     String categorie;
     String type;
+    int niveau;
 
     public Reponse() {
     }
@@ -67,5 +68,13 @@ public class Reponse {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getNiveau() {
+        return niveau;
+    }
+
+    public void setNiveau(int niveau) {
+        this.niveau = niveau;
     }
 }

@@ -30,7 +30,7 @@
     <string name="title_activity_article_dialog">ArticleDialog</string>
     <string name="title_activity_livraison">Suivi des livraisons</string>
     <string name="title_activity_rechecher">RechecherActivity</string>
-
+    <string name="title_activity_satisfaction">Satisfaction client</string>
 
     <string name="action_ajout">Ajouter un contact</string>
     <string name="action_contact">Liste des contacts</string>
@@ -119,5 +119,13 @@
     <string name="deux_points">:</string>
     <string name="date_test">12/08/2015 16:12:25</string>
     <string name="lien_suivi_test">https://track.dhl.fr/2555645485152</string>
+
+    <!-- Satisfaction -->
+    <string name="nb_questionnaire_envoye">Nombre questionnaires envoyées</string>
+    <string name="nb_reponse_recu">Réponses reçues</string>
+    <string name="satisfaction_generale">Satisfaction générale</string>
+    <string name="action_stats">Statistiques</string>
+    <string name="action_commentaire">Commentaires</string>
+    <string name="action_gestion">Configuration</string>
 
 </resources>

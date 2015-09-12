@@ -52,11 +52,18 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
     int nb_commande_prepare;
     int nb_commande_termine;
 
-    int[] couleurs = new int[]{ Color.rgb(211,88,247), Color.rgb(0,64,255), Color.rgb(1,223,215),
-                                Color.rgb(58,223,0), Color.rgb(128,255,0), Color.rgb(134,180,4),
-                                Color.rgb(255,255,0), Color.rgb(250,204,46), Color.rgb(255,128,0),
-                                Color.rgb(245,218,129), Color.rgb(180,4,4), Color.rgb(255,0,0),
-                                Color.rgb(247,129,243), Color.rgb(255,0,64), Color.rgb(8,138,8)};
+    int[] couleurs = new int[]{ Color.rgb(227,207,87), Color.rgb(245,245,220), Color.rgb(255,228,196), Color.rgb(0,0,255), Color.rgb(156,102,31),
+            Color.rgb(138,51,36), Color.rgb(95,158,160), Color.rgb(237,145,33), Color.rgb(210,105,30), Color.rgb(61,89,171), Color.rgb(255,127,80),
+            Color.rgb(255,248,220), Color.rgb(220,20,60), Color.rgb(0,255,255), Color.rgb(47,79,79), Color.rgb(255,125,64), Color.rgb(34,139,34),
+            Color.rgb(255,215,0), Color.rgb(0,128,0), Color.rgb(173,255,47), Color.rgb(205,92,92), Color.rgb(240,230,140), Color.rgb(230,230,250),
+            Color.rgb(50,205,50), Color.rgb(255,0,255), Color.rgb(3,168,158), Color.rgb(255,52,179), Color.rgb(227,168,105), Color.rgb(189,252,201),
+            Color.rgb(255,228,181) };
+
+    int[] couleurs2 = new int[]{ Color.rgb(0,0,128), Color.rgb(128,128,0), Color.rgb(255,128,0), Color.rgb(218,112,214), Color.rgb(51,161,201), Color.rgb(255,192,203),
+            Color.rgb(221,160,221), Color.rgb(128,0,128), Color.rgb(135,38,87), Color.rgb(188,143,143), Color.rgb(250,128,114), Color.rgb(244,164,96), Color.rgb(84,255,159),
+            Color.rgb(94,38,18), Color.rgb(160,82,45), Color.rgb(216,191,216), Color.rgb(64,224,208), Color.rgb(238,130,238), Color.rgb(208,32,144), Color.rgb(245,222,179),
+            Color.rgb(255,255,0), Color.rgb(255,0,0), Color.rgb(128,0,0), Color.rgb(142,56,142), Color.rgb(113,113,198), Color.rgb(125,158,192), Color.rgb(56,142,142),
+            Color.rgb(113,198,113), Color.rgb(142,142,56), Color.rgb(197,193,170), Color.rgb(198,113,113) };
 
     // pour le dernier graphique (barres horizontale devis ayant conduit à une commande ferme
     BarData donnees_devis_donne_commande = new BarData();

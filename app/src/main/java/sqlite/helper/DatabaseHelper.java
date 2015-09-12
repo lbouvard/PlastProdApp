@@ -82,11 +82,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY (IdtCompte) REFERENCES Compte(IdtCompte))";
 
     private static final String CREATE_TABLE_REPONSE = "CREATE TABLE Reponse (IdtQuestion INTEGER PRIMARY KEY, "
-            + "Question TEXT NOT NULL, Reponse TEXT NOT NULL, Categorie TEXT NOT NULL, Type TEXT NOT NULL, IdtSatisfaction INTEGER NOT NULL, "
+            + "Question TEXT NOT NULL, Reponse TEXT NOT NULL, Categorie TEXT NOT NULL, Type TEXT NOT NULL, Niveau INTEGER NOT NULL, IdtSatisfaction INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSatisfaction) REFERENCES Satisfaction(IdtSatisfaction))";
 
     private static final String CREATE_TABLE_SATISF = "CREATE TABLE Satisfaction (IdtSatisfaction INTEGER PRIMARY KEY, "
-            + "Nom TEXT, DateEnvoi TEXT NOT NULL, DateRecu TEXT, IdtSociete INTEGER NOT NULL, "
+            + "Nom TEXT, DateEnvoi TEXT NOT NULL, DateRecu TEXT, Corps TEXT, Lien TEXT, Contact TEXT, IdtSociete INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
 
     private static final String CREATE_TABLE_EVENT = "CREATE TABLE Evenement (IdtEvent INTEGER PRIMARY KEY, DateDeb TEXT NOT NULL, "
@@ -1115,6 +1115,101 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return suivi;
     }
+
+    public List<StatisGraphique> getSatisGraphique(){
+
+        List<StatisGraphique> liste = new ArrayList<StatisGraphique>();
+        String requete = "";
+
+        requete = "select rep.Categorie, COALESCE(Nb1.nb, 0) Niveau1, COALESCE(Nb2.nb, 0) Niveau2, COALESCE(Nb3.nb, 0) Niveau3, COALESCE(Nb4.nb, 0) Niveau4, COALESCE(Nb5.nb, 0) Niveau5\n" +
+                "from Reponse rep\n" +
+                "left join (\n" +
+                "    select Categorie, COUNT(Niveau) nb from Reponse\n" +
+                "    where Niveau = 1\n" +
+                "    group by Categorie\n" +
+                ") as Nb1 ON Nb1.Categorie = rep.Categorie\n" +
+                "left join (\n" +
+                "    select Categorie, COUNT(Niveau) nb from Reponse\n" +
+                "    where Niveau = 2\n" +
+                "    group by Categorie\n" +
+                ") as Nb2 ON Nb2.Categorie = rep.Categorie\n" +
+                "left join (\n" +
+                "    select Categorie, COUNT(Niveau) nb from Reponse\n" +
+                "    where Niveau = 3\n" +
+                "    group by Categorie\n" +
+                ") as Nb3 ON Nb3.Categorie = rep.Categorie\n" +
+                "left join (\n" +
+                "    select Categorie, COUNT(Niveau) nb from Reponse\n" +
+                "    where Niveau = 4\n" +
+                "    group by Categorie\n" +
+                ") as Nb4 ON Nb4.Categorie = rep.Categorie\n" +
+                "left join (\n" +
+                "    select Categorie, COUNT(Niveau) nb from Reponse\n" +
+                "    where Niveau = 5\n" +
+                "    group by Categorie\n" +
+                ") as Nb5 ON Nb5.Categorie = rep.Categorie\n" +
+                "group by rep.Categorie\n" +
+                "order by rep.Categorie";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les paramètres
+            if (c.moveToFirst()) {
+
+                do {
+                    StatisGraphique ligne = new StatisGraphique();
+                    ligne.setCategorie(c.getString(c.getColumnIndex("Categorie")));
+                    ligne.setNbNivUn(c.getInt(c.getColumnIndex("Niveau1")));
+                    ligne.setNbNivDeux(c.getInt(c.getColumnIndex("Niveau2")));
+                    ligne.setNbNivTrois(c.getInt(c.getColumnIndex("Niveau3")));
+                    ligne.setNbNivQuatre(c.getInt(c.getColumnIndex("Niveau4")));
+                    ligne.setNbNivCinq(c.getInt(c.getColumnIndex("Niveau5")));
+
+                    //On ajoute la commande
+                    liste.add(ligne);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return liste;
+    }
+
+    public SatisDonnee getSatisTableau(){
+
+        SatisDonnee info = new SatisDonnee();
+        String requete = "";
+
+        requete = "SELECT COUNT(sat.IdtSatisfaction) Envoye, COALESCE(sat2.Nb, 0) Recu \n" +
+                "FROM Satisfaction sat\n" +
+                "LEFT JOIN (\n" +
+                "    SELECT IdtSatisfaction, COUNT(IdtSatisfaction) Nb\n" +
+                "    FROM Satisfaction\n" +
+                "    WHERE DateRecu IS NOT NULL\n" +
+                ") AS sat2 ON sat2.IdtSatisfaction = sat.IdtSatisfaction";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les produits pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                info.setNbQuestionnaireEnvoye(c.getInt(c.getColumnIndex("Envoye")));
+                info.setNbReponse(c.getInt(c.getColumnIndex("Recu")));
+            }
+
+            c.close();
+        }
+        else
+            info = null;
+
+        return info;
+    }
     /**********************************
      * RECHERCHES
      *********************************/
@@ -2015,6 +2110,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Reponse", rep.getReponse());
         valeurs.put("Categorie", rep.getCategorie());
         valeurs.put("Type", rep.getType());
+        valeurs.put("Niveau", rep.getNiveau());
         valeurs.put("IdtSatisfaction", rep.getId_satisfaction());
 
         db.insert(TABLE_REPONSE, null, valeurs);
@@ -2030,6 +2126,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Nom", sat.getNom());
         valeurs.put("DateEnvoi", sat.getDate_envoi());
         valeurs.put("DateRecu", sat.getDate_recu());
+        valeurs.put("Corps", sat.getCorps());
+        valeurs.put("Lien", sat.getLien());
+        valeurs.put("Contact", sat.getContact());
         valeurs.put("IdtSociete", sat.getId_societe());
 
         db.insert(TABLE_SATISF, null, valeurs);
