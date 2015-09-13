@@ -121,7 +121,7 @@
     <string name="lien_suivi_test">https://track.dhl.fr/2555645485152</string>
 
     <!-- Satisfaction -->
-    <string name="nb_questionnaire_envoye">Nombre questionnaires envoyées</string>
+    <string name="nb_questionnaire_envoye">Questionnaires envoyées</string>
     <string name="nb_reponse_recu">Réponses reçues</string>
     <string name="satisfaction_generale">Satisfaction générale</string>
     <string name="action_stats">Statistiques</string>

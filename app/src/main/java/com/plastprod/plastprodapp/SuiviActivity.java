@@ -66,4 +66,10 @@ public class SuiviActivity extends ActionBarActivity {
         Intent activite = new Intent(this, LivraisonActivity.class);
         startActivity(activite);
     }
+
+    public void afficherSatisfaction(View vue){
+
+        Intent activite = new Intent(this, SatisfactionActivity.class);
+        startActivity(activite);
+    }
 }

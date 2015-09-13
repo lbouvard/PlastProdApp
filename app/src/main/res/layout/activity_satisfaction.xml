@@ -129,7 +129,7 @@
                 <TableRow style="@style/Derniere_Ligne_Tableau">
                     <TextView style="@style/Cellule_Ligne_Tableau"
                         android:text="@string/satisfaction_generale"/>
-                    <TextView style="@style/Cellule_Ligne_Tableau"
+                    <TextView style="@style/Cellule_Ligne_Tableau_Centre"
                         android:id="@+id/satisfaction_generale"/>
                 </TableRow>
             </TableLayout>

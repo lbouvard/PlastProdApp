@@ -201,7 +201,7 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
         NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(1);
         String satis = nf.format(satisfaction);
-        generique.setText(String.valueOf(satis));
+        generique.setText(String.valueOf(satis) + "%");
 
         // Satisfaction des livraisons
         PieChart chart = (PieChart) findViewById(R.id.satis_livraison);
@@ -223,7 +223,7 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
         // Répartition des devis par prospect
         chart = (PieChart) findViewById(R.id.satis_communication);
         mefCammenbert(chart);
-        chart.setCenterText("Satisfactopn communication");
+        chart.setCenterText("Satisfaction communication");
         chart.setData(liste_donnees.get(2));
         chart.highlightValues(null);
         chart.invalidate();
@@ -371,7 +371,8 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
         }
 
         //calcul de la satisfaction générale
-        satisfaction = total_note / nombre_note;
+        satisfaction = (double) total_note / nombre_note;
+        satisfaction = (double) (satisfaction * 100) / 5;
 
         xNiveau.add("Niveau 1");
         xNiveau.add("Niveau 2");
@@ -379,13 +380,16 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
         xNiveau.add("Niveau 4");
         xNiveau.add("Niveau 5");
 
+        int couleur = 0;
+
         for( ArrayList<Entry> ord : liste_ordonnees) {
+
             //Données du graphique 1
             PieDataSet dataSet = new PieDataSet(ord, "");
             dataSet.setSliceSpace(3f);
             dataSet.setSelectionShift(5f);
             // on applique les couleurs
-            dataSet.setColors(recupererCouleur(1));
+            dataSet.setColors(recupererCouleur(couleur));
             // abscisses
             PieData data = new PieData(xNiveau, dataSet);
             data.setValueFormatter(new PercentFormatter());
@@ -393,6 +397,11 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
             data.setValueTextColor(Color.BLACK);
             // ajout
             liste_donnee.add(data);
+
+            if( couleur == 0 )
+                couleur = 1;
+            else
+                couleur = 0;
         }
 
         return liste_donnee;
