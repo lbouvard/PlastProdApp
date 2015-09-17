@@ -92,7 +92,7 @@ public class MenuActivity extends ActionBarActivity implements ConfirmationSynch
             });
 
             // tâche de fond pour récupérer les événements du calendrier paramétré
-            verifierRendezVousCalendrier();
+            //verifierRendezVousCalendrier();
 
         }
         else {

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="2sp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/layout_expand"
+        android:orientation="horizontal"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="3sp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/selecteur"
+            android:background="@drawable/ic_expand_more_black_48dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/id_client"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Client"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentTop="@+id/layout_expand"
+        android:textColor="@color/noir"
+        android:textSize="14sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/id_nom_contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/id_client"
+        android:layout_marginTop="2dp"
+        android:text="Prénom Nom"
+        android:textSize="12sp"
+        android:textStyle="normal"
+        android:textColor="@color/gris_fonce"
+        android:layout_marginStart="5dp"/>
+
+</RelativeLayout>

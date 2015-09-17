@@ -1,11 +1,12 @@
 package sqlite.helper;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Laurent on 10/06/2015.
  */
-public class Satisfaction {
+public class Satisfaction implements Serializable{
 
     int id;
     int id_societe;

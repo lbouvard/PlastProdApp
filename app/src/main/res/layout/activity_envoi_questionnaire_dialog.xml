@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.plastprod.plastprodapp.ArticleDialog">
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="45sp"
+        android:contentDescription="@string/entete_dilaogue"
+        android:background="@drawable/btn_carre_orange"
+        android:id="@+id/entete_article_dialog"
+        android:layout_alignParentTop="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="45sp"
+        android:text="@string/titre_dialogue"
+        android:id="@+id/titre_article_dialog"
+        android:textColor="@color/blanc"
+        android:textSize="18sp"
+        android:gravity="center_vertical"
+        android:layout_marginStart="10sp"
+        android:textStyle="bold"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dropdown_client"
+        android:layout_below="@+id/entete_article_dialog"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_marginTop="5sp"
+        android:layout_marginBottom="5sp"/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/dropdown_contact"
+        android:layout_below="@+id/dropdown_client"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:layout_marginBottom="5sp"/>
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp"
+        android:inputType="textEmailAddress"
+        android:gravity="center"
+        android:id="@+id/edt_email"
+        android:textSize="16sp"
+        android:layout_below="@+id/dropdown_contact"/>
+</RelativeLayout>

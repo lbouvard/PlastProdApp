@@ -8,6 +8,7 @@ public class StatisCommentaire {
     String commentaire;
     String question;
     String client;
+    String societe;
 
     public String getCommentaire() {
         return commentaire;
@@ -31,5 +32,13 @@ public class StatisCommentaire {
 
     public void setClient(String client) {
         this.client = client;
+    }
+
+    public String getSociete() {
+        return societe;
+    }
+
+    public void setSociete(String societe) {
+        this.societe = societe;
     }
 }

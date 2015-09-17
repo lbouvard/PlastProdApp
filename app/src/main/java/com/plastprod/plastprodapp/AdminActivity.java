@@ -25,8 +25,6 @@ public class AdminActivity extends ActionBarActivity {
 
     EditText ssid;
     EditText adresseip;
-    int idt_adresseip;
-    int idt_ssid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +41,11 @@ public class AdminActivity extends ActionBarActivity {
             if( param.getNom().equals("ADRESSEIP_SRV") ){
                 adresseip = (EditText) findViewById(R.id.etAdresseIp);
                 adresseip.setText(param.getValeur());
-                idt_adresseip = param.getId();
             }
 
             if( param.getNom().equals("SSID_SOCIETE") ){
                 ssid = (EditText) findViewById(R.id.etSsid);
                 ssid.setText(param.getValeur());
-                idt_ssid = param.getId();
             }
         }
 
@@ -114,19 +110,18 @@ public class AdminActivity extends ActionBarActivity {
 
         db = new DatabaseHelper(getApplicationContext());
 
-        //adresse ip du serveur
-        Parametre param = new Parametre();
-        param.setValeur(adresseip.getText().toString());
-        param.setId(idt_adresseip);
+        for(Parametre param : liste_params){
 
-        db.majParametre(param);
+            if( param.getNom().equals("ADRESSEIP_SRV") ){
+                param.setValeur(adresseip.getText().toString());
+                db.majParametre(param);
+            }
 
-        //ssid du réseau WIFI
-        param = new Parametre();
-        param.setValeur(ssid.getText().toString());
-        param.setId(idt_ssid);
-
-        db.majParametre(param);
+            if( param.getNom().equals("SSID_SOCIETE") ){
+                param.setValeur(ssid.getText().toString());
+                db.majParametre(param);
+            }
+        }
 
         Toast notification = Toast.makeText(getApplicationContext(), "Les paramètres ont été modifiés avec succès.", Toast.LENGTH_LONG);
         notification.show();

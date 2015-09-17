@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +28,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import sqlite.helper.Bon;
+import sqlite.helper.Choix;
 import sqlite.helper.Compte;
 import sqlite.helper.Contact;
 import sqlite.helper.DatabaseHelper;
@@ -41,10 +43,15 @@ import sqlite.helper.Societe;
 import sqlite.helper.Stock;
 import sqlite.helper.Synchro;
 
-public class RestApi extends AsyncTask<Context, Void, Void> {
+public class RestApi extends AsyncTask<Context, Integer, Integer> {
 
     //Adresse du serveur plastprod
     private static String SVRPLASTPROD = "http://192.168.0.26/";
+    public FinSynchro delegue;
+
+    /*public RestApi(FinSynchro finSynchro){
+        delegue = finSynchro;
+    }*/
 
 	//pour serialiser / déserialiser les objets
 	Gson gson;
@@ -66,6 +73,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
     List<Stock> liste_stocks;
     List<Reponse> liste_reponses;
     List<Satisfaction> liste_satifs;
+    List<Choix> liste_choix;
 
     //Pour la correspondance des identité
     Hashtable<Integer, Integer> corresp_client = null;
@@ -97,8 +105,10 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 	private static String API_STOCK;
 	private static String API_REPONSE;
 	private static String API_SATISF;
+    private static String API_CHOIX;
 
-    protected Void doInBackground(Context... arg){
+    @Override
+    protected Integer doInBackground(Context... arg){
 
         //initialisation
         db = new DatabaseHelper(arg[0]);
@@ -126,7 +136,7 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 
             db.close();
 
-            return null;
+            return 0;
         }
 
         NotificationManager mManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -227,6 +237,8 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         recupererProduits();
         //paramètres
         recupererParametres();
+        //choix
+        recupererChoix();
         //info du stock
         recupererStocks();
 
@@ -254,7 +266,13 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
 
         db.close();
 
-        return null;
+        return 0;
+    }
+
+    @Override
+    protected void onPostExecute(Integer result) {
+        //delegue.etatSynchro(result);
+        Toast.makeText(context, "Synchronisation terminé avec succès.", Toast.LENGTH_LONG).show();
     }
 
     public void alimenterConstantes(){
@@ -291,6 +309,8 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         API_STOCK 		    = SVRPLASTPROD + "WebServices/api/stocks";
         API_REPONSE		    = SVRPLASTPROD + "WebServices/api/reponses";
         API_SATISF 		    = SVRPLASTPROD + "WebServices/api/satisfactions";
+
+        API_CHOIX           = SVRPLASTPROD + "WebServices/api/choix";
     }
 
     public int envoyerClients(int methode, List<Societe> liste_clients) {
@@ -628,6 +648,11 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         recupererDepuisWS(url, "Parametres");
     }
 
+    public void recupererChoix(){
+
+        recupererDepuisWS(API_CHOIX, "Choix");
+    }
+
     public void recupererObjectifs(){
 
         final Global jeton = (Global)context;
@@ -717,6 +742,9 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
                 case "Evenements":
                     setEvents(obj);
                     break;
+                case "Choix":
+                    setChoix(obj);
+                    break;
             }
         }
         catch (Exception ex){
@@ -804,6 +832,16 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
         }
     }
 
+    public void setChoix(JSONArray donnees){
+
+        Type type_liste = new TypeToken<ArrayList<Choix>>() {}.getType();
+        liste_choix = gson.fromJson(donnees.toString(), type_liste);
+
+        for (Choix c : liste_choix) {
+            db.chargerListeChoix(c);
+        }
+    }
+
     public void setProduits(JSONArray donnees){
 
         Type type_liste = new TypeToken<ArrayList<Produit>>() {}.getType();
@@ -867,5 +905,9 @@ public class RestApi extends AsyncTask<Context, Void, Void> {
             ecrivain.write(buffer, 0, n);
 
         return ecrivain.toString();
+    }
+
+    public interface FinSynchro {
+        void etatSynchro(Integer resultat);
     }
 }

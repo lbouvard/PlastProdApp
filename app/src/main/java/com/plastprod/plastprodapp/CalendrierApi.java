@@ -106,7 +106,7 @@ public class CalendrierApi extends AsyncTask<Context, Void, Void> {
 
     public void recupererCalendrierId(String email, String type) {
 
-        // on r�cup�re les comptes et on recup�re l'id du calendrier param�tr� dans l'application
+        // on récupère les comptes et on recupère l'id du calendrier paramétré dans l'application
         Cursor cur = null;
         ContentResolver cr = context.getContentResolver();
 
@@ -138,7 +138,7 @@ public class CalendrierApi extends AsyncTask<Context, Void, Void> {
 
             calendrier_id = cur.getLong(PROJECTION_ID_INDEX);
 
-            Log.d("Rendez-vous", "Calendrier " + String.valueOf(calendrier_id) + " trouv�!");
+            Log.d("Rendez-vous", "Calendrier " + String.valueOf(calendrier_id) + " trouvé!");
         }
 
         cur.close();
@@ -152,7 +152,7 @@ public class CalendrierApi extends AsyncTask<Context, Void, Void> {
         String selection = "";
         String[] selectionArgs;
 
-        // on regarde le nombre de jours depuis la derni�re maj du calendrier
+        // on regarde le nombre de jours depuis la dernière maj du calendrier
         String date_temporaire = db.getDerniereRecuperationEvenements(id_param);
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         try{

@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 62;
+    private static final int DATABASE_VERSION = 64;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -44,6 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_CORRESP_COULEUR = "CorrespCouleur";
     private static final String TABLE_CORRESP_ID = "CorrespId";
     private static final String TABLE_CALENDRIER = "MajCalendrier";
+    private static final String TABLE_CHOIX = "Choix";
 
 
     private static final String CREATE_TABLE_SOCIETE = "CREATE TABLE Societe (IdtSociete INTEGER PRIMARY KEY, Nom TEXT NOT NULL, "
@@ -86,7 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY (IdtSatisfaction) REFERENCES Satisfaction(IdtSatisfaction))";
 
     private static final String CREATE_TABLE_SATISF = "CREATE TABLE Satisfaction (IdtSatisfaction INTEGER PRIMARY KEY, "
-            + "Nom TEXT, DateEnvoi TEXT NOT NULL, DateRecu TEXT, Corps TEXT, Lien TEXT, Contact TEXT, IdtSociete INTEGER NOT NULL, "
+            + "Nom TEXT, DateEnvoi TEXT, DateRecu TEXT, Corps TEXT, Lien TEXT, Contact TEXT, IdtSociete INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
 
     private static final String CREATE_TABLE_EVENT = "CREATE TABLE Evenement (IdtEvent INTEGER PRIMARY KEY, DateDeb TEXT NOT NULL, "
@@ -106,6 +107,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "IdtAndroid INTEGER NOT NULL, IdtServeur INTEGER NOT NULL)";
 
     private static final String CREATE_TABLE_CALENDRIER = "CREATE TABLE MajCalendrier (Idt INTEGER PRIMARY KEY, DateDerniereMaj TEXT, IdtParamCompte INTEGER NOT NULL )";
+
+    private static final String CREATE_TABLE_CHOIX = "CREATE TABLE Choix (Idt INTEGER PRIMARY KEY, Type TEXT NOT NULL, Valeur TEXT NOT NULL)";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -130,6 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_CORRESP_COULEUR);
         db.execSQL(CREATE_TABLE_CORRESP_ID);
         db.execSQL(CREATE_TABLE_CALENDRIER);
+        db.execSQL(CREATE_TABLE_CHOIX);
 
         chargerTables(db);
     }
@@ -153,6 +157,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CORRESP_COULEUR);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CORRESP_ID);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CALENDRIER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHOIX);
 
         // create new tables
         onCreate(db);
@@ -446,6 +451,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_COMPTE, null, valeurs);
     }
 
+    //Ajouter un questionnaire de satisfaction envoyé
+    public long ajouterSatisfaction(Satisfaction sat) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put("Nom", sat.getNom());
+        valeurs.put("DateEnvoi", sat.getDate_envoi());
+        valeurs.put("Corps", sat.getCorps());
+        valeurs.put("Lien", sat.getLien());
+        valeurs.put("Contact", sat.getContact());
+        valeurs.put("IdtSociete", sat.getId_societe());
+
+        return db.insert(TABLE_SATISF, null, valeurs);
+    }
+
     /**************************
      * RECUPERATION UNIQUE
      **************************/
@@ -592,6 +613,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             retour = null;
 
         return retour;
+    }
+
+    public Satisfaction recupererQuestionnaire(int id_commercial){
+
+        Satisfaction sat = new Satisfaction();
+
+        String requete = "SELECT sat.Nom, sat.Corps, sat.Lien \n" +
+                "FROM Satisfaction sat\n" +
+                "INNER JOIN Parametre parm ON sat.Nom = parm.Valeur \n" +
+                "WHERE sat.IdtSociete = -1 AND parm.Nom = 'QVERSION' AND parm.IdtCompte = " + String.valueOf(id_commercial);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            c.moveToFirst();
+
+            sat.setNom(c.getString(c.getColumnIndex("Nom")));
+            sat.setCorps(c.getString(c.getColumnIndex("Corps")));
+            sat.setLien(c.getString(c.getColumnIndex("Lien")));
+
+            c.close();
+        }
+        else
+            sat = null;
+
+        return sat;
     }
 
     /**************************
@@ -1189,7 +1238,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "LEFT JOIN (\n" +
                 "    SELECT IdtSatisfaction, COUNT(IdtSatisfaction) Nb\n" +
                 "    FROM Satisfaction\n" +
-                "    WHERE DateRecu IS NOT NULL\n" +
+                "    WHERE DateRecu IS NULL\n" +
                 ") AS sat2 ON sat2.IdtSatisfaction = sat.IdtSatisfaction";
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1200,7 +1249,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             if (c.moveToFirst()) {
 
                 info.setNbQuestionnaireEnvoye(c.getInt(c.getColumnIndex("Envoye")));
-                info.setNbReponse(c.getInt(c.getColumnIndex("Recu")));
+                info.setNbReponse(c.getInt(c.getColumnIndex("Envoye")) - c.getInt(c.getColumnIndex("Recu")));
             }
 
             c.close();
@@ -1210,6 +1259,99 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return info;
     }
+
+    public List<StatisCommentaire> getSatisCommentaire(){
+
+        List<StatisCommentaire> info = new ArrayList<StatisCommentaire>();
+        String requete = "";
+
+        requete = "SELECT soc.Nom, satis.Contact, rep.Question, rep.Reponse\n" +
+                "FROM Satisfaction satis\n" +
+                "INNER JOIN Societe soc ON satis.IdtSociete = soc.IdtSociete\n" +
+                "INNER JOIN Reponse rep ON satis.IdtSatisfaction = rep.IdtSatisfaction AND rep.Type = 'OUVERT'\n" +
+                "WHERE satis.DateRecu IS NOT NULL";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les commentaires
+            if (c.moveToFirst()) {
+
+                do {
+                    StatisCommentaire com = new StatisCommentaire();
+                    com.setSociete(c.getString(c.getColumnIndex("Nom")));
+                    com.setClient(c.getString(c.getColumnIndex("Contact")));
+                    com.setQuestion(c.getString(c.getColumnIndex("Question")));
+                    com.setCommentaire(c.getString(c.getColumnIndex("Reponse")));
+
+                    info.add(com);
+                }
+                while(c.moveToNext());
+            }
+
+            c.close();
+        }
+        else
+            info = null;
+
+        return info;
+    }
+
+    public List<Parametre> getParamQuestionnaire(int id_commercial){
+
+        List<Parametre> liste = new ArrayList<Parametre>();
+        String requete;
+
+        // IdtParam, Nom, Type, Libelle, Valeur, IdtCompte
+        requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur\n" +
+                "FROM Parametre\n" +
+                "WHERE Nom IN ('QAUTO', 'QETAPE', 'QDELAIS', 'QVERSION') AND IdtCompte = " + String.valueOf(id_commercial);
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            if (c.moveToFirst()) {
+
+                do {
+                    Parametre info = new Parametre();
+
+                    info.setId(c.getInt(c.getColumnIndex("IdtParam")));
+                    info.setNom(c.getString(c.getColumnIndex("Nom")));
+                    info.setType(c.getString(c.getColumnIndex("Type")));
+                    info.setLibelle(c.getString(c.getColumnIndex("Libelle")));
+                    info.setValeur(c.getString(c.getColumnIndex("Valeur")));
+                    info.setId_Compte(id_commercial);
+
+                    //On ajoute le paramètre
+                    liste.add(info);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return liste;
+    }
+
+    public Cursor getCurseurChoix(String type){
+
+        String requete;
+
+        // Idt, Type, Valeur
+        requete = "SELECT Idt _id, Valeur\n" +
+                    "FROM Choix\n" +
+                    "WHERE Type = '" + type + "'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        return c;
+    }
+
     /**********************************
      * RECHERCHES
      *********************************/
@@ -1885,7 +2027,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /********************************************
-     *     SYNCHRONISATION ANDROID --> SERVEUR
+     *     SYNCHRONISATION SERVEUR --> ANDROID
      ********************************************/
 
     public void chargerClient(Societe client){
@@ -2070,6 +2212,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void chargerListeChoix(Choix valeur){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues valeurs = new ContentValues();
+        valeurs.put("Idt", valeur.getIdt());
+        valeurs.put("Type", valeur.getType());
+        valeurs.put("Valeur", valeur.getValeur());
+
+        db.insert(TABLE_CHOIX, null, valeurs);
+        db.close();
+    }
+
     public void chargerStock(Stock sto){
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -2196,6 +2351,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM Produit");
         db.execSQL("DELETE FROM Stock");
         db.execSQL("DELETE FROM Objectif");
+        db.execSQL("DELETE FROM Choix");
         db.execSQL("DELETE FROM Parametre WHERE IdtCompte != 0");
         db.execSQL("DELETE FROM Reponse");
         db.execSQL("DELETE FROM Satisfaction");

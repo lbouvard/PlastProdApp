@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="2sp">
+
+    <TextView
+        android:id="@+id/id_nom_param"
+        android:text="@string/nom_param"
+        android:layout_width="200sp"
+        android:layout_height="50sp"
+        android:gravity="center_vertical"
+        android:paddingStart="20sp"
+        android:paddingEnd="2sp"
+        android:textColor="@color/noir"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/id_valeur_param"
+        android:layout_width="fill_parent"
+        android:layout_height="50sp"
+        android:text="@string/valeur_param"
+        android:gravity="center_vertical"
+        android:textSize="14sp"
+        android:textColor="@color/gris_fonce"
+        android:layout_toEndOf="@+id/id_nom_param"/>
+
+</RelativeLayout>

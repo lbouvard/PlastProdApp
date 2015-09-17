@@ -1,9 +1,11 @@
 package sqlite.helper;
 
+import java.io.Serializable;
+
 /**
  * Created by Laurent on 10/06/2015.
  */
-public class Parametre {
+public class Parametre implements Serializable{
 
     private int id;
     private String nom;

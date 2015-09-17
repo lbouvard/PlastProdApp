@@ -31,6 +31,8 @@
     <string name="title_activity_livraison">Suivi des livraisons</string>
     <string name="title_activity_rechecher">RechecherActivity</string>
     <string name="title_activity_satisfaction">Satisfaction client</string>
+    <string name="title_activity_commentaire">Commentaires</string>
+    <string name="title_activity_menu_questionnaire">Gestion questionnaire</string>
 
     <string name="action_ajout">Ajouter un contact</string>
     <string name="action_contact">Liste des contacts</string>
@@ -127,5 +129,18 @@
     <string name="action_stats">Statistiques</string>
     <string name="action_commentaire">Commentaires</string>
     <string name="action_gestion">Configuration</string>
+
+    <!-- Commentaire -->
+    <string name="question">Question</string>
+    <string name="commentaire">Commentaire</string>
+    <string name="title_activity_questionnaire">Paramètres</string>
+
+    <!-- Paramètres -->
+    <string name="nom_param">Nom du paramètre</string>
+    <string name="valeur_param">Valeur du paramètre</string>
+    
+    <!-- Dialogue envoi mail de satisfaction -->
+    <string name="entete_dilaogue">Entête</string>
+    <string name="titre_dialogue">Envoyer le questionnaire à</string>
 
 </resources>

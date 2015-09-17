@@ -1,5 +1,6 @@
 package com.plastprod.plastprodapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -8,29 +9,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.animation.Easing;
-import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.PercentFormatter;
-import com.github.mikephil.charting.utils.ValueFormatter;
 
-import org.w3c.dom.Text;
-
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,8 +27,6 @@ import java.util.List;
 
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.SatisDonnee;
-import sqlite.helper.StatParClient;
-import sqlite.helper.StatProduit;
 import sqlite.helper.StatisCommentaire;
 import sqlite.helper.StatisGraphique;
 
@@ -52,8 +38,6 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
     List<StatisCommentaire> liste_commentaire = new ArrayList<StatisCommentaire>();
     SatisDonnee donneeTableau;
 
-    int nb_questionnaire_envoye;
-    int nb_questionnaire_recu;
     double satisfaction;
 
     int total_note;
@@ -99,14 +83,20 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
 
             case R.id.action_stats :
 
+                // en cours !
                 return true;
 
             case R.id.action_commentaire :
 
-                //voir ClientActivity pour la recherche et androidmanifest pour la config
+                Intent activite_com = new Intent(this, CommentaireActivity.class);
+                startActivity(activite_com);
+
                 return true;
 
             case R.id.action_config :
+
+                Intent activite_cfg = new Intent(this, MenuQuestionnaireActivity.class);
+                startActivity(activite_cfg);
 
                 return true;
 
@@ -177,7 +167,6 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
         db = new DatabaseHelper(getApplicationContext());
 
         liste_satisfaction = db.getSatisGraphique();
-        //liste_commentaire = db.getSatisCommentaire();
         donneeTableau = db.getSatisTableau();
 
         afficherSatisfaction();
@@ -193,9 +182,9 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
 
         // Remplissage du tableau
         TextView generique = (TextView) findViewById(R.id.nb_questionnaire_envoye);
-        generique.setText(String.valueOf(nb_questionnaire_envoye));
+        generique.setText(String.valueOf(donneeTableau.getNbQuestionnaireEnvoye()));
         generique = (TextView) findViewById(R.id.nb_reponse_recu);
-        generique.setText(String.valueOf(nb_questionnaire_recu));
+        generique.setText(String.valueOf(donneeTableau.getNbReponse()));
 
         generique = (TextView) findViewById(R.id.satisfaction_generale);
         NumberFormat nf = NumberFormat.getInstance();

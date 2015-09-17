@@ -163,6 +163,30 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.SuiviActivity" />
         </activity>
+        <activity
+            android:name=".CommentaireActivity"
+            android:label="@string/title_activity_commentaire"
+            android:parentActivityName=".SuiviActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.SuiviActivity" />
+        </activity>
+        <activity
+            android:name=".OptQuestionnaireActivity"
+            android:label="@string/title_activity_questionnaire"
+            android:parentActivityName=".MenuQuestionnaireActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.MenuQuestionnaireActivity" />
+        </activity>
+        <activity
+            android:name=".MenuQuestionnaireActivity"
+            android:label="@string/title_activity_menu_questionnaire"
+            android:parentActivityName=".SuiviActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.plastprod.plastprodapp.SuiviActivity" />
+        </activity>
     </application>
 
 </manifest>

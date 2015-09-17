@@ -145,4 +145,9 @@ public class Societe implements Serializable {
     public void setASupprimer(boolean ASupprimer) {
         this.ASupprimer = ASupprimer;
     }
+
+    @Override
+    public String toString(){
+        return nom;
+    }
 }
