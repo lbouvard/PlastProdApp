@@ -1,52 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="5dp">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <TableLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="NomArticle"
-        android:id="@+id/nom_article"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:textColor="@color/noir"/>
+        android:id="@+id/tableau_info"
+        android:layout_marginStart="20sp"
+        android:layout_marginEnd="20sp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Prix"
-        android:id="@+id/prix"
-        android:layout_below="@+id/nom_article"
-        android:layout_alignParentStart="true"
-        android:textColor="@color/noir"/>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Quantité"
-        android:id="@+id/quantite"
-        android:layout_below="@+id/nom_article"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/noir"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="30sp"
+                android:gravity="center_vertical"
+                android:text="NomArticle"
+                android:id="@+id/nom_article"
+                android:layout_weight="0.5"
+                android:textColor="@color/gris_fonce"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reference"
-        android:id="@+id/reference"
-        android:layout_above="@+id/quantite"
-        android:layout_alignParentEnd="true"
-        android:textColor="@color/noir"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reference"
+                android:id="@+id/ref_article"
+                android:gravity="end"
+                android:layout_weight="0.5"
+                android:textColor="@color/gris_fonce"/>
+        </TableRow>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total"
-        android:id="@+id/prix_total"
-        android:layout_below="@+id/reference"
-        android:layout_alignParentEnd="true"
-        android:textColor="@color/noir"/>
+        <TableRow
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="120sp"
+                android:layout_height="30sp"
+                android:text="Prix"
+                android:gravity="center_vertical"
+                android:id="@+id/prix_unitaire"
+                android:textColor="@color/gris_fonce"/>
+
+            <TextView
+                android:layout_width="60sp"
+                android:layout_height="wrap_content"
+                android:text="Quantité"
+                android:gravity="end"
+                android:id="@+id/quantite"
+                android:textColor="@color/gris_fonce"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total"
+                android:gravity="end"
+                android:id="@+id/prix_total"
+                android:layout_weight="0.4"
+                android:textColor="@color/noir"/>
+        </TableRow>
+
+    </TableLayout>
+
 </RelativeLayout>

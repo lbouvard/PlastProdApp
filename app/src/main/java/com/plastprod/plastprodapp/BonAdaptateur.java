@@ -54,15 +54,14 @@ public class BonAdaptateur extends ArrayAdapter<Bon> {
         }
 
         //(2) : Récupération des TextView de notre layout
-        TextView dateCommande = (TextView)convertView.findViewById(R.id.datecommande);
-        TextView numeroBon = (TextView)convertView.findViewById(R.id.idbon);
-        //TextView a_Contact = (TextView)convertView.findViewById(R.id.aContact);
+        TextView tvNumero = (TextView)convertView.findViewById(R.id.id_commande);
+        TextView tvDate = (TextView)convertView.findViewById(R.id.id_date);
+        TextView tvMontant = (TextView)convertView.findViewById(R.id.id_montant);
 
         //(3) : Renseignement des valeurs
-        dateCommande.setText( Outils.DateJourMoisAnnee(Outils.chaineVersDate(liste_bon.get(position).getDate_commande())) );
-        numeroBon.setText(liste_bon.get(position).getType() + liste_bon.get(position).getId());
-
-        //a_Contact.setText(liste_bon.get(position).getClient().getNom());
+        tvNumero.setText(liste_bon.get(position).getType() + liste_bon.get(position).getId());
+        tvDate.setText( Outils.DateJourMoisAnnee(Outils.chaineVersDate(liste_bon.get(position).getDate_commande())) );
+        tvMontant.setText(liste_bon.get(position).calculerPrixTotal().toString() + " €");
 
         //On retourne l'item créé.
         return convertView;

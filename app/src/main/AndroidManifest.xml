@@ -124,7 +124,7 @@
                 android:value="com.plastprod.plastprodapp.ContactActivity" />
         </activity>
         <activity
-            android:name=".FormulaireBon"
+            android:name=".AffichageBon"
             android:label="@string/title_activity_affcommande"
             android:parentActivityName=".BonActivity" >
             <meta-data
@@ -185,7 +185,15 @@
             android:parentActivityName=".SuiviActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.plastprod.plastprodapp.SuiviActivity" />
+                android:value="com.plastprod.plastprodapp.SuiviActivity" />
+        </activity>
+        <activity
+            android:name=".FormulaireBon"
+            android:label="@string/title_activity_formulaire_bon"
+            android:parentActivityName=".AffichageBon" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.AffichageBon" />
         </activity>
     </application>
 

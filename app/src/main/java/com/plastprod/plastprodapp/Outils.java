@@ -121,4 +121,47 @@ public class Outils {
 
         return datefinale;
     }
+
+    public static String dateComplete(Date date){
+
+        String datefinale = "";
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+        datefinale = dateformat.format(date);
+
+        return datefinale;
+    }
+
+    public static int[] decoupeDate(String date){
+
+        int[] info = new int[3];
+
+        String[] decoupage = date.split("/");
+
+        info[0] = getJour(decoupage[0]);
+        info[1] = getMois(decoupage[1]);
+        info[2] = Integer.valueOf(decoupage[2]);
+
+        return info;
+    }
+
+    public static int getMois(String mois){
+
+        int retour = 0;
+        int valeur = 0;
+
+        valeur = Integer.valueOf(mois);
+        retour = valeur - 1;
+
+        return retour;
+    }
+
+    public static  int getJour(String jour){
+
+        int retour = 0;
+
+        retour = Integer.valueOf(jour);
+
+        return retour;
+    }
 }

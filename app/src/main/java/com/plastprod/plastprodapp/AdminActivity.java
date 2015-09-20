@@ -33,7 +33,7 @@ public class AdminActivity extends ActionBarActivity {
 
         db = new DatabaseHelper(getApplicationContext());
 
-        liste_params = db.getParametres(0);
+        liste_params = db.getParametres(0, false);
 
         //on renseigne les champs
         for(Parametre param : liste_params){

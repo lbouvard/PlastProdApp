@@ -103,7 +103,7 @@ public class OptQuestionnaireDialog extends DialogFragment {
                         c3.moveToPosition(which);
                         choix = c3.getString(c3.getColumnIndex("Valeur"));
                         //on sauvegarde le choix de la valeur du paramètre
-                        valeurEnCours.setValeur(choix);
+                        valeurEnCours.setValeur(choix.toUpperCase());
                         db.majParametre(valeurEnCours);
                         db.close();
 

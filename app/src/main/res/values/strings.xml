@@ -33,6 +33,7 @@
     <string name="title_activity_satisfaction">Satisfaction client</string>
     <string name="title_activity_commentaire">Commentaires</string>
     <string name="title_activity_menu_questionnaire">Gestion questionnaire</string>
+    <string name="title_activity_formulaire_bon">Modif/Ajout</string>
 
     <string name="action_ajout">Ajouter un contact</string>
     <string name="action_contact">Liste des contacts</string>
@@ -120,6 +121,8 @@
     <string name="decors_item_liste_expensive">Décors</string>
     <string name="deux_points">:</string>
     <string name="date_test">12/08/2015 16:12:25</string>
+    <string name="date_test_court">19/09/2015</string>
+    <string name="numero_bon">CD2154</string>
     <string name="lien_suivi_test">https://track.dhl.fr/2555645485152</string>
 
     <!-- Satisfaction -->
@@ -142,5 +145,14 @@
     <!-- Dialogue envoi mail de satisfaction -->
     <string name="entete_dilaogue">Entête</string>
     <string name="titre_dialogue">Envoyer le questionnaire à</string>
+
+    <string name="etat_commande">Etat de la commande</string>
+    <string name="nom_cmd_societe">Société 1</string>
+    <string name="adresse_cmd_societe">12 rue du test</string>
+    <string name="ville_cmd">75001 Paris</string>
+
+    <string name="nom_cmd_commercial">Jean Dupond</string>
+    <string name="adresse_cmd_commercial">1 rue du bac</string>
+    <string name="ville_cmd_commercial">75002 Paris</string>
 
 </resources>

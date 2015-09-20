@@ -31,6 +31,7 @@ import com.github.mikephil.charting.utils.ValueFormatter;
 import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -51,6 +52,9 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
     int nb_total_devis;
     int nb_commande_prepare;
     int nb_commande_termine;
+
+    String date_debut;
+    String date_fin;
 
     int[] couleurs = new int[]{ Color.rgb(227,207,87), Color.rgb(245,245,220), Color.rgb(255,228,196), Color.rgb(0,0,255), Color.rgb(156,102,31),
             Color.rgb(138,51,36), Color.rgb(95,158,160), Color.rgb(237,145,33), Color.rgb(210,105,30), Color.rgb(61,89,171), Color.rgb(255,127,80),
@@ -74,11 +78,12 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         setContentView(R.layout.activity_statistique);
 
         EditText generique = (EditText) findViewById(R.id.edStatsDateDeb);
-        //generique.setEnabled(false);
         generique.setFocusable(false);
+        generique.setText(dateDebut());
+
         generique = (EditText) findViewById(R.id.edStatsDateFin);
-        //generique.setEnabled(false);
         generique.setFocusable(false);
+        generique.setText(dateFin());
     }
 
     @Override
@@ -101,6 +106,8 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         EditText lDate = null;
         String jour = "";
         String mois = "";
+        String date_affichage;
+        String date_calcul;
         int iMois = 0;
 
         if( type.equals("DateDeb") )
@@ -122,7 +129,16 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         else
             mois = String.valueOf(iMois);
 
-        lDate.setText(jour + "/" + mois + "/" + date.get(Calendar.YEAR));
+        // date à afficher
+        date_affichage = jour + "/" + mois + "/" + date.get(Calendar.YEAR);
+        lDate.setText(date_affichage);
+
+        // date pour le calcul
+        date_calcul = date.get(Calendar.YEAR) + "-" + mois + "-" + jour;
+        if( type.equals("DateDeb") )
+            date_debut = date_calcul;
+        else
+            date_fin = date_calcul;
     }
 
     public void recupererDateDebut(View vue){
@@ -132,6 +148,7 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         // on passe le type en argument
         Bundle bundle = new Bundle();
         bundle.putString("Type", "DateDeb");
+        bundle.putString("Date_en_cours", ((EditText) findViewById(R.id.edStatsDateDeb)).getText().toString());
 
         dialog.setArguments(bundle);
 
@@ -146,6 +163,7 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         // on passe le type en argument
         Bundle bundle = new Bundle();
         bundle.putString("Type", "DateFin");
+        bundle.putString("Date_en_cours", ((EditText) findViewById(R.id.edStatsDateFin)).getText().toString());
 
         dialog.setArguments(bundle);
 
@@ -153,12 +171,40 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         dialog.show(getSupportFragmentManager(), "datePicker");
     }
 
+    private String dateFin() {
+
+        Calendar calendar = Calendar.getInstance();
+
+        // pour les requêtes sql
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        date_fin = formatter.format(calendar.getTime());
+
+        formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(calendar.getTime());
+    }
+
+    private String dateDebut(){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -1);
+
+        // pour les requêtes sql
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        date_debut = formatter.format(calendar.getTime());
+
+        formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(calendar.getTime());
+    }
+
     public void recupererStat(View vue){
+
+        //String date_debut = ((EditText) findViewById(R.id.edStatsDateDeb)).getText().toString();
+        //String date_fin = ((EditText) findViewById(R.id.edStatsDateFin)).getText().toString();
 
         db = new DatabaseHelper(getApplicationContext());
 
-        liste_stats_client = db.getStatsParClient();
-        liste_stats_produit = db.getStatsProduit();
+        liste_stats_client = db.getStatsParClient(date_debut, date_fin);
+        liste_stats_produit = db.getStatsProduit(date_debut, date_fin);
 
         afficherStatClient();
         afficherStatProduit();
@@ -500,8 +546,8 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         ArrayList<String> xValMoins = new ArrayList<String>();
         ArrayList<BarEntry> yValMoins = new ArrayList<BarEntry>();
 
-        for (index = finListe; index > finListe - 5; index--) {
-            stat = liste_stats_produit.get(finListe - index);
+        for (index = finListe - 1; index > finListe - 6; index--) {
+            stat = liste_stats_produit.get(index);
 
             xValMoins.add(stat.getCodeProduit());
             yValMoins.add(new BarEntry((float) stat.getNbProduitVendu(), finListe - index));

@@ -6,4 +6,13 @@
     <color name="gris_clair">#FFABABAB</color>
     <color name="gris_fonce">#FF696969</color>
     <color name="noir">#FF000000</color>
+
+    <color name="crimson">#FFDB143C</color>
+    <color name="corail">#FFFF7E4F</color>
+    <color name="banane">#FFFAD900</color>
+    <color name="jaune">#FFFFFF00</color>
+    <color name="pomme">#FF96FA00</color>
+    <color name="vert">#FF14C204</color>
+    <color name="bleu">#FF261FDE</color>
+
 </resources>

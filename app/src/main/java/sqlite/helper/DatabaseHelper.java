@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //private static final String log = "DatabaseHelper";
 
     //version de la base
-    private static final int DATABASE_VERSION = 64;
+    private static final int DATABASE_VERSION = 65;
 
     //nom de la base
     private static final String DATABASE_NAME = "DB_PLASTPROD";
@@ -87,7 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + "FOREIGN KEY (IdtSatisfaction) REFERENCES Satisfaction(IdtSatisfaction))";
 
     private static final String CREATE_TABLE_SATISF = "CREATE TABLE Satisfaction (IdtSatisfaction INTEGER PRIMARY KEY, "
-            + "Nom TEXT, DateEnvoi TEXT, DateRecu TEXT, Corps TEXT, Lien TEXT, Contact TEXT, IdtSociete INTEGER NOT NULL, "
+            + "Nom TEXT, DateEnvoi TEXT, DateRecu TEXT, Corps TEXT, Lien TEXT, Contact TEXT, BitAjout INTEGER NOT NULL, IdtSociete INTEGER NOT NULL, "
             + "FOREIGN KEY (IdtSociete) REFERENCES Societe(IdtSociete))";
 
     private static final String CREATE_TABLE_EVENT = "CREATE TABLE Evenement (IdtEvent INTEGER PRIMARY KEY, DateDeb TEXT NOT NULL, "
@@ -463,6 +463,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Lien", sat.getLien());
         valeurs.put("Contact", sat.getContact());
         valeurs.put("IdtSociete", sat.getId_societe());
+        valeurs.put("BitAjout", 1);
 
         return db.insert(TABLE_SATISF, null, valeurs);
     }
@@ -870,19 +871,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return contacts;
     }
 
-    public List<Parametre> getParametres(int id_commercial){
+    public List<Parametre> getParametres(int id_commercial, boolean ajout){
 
         List<Parametre> params = new ArrayList<Parametre>();
         String requete = "";
 
-        requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur FROM Parametre "
-                + "WHERE IdtCompte = " + id_commercial;
+        if( ajout ){
+            requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur FROM Parametre "
+                    + "WHERE ATraiter = 1 AND IdtCompte = " + id_commercial;
+        }
+        else {
+            requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur FROM Parametre "
+                    + "WHERE IdtCompte = " + id_commercial;
+        }
 
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = db.rawQuery(requete, null);
 
         if( c != null) {
-            //On parcours les param鵲es pour ajouter un objet ࡬a liste.
+            //On parcours les paramètres pour ajouter un objet à la liste.
             if (c.moveToFirst()) {
                 do {
                     Parametre ligne = new Parametre();
@@ -1005,7 +1012,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return info;
     }
 
-    public List<StatParClient> getStatsParClient(){
+    public List<StatParClient> getStatsParClient(String debut, String fin){
 
         List<StatParClient> stats_client = new ArrayList<StatParClient>();
         String requete = "";
@@ -1015,31 +1022,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "LEFT JOIN (\n" +
                 "    SELECT Societe_id, COUNT(*) as nb\n" +
                 "    FROM Bon\n" +
-                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD'\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND DateCommande > '" + debut + "' AND DateCommande < '" + fin + "'\n" +
                 "    GROUP BY (Societe_id)\n" +
                 "    ) AS cmd1 ON cmd1.Societe_id = IdtSociete\n" +
                 "LEFT JOIN (\n" +
                 "    SELECT Societe_id, COUNT(*) as nb\n" +
                 "    FROM Bon\n" +
-                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'DE'\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'DE' AND DateCommande > '" + debut + "' AND DateCommande < '" + fin + "'\n" +
                 "    GROUP BY (Societe_id)\n" +
                 "    ) AS cmd2 ON cmd2.Societe_id = IdtSociete\n" +
                 "LEFT JOIN (\n" +
                 "    SELECT Societe_id, COUNT(*) as nb\n" +
                 "    FROM Bon\n" +
-                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND EtatCommande = 'Terminée'\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND EtatCommande = 'Terminée' AND DateCommande > '" + debut + "' AND DateCommande < '" + fin + "'\n" +
                 "    GROUP BY (Societe_id)\n" +
                 "    ) AS cmd3 ON cmd3.Societe_id = IdtSociete\n" +
                 "LEFT JOIN (\n" +
                 "    SELECT Societe_id, COUNT(*) as nb\n" +
                 "    FROM Bon\n" +
-                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND EtatCommande = 'Préparation'\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND EtatCommande = 'Préparation'  AND DateCommande > '" + debut + "' AND DateCommande < '" + fin + "'\n" +
                 "    GROUP BY (Societe_id)\n" +
                 "    ) AS cmd4 ON cmd4.Societe_id = IdtSociete\n" +
                 "LEFT JOIN (\n" +
                 "    SELECT Societe_id, COUNT(*) as nb\n" +
                 "    FROM Bon\n" +
-                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND NOT Devis_id is NULL\n" +
+                "    WHERE BitSup = 0 AND BitChg = 0 AND Type = 'CD' AND NOT Devis_id is NULL  AND DateCommande > '" + debut + "' AND DateCommande < '" + fin + "'\n" +
                 "    GROUP BY (Societe_id)\n" +
                 "    ) AS cmd5 ON cmd5.Societe_id = IdtSociete\n" +
                 "WHERE BitSup = 0 AND Type IN ('C', 'P')\n" +
@@ -1078,7 +1085,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return stats_client;
     }
 
-    public List<StatProduit> getStatsProduit(){
+    public List<StatProduit> getStatsProduit(String debut, String fin){
 
         List<StatProduit> stats_produit = new ArrayList<StatProduit>();
         String requete;
@@ -1091,7 +1098,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "    WHERE IdtBon IN (\n" +
                 "        SELECT IdtBon\n" +
                 "        FROM Bon\n" +
-                "        WHERE Type = 'CD')\n" +
+                "        WHERE Type = 'CD' AND DateCommande > '" + debut + "' AND DateCommande < '" + fin + "')\n" +
                 "    GROUP BY Code\n" +
                 "    ) AS articles ON articles.Code = prd.Code\n" +
                 "ORDER BY NbVente DESC ";
@@ -1350,6 +1357,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(requete, null);
 
         return c;
+    }
+
+    /**********************************
+     * FIN AJOUT
+     *********************************/
+    public void finAjoutParametre(List<Parametre> params){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        for(Parametre parm : params){
+            ContentValues valeurs = new ContentValues();
+            valeurs.put("ATraiter", 0);
+
+            // updating row
+            db.update(TABLE_PARAM, valeurs, "IdtParam = ?",
+                    new String[] { String.valueOf(parm.getId()) });
+        }
+
+        db.close();
     }
 
     /**********************************
@@ -2026,6 +2052,46 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return params;
     }
 
+    public List<Satisfaction> getSyncSatisfaction(){
+
+        List<Satisfaction> satis = new ArrayList<Satisfaction>();
+        String requete = "";
+
+        requete = "SELECT IdtSatisfaction, Nom, DateEnvoi, DateRecu, Corps, Lien, Contact, IdtSociete "
+                    + "FROM Satisfaction "
+                    + "WHERE BitAjout = 1";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+            //On parcours les questionnaire de satisfaction envoyés pour ajouter un objet à la liste.
+            if (c.moveToFirst()) {
+
+                do {
+                    Satisfaction sat = new Satisfaction();
+
+                    sat.setId(c.getInt(c.getColumnIndex("IdtSatisfaction")));
+                    sat.setNom(c.getString(c.getColumnIndex("Nom")));
+                    sat.setDate_envoi(c.getString(c.getColumnIndex("DateEnvoi")));
+                    sat.setDate_recu(c.getString(c.getColumnIndex("DateRecu")));
+                    sat.setCorps(c.getString(c.getColumnIndex("Corps")));
+                    sat.setLien(c.getString(c.getColumnIndex("Lien")));
+                    sat.setContact(c.getString(c.getColumnIndex("Contact")));
+                    sat.setId_societe(c.getInt(c.getColumnIndex("IdtSociete")));
+
+                    //on ajoute la ligne
+                    satis.add(sat);
+
+                } while( c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return satis;
+    }
+
     /********************************************
      *     SYNCHRONISATION SERVEUR --> ANDROID
      ********************************************/
@@ -2284,6 +2350,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         valeurs.put("Corps", sat.getCorps());
         valeurs.put("Lien", sat.getLien());
         valeurs.put("Contact", sat.getContact());
+        valeurs.put("BitAjout", 0);
         valeurs.put("IdtSociete", sat.getId_societe());
 
         db.insert(TABLE_SATISF, null, valeurs);

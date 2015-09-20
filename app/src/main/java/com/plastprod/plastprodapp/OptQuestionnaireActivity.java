@@ -94,8 +94,8 @@ public class OptQuestionnaireActivity extends ActionBarActivity implements Adapt
     @Override
     public void onFinDialogue(){
 
-        liste_param = db.getParamQuestionnaire(id_commercial);
-        adaptateur.majResultat(liste_param);
+        //liste_param = db.getParamQuestionnaire(id_commercial);
+        adaptateur.majResultat();
     }
 
 }

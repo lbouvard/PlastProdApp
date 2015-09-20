@@ -31,7 +31,7 @@ public class OptQuestionnaireAdaptateur extends BaseAdapter{
 
     @Override
     public int getViewTypeCount(){
-        return 2;
+        return 4;
     }
 
     @Override
@@ -113,9 +113,9 @@ public class OptQuestionnaireAdaptateur extends BaseAdapter{
         return getType(liste_parm_questionnaire.get(position).getType());
     }
 
-    public void majResultat(List<Parametre> liste){
+    public void majResultat(){
 
-        liste_parm_questionnaire = liste;
+        //liste_parm_questionnaire = liste;
         notifyDataSetChanged();
     }
 

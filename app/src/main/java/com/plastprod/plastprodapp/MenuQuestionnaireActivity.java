@@ -126,7 +126,7 @@ public class MenuQuestionnaireActivity extends ActionBarActivity implements Adap
     }
 
     private String dateEnCours() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
         Calendar calendar = Calendar.getInstance();
         return formatter.format(calendar.getTime());
     }

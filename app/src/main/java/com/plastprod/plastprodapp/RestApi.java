@@ -47,11 +47,6 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
 
     //Adresse du serveur plastprod
     private static String SVRPLASTPROD = "http://192.168.0.26/";
-    public FinSynchro delegue;
-
-    /*public RestApi(FinSynchro finSynchro){
-        delegue = finSynchro;
-    }*/
 
 	//pour serialiser / déserialiser les objets
 	Gson gson;
@@ -72,7 +67,7 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
     List<Objectif> liste_objectifs;
     List<Stock> liste_stocks;
     List<Reponse> liste_reponses;
-    List<Satisfaction> liste_satifs;
+    List<Satisfaction> liste_satis;
     List<Choix> liste_choix;
 
     //Pour la correspondance des identité
@@ -105,6 +100,7 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
 	private static String API_STOCK;
 	private static String API_REPONSE;
 	private static String API_SATISF;
+    private static String API_SATISF_AJT;
     private static String API_CHOIX;
 
     @Override
@@ -120,11 +116,16 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
         SVRPLASTPROD = "http://" + db.getAdresseIpServeur() + "/";
         alimenterConstantes();
 
+        // Configuration admin post installation
         if( arg.length > 1 ){
 
-            //on enregistre les paramètre d'accès au web services
-            liste_parametres = db.getParametres(0);
-            envoyerParametresAdmin(liste_parametres);
+            //on enregistre les paramètre d'accès au web services modifié
+            liste_parametres = db.getParametres(0, true);
+
+            if( liste_parametres.size() > 0 ) {
+                envoyerParametresAdmin(liste_parametres);
+                db.finAjoutParametre(liste_parametres);
+            }
 
             db.viderTables();
             db.viderTableCompte();
@@ -132,7 +133,6 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
             //pour les comptes des commerciaux
             recupererComptes();
             recupererCommerciaux();
-            //recupererAdminParametres();
 
             db.close();
 
@@ -199,6 +199,10 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
         //paramètres à modifier
         liste_parametres = db.getSyncParam();
         envoyerParametres(liste_parametres);
+
+        //questionnaire de satisfaction envoyé à ajouter
+        liste_satis = db.getSyncSatisfaction();
+        envoyerSatisfaction(liste_satis);
 
         mBuilder.setProgress(100, 45, false);
         mManager.notify(UID, mBuilder.build());
@@ -308,7 +312,9 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
         API_OBJECTIF	    = SVRPLASTPROD + "WebServices/api/objectifs/id";
         API_STOCK 		    = SVRPLASTPROD + "WebServices/api/stocks";
         API_REPONSE		    = SVRPLASTPROD + "WebServices/api/reponses";
+
         API_SATISF 		    = SVRPLASTPROD + "WebServices/api/satisfactions";
+        API_SATISF_AJT      = SVRPLASTPROD + "WebServices/api/satisfactions/ajt";
 
         API_CHOIX           = SVRPLASTPROD + "WebServices/api/choix";
     }
@@ -505,6 +511,25 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
         return 1;
     }
 
+    public int envoyerSatisfaction(List<Satisfaction> liste_satis){
+
+        if( liste_satis.size() > 0 ){
+
+            try {
+
+                Type type_liste = new TypeToken<ArrayList<Satisfaction>>() {}.getType();
+                String params = gson.toJson(liste_satis, type_liste);
+
+                envoyerVersWS(API_SATISF_AJT, params, "Satisfaction");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return -1;
+            }
+        }
+        return 1;
+    }
+
     public void envoyerVersWS(String url, String donnees, final String type ){
 
         URL adresse;
@@ -541,30 +566,6 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
 
             //pour debug
             Log.d("Retour", retour);
-
-            //si retour non vide alors c'est un ajout
-            if( retour.length() > 1 )
-            {
-                //On recupère l'objet issu de JSON
-                JSONArray jsonRetour = new JSONArray(retour);
-                JSONObject etat;
-
-                for (int i = 0; i < jsonRetour.length(); i++) {
-                    etat = jsonRetour.getJSONObject(i);
-
-                    if (etat.getString("Etat").equals("OK")) {
-
-                        //base de correspondance pour connaitre l'id créer dans la base distante
-                        Synchro correspondance = new Synchro();
-
-                        correspondance.setType(type);
-                        correspondance.setNewId(etat.getInt("NewId"));
-                        correspondance.setOldId(etat.getInt("OldId"));
-
-                        db.ajouterCorrespondance(correspondance);
-                    }
-                }
-            }
         }
         catch (Exception ex){
             ex.printStackTrace();
@@ -885,9 +886,9 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
     public void setSatisfactions(JSONArray donnees){
 
         Type type_liste = new TypeToken<ArrayList<Satisfaction>>() {}.getType();
-        liste_satifs = gson.fromJson(donnees.toString(), type_liste);
+        liste_satis = gson.fromJson(donnees.toString(), type_liste);
 
-        for (Satisfaction sat : liste_satifs) {
+        for (Satisfaction sat : liste_satis) {
             db.chargerSatisfaction(sat);
         }
     }

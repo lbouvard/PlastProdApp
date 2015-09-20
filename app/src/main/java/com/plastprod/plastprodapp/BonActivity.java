@@ -1,16 +1,8 @@
 package com.plastprod.plastprodapp;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar.Tab;
-import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar.TabListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -117,13 +109,14 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
     public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
         //on recupère l'activité du formulaire client
-        Intent activite = new Intent(this, FormulaireBon.class);
+        Intent activite = new Intent(this, AffichageBon.class);
 
         //on récupère la classe qui contient les données du client
         Bon bon = (Bon)((ListView) arg0).getAdapter().getItem(arg2);
 
         //on transmet l'objet à  la nouvelle activité
         activite.putExtra("Bon", bon);
+        activite.putExtra("Type", type);
 
         //et on affiche le formulaire
         startActivityForResult(activite, RETOUR_MAJ);
@@ -170,7 +163,7 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
     public void ajouterBon(){
 
         //on recupère l'activité du formulaire client
-        Intent activite = new Intent(this, FormulaireBon.class);
+        Intent activite = new Intent(this, AffichageBon.class);
 
         Bon bon = null;
 

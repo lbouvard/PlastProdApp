@@ -18,19 +18,24 @@ public class ChoixDate extends DialogFragment implements DatePickerDialog.OnDate
 
     RetourListener mListener;
     String type;
+    String dateEnCours;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         type = getArguments().getString("Type");
-        // Use the current date as the default date in the picker
+        dateEnCours = getArguments().getString("Date_en_cours");
+
+        int decoupageDate[] = Outils.decoupeDate(dateEnCours);
+
+        /*// Use the current date as the default date in the picker
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);*/
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        return new DatePickerDialog(getActivity(), this, decoupageDate[2], decoupageDate[1], decoupageDate[0]);
     }
 
     @Override

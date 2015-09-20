@@ -31,11 +31,10 @@ import sqlite.helper.StatisCommentaire;
 import sqlite.helper.StatisGraphique;
 
 
-public class SatisfactionActivity extends ActionBarActivity implements ChoixDate.RetourListener {
+public class SatisfactionActivity extends ActionBarActivity {
 
     DatabaseHelper db;
     List<StatisGraphique> liste_satisfaction = new ArrayList<StatisGraphique>();
-    List<StatisCommentaire> liste_commentaire = new ArrayList<StatisCommentaire>();
     SatisDonnee donneeTableau;
 
     double satisfaction;
@@ -61,12 +60,12 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_satisfaction);
 
-        EditText generique = (EditText) findViewById(R.id.edStatsDateDeb);
+        /*EditText generique = (EditText) findViewById(R.id.edStatsDateDeb);
         //generique.setEnabled(false);
         generique.setFocusable(false);
         generique = (EditText) findViewById(R.id.edStatsDateFin);
         //generique.setEnabled(false);
-        generique.setFocusable(false);
+        generique.setFocusable(false);*/
     }
 
     @Override
@@ -103,63 +102,6 @@ public class SatisfactionActivity extends ActionBarActivity implements ChoixDate
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    public void modifierDate(GregorianCalendar date, String type){
-
-        EditText lDate = null;
-        String jour = "";
-        String mois = "";
-        int iMois = 0;
-
-        if( type.equals("DateDeb") )
-            lDate = (EditText) findViewById(R.id.edStatsDateDeb);
-        else
-            lDate = (EditText) findViewById(R.id.edStatsDateFin);
-
-        if( date.get(Calendar.DAY_OF_MONTH) < 10)
-            jour = "0" + String.valueOf(date.get(Calendar.DAY_OF_MONTH));
-        else
-            jour = String.valueOf(date.get(Calendar.DAY_OF_MONTH));
-
-        //le premier mois commence à 0
-        iMois = date.get(Calendar.MONTH);
-        iMois++;
-
-        if( iMois < 10 )
-            mois = "0" + String.valueOf(iMois);
-        else
-            mois = String.valueOf(iMois);
-
-        lDate.setText(jour + "/" + mois + "/" + date.get(Calendar.YEAR));
-    }
-
-    public void recupererDateDebut(View vue){
-
-        DialogFragment dialog = new ChoixDate();
-
-        // on passe le type en argument
-        Bundle bundle = new Bundle();
-        bundle.putString("Type", "DateDeb");
-
-        dialog.setArguments(bundle);
-
-        //affiche le date picker
-        dialog.show(getSupportFragmentManager(), "datePicker");
-    }
-
-    public void recupererDateFin(View vue){
-
-        DialogFragment dialog = new ChoixDate();
-
-        // on passe le type en argument
-        Bundle bundle = new Bundle();
-        bundle.putString("Type", "DateFin");
-
-        dialog.setArguments(bundle);
-
-        //affiche le date picker
-        dialog.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void recupererStat(View vue){

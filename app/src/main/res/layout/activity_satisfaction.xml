@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/page_statistiques">
 
-            <TextView
+            <!--<TextView
                 android:layout_width="50sp"
                 android:layout_height="wrap_content"
                 android:text="Début"
@@ -79,12 +79,12 @@
                 android:layout_marginTop="8sp"
                 android:layout_marginStart="10sp"
                 android:src="@drawable/ic_today_black_36dp"
-                android:onClick="recupererDateFin"/>
+                android:onClick="recupererDateFin"/>-->
 
             <Button
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/valider"
+                android:text="Charger"
                 android:id="@+id/button_valider_critere"
                 android:onClick="recupererStat"
                 android:layout_marginTop="20sp"
@@ -97,8 +97,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textAllCaps="false"
-                android:background="@drawable/btn_carre_blanc"
-                android:layout_below="@+id/edStatsDateFin"/>
+                android:background="@drawable/btn_carre_blanc" />
 
             <TableLayout style="@style/Tableau"
                 android:id="@+id/tableau_donnees"
