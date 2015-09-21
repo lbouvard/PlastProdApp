@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import sqlite.helper.Bon;
 import sqlite.helper.LigneCommande;
@@ -25,14 +26,17 @@ public class LivraisonAdaptateur extends BaseExpandableListAdapter{
 
     private Context context;
     private List<Livraison> liste_suivi;
-    private SimpleDateFormat date_base = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-    private SimpleDateFormat date_ihm = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+    private SimpleDateFormat date_base = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.FRANCE);
+    private SimpleDateFormat date_ihm = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.FRANCE);
     private Date date_util = new Date();
     private String date_chaine = "";
 
     public LivraisonAdaptateur(Context context, List<Livraison> liste ) {
         this.context = context;
         this.liste_suivi = liste;
+
+        this.date_base.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+        this.date_ihm.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
     }
 
     @Override

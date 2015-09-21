@@ -4,11 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridLayout;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,16 +27,23 @@ public class AffichageBon extends ActionBarActivity {
 
     //commande passé lors de la visualisation et modification
     Bon bon_en_cours;
-    DatabaseHelper db;
-
     //commande ou devis (CD ou DE)
     String type;
+    int idtClient;
+
+    DatabaseHelper db;
+
+    //Pour la liste des articles
+    ListView lvLigneCommande;
+    AffichageBonAdaptateur adaptateur;
 
     Context context;
 
     //ligne des totaux
     String quantiteTotale;
     String prixTotal;
+
+    static final int RETOUR_MAJ = 4000;
 
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -48,62 +53,52 @@ public class AffichageBon extends ActionBarActivity {
         //on recupère les données passé en argument
         Intent intent = getIntent();
         bon_en_cours = (Bon) intent.getSerializableExtra("Bon");
+        idtClient = intent.getIntExtra("IdtClient", -1);
         type = intent.getStringExtra("Type");
 
         setTitle(type + bon_en_cours.getId());
 
-        // Seulement si on est en modification/consultation
-        if( bon_en_cours != null ) {
+        // on rempli les champs
+        remplirAffichage();
 
-            //etat
-            imEtat = (ImageView) findViewById(R.id.etat_commande);
-            verifierEtat(bon_en_cours.getEtat_commande(), imEtat);
+        adaptateur = new AffichageBonAdaptateur(getApplicationContext(), bon_en_cours.getLignesBon());
 
-            tvGenerique = (TextView) findViewById(R.id.etat_texte_commande);
-            tvGenerique.setText(bon_en_cours.getEtat_commande());
+        lvLigneCommande = (ListView) findViewById(R.id.liste_affichage_commande);
+        lvLigneCommande.setAdapter(adaptateur);
 
-            //date commande
-            tvGenerique = (TextView) findViewById(R.id.date_commande);
-            tvGenerique.setText( Outils.dateComplete(Outils.chaineVersDate(bon_en_cours.getDate_commande())) );
+        Outils.setListViewHeightBasedOnChildren(lvLigneCommande);
+    }
 
-            tvGenerique = (TextView) findViewById(R.id.nom_societe);
-            tvGenerique.setText(bon_en_cours.getClient().getNom());
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_affichage_bon, menu);
+        return true;
+    }
 
-            tvGenerique = (TextView) findViewById(R.id.adresse_societe);
-            tvGenerique.setText(bon_en_cours.getClient().getAdresse1());
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-            tvGenerique = (TextView) findViewById(R.id.cp_ville_societe);
-            tvGenerique.setText(bon_en_cours.getClient().getCode_postal() + " " + bon_en_cours.getClient().getVille());
+        switch (item.getItemId()) {
 
-            tvGenerique = (TextView) findViewById(R.id.nom_commercial);
-            tvGenerique.setText(bon_en_cours.getCommercial().getPrenom() + " " + bon_en_cours.getCommercial().getNom());
+            case R.id.action_valide_devis:
 
-            tvGenerique = (TextView) findViewById(R.id.adresse_commercial);
-            tvGenerique.setText(bon_en_cours.getClient().getAdresse1());
+                validerDevis();
+                return true;
 
-            tvGenerique = (TextView) findViewById(R.id.cp_ville_commercial);
-            tvGenerique.setText(bon_en_cours.getClient().getCode_postal() + " " + bon_en_cours.getClient().getVille());
+            case R.id.action_supprime_bon :
 
-            //totaux
-            calculerTotalBon();
+                supprimerBon();
+                finish();
+                return true;
 
-            tvGenerique = (TextView) findViewById(R.id.quantite_total);
-            tvGenerique.setText(quantiteTotale);
+            case R.id.action_modifie_bon :
 
-            tvGenerique = (TextView) findViewById(R.id.prix_total);
-            tvGenerique.setText(prixTotal + " €");
+                afficherFormulaireBon();
+                return true;
 
-            //Pour la liste des articles
-            ListView lvLigneCommande;
-            AffichageBonAdaptateur adaptateur;
-
-            adaptateur = new AffichageBonAdaptateur(getApplicationContext(), bon_en_cours.getLignesBon());
-
-            lvLigneCommande = (ListView) findViewById(R.id.liste_affichage_commande);
-            lvLigneCommande.setAdapter(adaptateur);
-
-            setListViewHeightBasedOnChildren(lvLigneCommande);
-
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -156,29 +151,94 @@ public class AffichageBon extends ActionBarActivity {
 
     }
 
-    /**** Method for Setting the Height of the ListView dynamically.
-     **** Hack to fix the issue of not showing all the items of the ListView
-     **** when placed inside a ScrollView  ****/
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter == null)
-            return;
+    private void validerDevis(){
 
-        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-        int totalHeight = 0;
-        View view = null;
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            view = listAdapter.getView(i, view, listView);
-            if (i == 0)
-                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, GridLayout.LayoutParams.WRAP_CONTENT));
+        db = new DatabaseHelper(context);
+        db.ajouterCommande(bon_en_cours, bon_en_cours.getLignesBon(), bon_en_cours.getId());
+        db.close();
+    }
 
-            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += view.getMeasuredHeight();
+    private void supprimerBon(){
+
+        db = new DatabaseHelper(context);
+        db.supprimerBon(bon_en_cours);
+        db.close();
+    }
+
+    private void afficherFormulaireBon(){
+
+        Intent activite = new Intent(this, FormulaireBon.class);
+
+        activite.putExtra("Bon", bon_en_cours);
+        activite.putExtra("IdtClient", idtClient);
+        activite.putExtra("Type", bon_en_cours.getType());
+
+        startActivityForResult(activite, RETOUR_MAJ);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == RETOUR_MAJ) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+                majDonnees();
+            }
         }
-        ViewGroup.LayoutParams params = listView.getLayoutParams();
-        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
-        listView.setLayoutParams(params);
-        listView.requestLayout();
+    }
+
+    private void majDonnees(){
+
+        db = new DatabaseHelper(context);
+        bon_en_cours = db.getBon(bon_en_cours.getId());
+        db.close();
+
+        adaptateur.majListe(bon_en_cours.getLignesBon());
+
+        remplirAffichage();
+
+        Outils.setListViewHeightBasedOnChildren(lvLigneCommande);
+    }
+
+    private void remplirAffichage(){
+
+        //etat
+        imEtat = (ImageView) findViewById(R.id.etat_commande);
+        verifierEtat(bon_en_cours.getEtat_commande(), imEtat);
+
+        tvGenerique = (TextView) findViewById(R.id.etat_texte_commande);
+        tvGenerique.setText(bon_en_cours.getEtat_commande());
+
+        //date commande
+        tvGenerique = (TextView) findViewById(R.id.date_commande);
+        tvGenerique.setText( Outils.dateComplete(Outils.chaineVersDate(bon_en_cours.getDate_commande())) );
+
+        tvGenerique = (TextView) findViewById(R.id.nom_societe);
+        tvGenerique.setText(bon_en_cours.getClient().getNom());
+
+        tvGenerique = (TextView) findViewById(R.id.adresse_societe);
+        tvGenerique.setText(bon_en_cours.getClient().getAdresse1());
+
+        tvGenerique = (TextView) findViewById(R.id.cp_ville_societe);
+        tvGenerique.setText(bon_en_cours.getClient().getCode_postal() + " " + bon_en_cours.getClient().getVille());
+
+        tvGenerique = (TextView) findViewById(R.id.nom_commercial);
+        tvGenerique.setText(bon_en_cours.getCommercial().getPrenom() + " " + bon_en_cours.getCommercial().getNom());
+
+        tvGenerique = (TextView) findViewById(R.id.adresse_commercial);
+        tvGenerique.setText(bon_en_cours.getClient().getAdresse1());
+
+        tvGenerique = (TextView) findViewById(R.id.cp_ville_commercial);
+        tvGenerique.setText(bon_en_cours.getClient().getCode_postal() + " " + bon_en_cours.getClient().getVille());
+
+        //totaux
+        calculerTotalBon();
+
+        tvGenerique = (TextView) findViewById(R.id.quantite_total);
+        tvGenerique.setText(quantiteTotale);
+
+        tvGenerique = (TextView) findViewById(R.id.prix_total_bon);
+        tvGenerique.setText(prixTotal + " €");
     }
 }
 

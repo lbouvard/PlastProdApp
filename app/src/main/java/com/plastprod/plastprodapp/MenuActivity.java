@@ -29,7 +29,7 @@ import sqlite.helper.LigneCommande;
 import sqlite.helper.Societe;
 
 
-public class MenuActivity extends ActionBarActivity implements ConfirmationSynchroDialog.RetourListener, ArticleDialog.RetourListener {
+public class MenuActivity extends ActionBarActivity implements ConfirmationSynchroDialog.RetourListener {
 
     Intent itActivite;
     Contact commercial;
@@ -210,26 +210,5 @@ public class MenuActivity extends ActionBarActivity implements ConfirmationSynch
             db.close();
         }
 
-    }
-
-   /* public void afficherdialog(View vue){
-
-        db = new DatabaseHelper(getApplicationContext());
-        LigneCommande liste = db.getArticle(5);
-
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("article", liste);
-
-        DialogFragment test = new ArticleDialog();
-        test.setArguments(bundle);
-        test.show(getSupportFragmentManager(), "article_dialog");
-    }*/
-
-    public void validateArticles(DialogFragment diag){
-        Outils.afficherToast(getApplicationContext(), "Articles validés");
-    }
-
-    public void annuleArticles(DialogFragment diag){
-        Outils.afficherToast(getApplicationContext(), "Annulé");
     }
 }

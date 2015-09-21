@@ -40,6 +40,9 @@
     <string name="action_histo">Historique des commandes</string>
     <string name="action_supprime">Supprimer un client</string>
     <string name="action_supprime_contact">Supprimer un contact</string>
+    <string name="action_supprime_bon">Supprimer un bon</string>
+    <string name="action_ajout_article">Ajouter un article</string>
+    <string name="action_valide_devis">Valider le devis</string>
 
 
     <string name="form_client_nom">Nom de la société</string>
@@ -154,5 +157,7 @@
     <string name="nom_cmd_commercial">Jean Dupond</string>
     <string name="adresse_cmd_commercial">1 rue du bac</string>
     <string name="ville_cmd_commercial">75002 Paris</string>
+
+    <string name="modifie_bon">Modification du bon</string>
 
 </resources>

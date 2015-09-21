@@ -18,6 +18,7 @@ public class ChoixClientDialog  extends DialogFragment {
     RetourListener mListener;
     DatabaseHelper db;
     int idSociete;
+    String type;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -33,9 +34,9 @@ public class ChoixClientDialog  extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 c.moveToPosition(which);
                 idSociete = c.getInt(c.getColumnIndexOrThrow("_id"));
-
+                type = c.getString(c.getColumnIndex("Type"));
                 //on transmet l'identifiant du client à l'activité bon
-                mListener.onDialogChoixClient(idSociete);
+                mListener.onDialogChoixClient(idSociete, type);
             }
         }, "Nom");
 
@@ -68,6 +69,6 @@ public class ChoixClientDialog  extends DialogFragment {
     }
 
     public interface RetourListener {
-        public void onDialogChoixClient(int id_societe);
+        public void onDialogChoixClient(int id_societe, String type);
     }
 }

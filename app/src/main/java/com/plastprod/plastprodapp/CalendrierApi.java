@@ -15,10 +15,13 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import sqlite.helper.Contact;
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Evenement;
+import sqlite.helper.Livraison;
 import sqlite.helper.Parametre;
 
 /**
@@ -154,7 +157,9 @@ public class CalendrierApi extends AsyncTask<Context, Void, Void> {
 
         // on regarde le nombre de jours depuis la dernière maj du calendrier
         String date_temporaire = db.getDerniereRecuperationEvenements(id_param);
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.FRANCE);
+        date.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
         try{
             Date lDate = date.parse(date_temporaire);
             date_plus_un_derniere_maj = lDate.getTime();
@@ -215,7 +220,9 @@ public class CalendrierApi extends AsyncTask<Context, Void, Void> {
 
     private String getDate(long milliSeconds)
     {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.FRANCE);
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(milliSeconds);
         return formatter.format(calendar.getTime());

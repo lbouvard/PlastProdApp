@@ -19,7 +19,7 @@ import sqlite.helper.LigneCommande;
 public class AffichageBonAdaptateur extends BaseAdapter {
 
     // Une liste de personnes
-    List<LigneCommande> liste_articles;
+    private List<LigneCommande> liste_articles;
 
     //Le contexte dans lequel est présent notre adapter
     private Context context;
@@ -30,13 +30,12 @@ public class AffichageBonAdaptateur extends BaseAdapter {
     public AffichageBonAdaptateur(Context context, List<LigneCommande> liste_articles) {
         this.context = context;
         this.liste_articles = liste_articles;
-        inflater = LayoutInflater.from(context);
+        this.inflater = LayoutInflater.from(context);
     }
 
     public int getCount() {
         return liste_articles.size();
     }
-
 
     public Object getItem(int position) {
         return liste_articles.get(position);
@@ -49,12 +48,15 @@ public class AffichageBonAdaptateur extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         RelativeLayout layoutItem;
+        boolean maj = false;
+
         //(1) : Réutilisation des layouts
         if (convertView == null) {
             //Initialisation de notre item à partir du  layout XML "personne_layout.xml"
             layoutItem = (RelativeLayout) inflater.inflate(R.layout.liste_article, parent, false);
         }
         else{
+            maj = true;
             layoutItem = (RelativeLayout) convertView;
         }
 
@@ -67,21 +69,31 @@ public class AffichageBonAdaptateur extends BaseAdapter {
 
         //(3) : Renseignement des valeurs
         tvNom.setText(liste_articles.get(position).getNom());
-        tvPrixUnitaire.setText(afficherPrixEuro(liste_articles.get(position).getPrixUnitaire()));
+
+        liste_articles.get(position).calculerPrixTotal();
+
+        tvPrixUnitaire.setText(liste_articles.get(position).getPrixRemise().toString() + " €");
+        tvPrixTotal.setText(liste_articles.get(position).getPrixTotal().toString() + " €");
+
         tvQuantite.setText(String.valueOf(liste_articles.get(position).getQuantite()));
         tvReference.setText(liste_articles.get(position).getCode());
-        tvPrixTotal.setText(liste_articles.get(position).getPrixTotal().toString() + " €");
+
 
         //On retourne l'item créé.
         return layoutItem;
     }
 
-    private String afficherPrixEuro(double prix){
+    public void majListe(List<LigneCommande> liste){
 
-        BigDecimal intermed = new BigDecimal(0.00);
-        intermed = intermed.add(new BigDecimal(prix));
-        intermed.setScale(2, BigDecimal.ROUND_HALF_UP);
+        // si on ajoute un nouvel item
+        if( liste.size() > liste_articles.size() ){
+            this.liste_articles.add(liste.get(liste.size() - 1));
+        }
+        // mise à jour des données seulement
+        else {
+            this.liste_articles = liste;
+        }
 
-        return intermed.toString() + " €";
+        notifyDataSetChanged();
     }
 }

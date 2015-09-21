@@ -103,21 +103,20 @@ public class LigneCommande implements Serializable{
     public void calculerPrixRemise(){
 
         if( this.remise > 0 ) {
-            Double prix = this.prixUnitaire - (this.prixUnitaire * this.remise);
+            Double prix = this.prixUnitaire - ((this.prixUnitaire * this.remise)/100);
 
             this.prixRemise = new BigDecimal(prix.doubleValue());
             this.prixRemise = this.prixRemise.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
         else{
             this.prixRemise = new BigDecimal(prixUnitaire.doubleValue());
+            this.prixRemise = this.prixRemise.setScale(2, BigDecimal.ROUND_HALF_UP);
         }
     }
 
     public void calculerPrixTotal(){
 
-        if( remise > 0 ){
-            calculerPrixRemise();
-        }
+        calculerPrixRemise();
 
         this.prixTotal = this.prixRemise.multiply(new BigDecimal(quantite));
         this.prixTotal = this.prixTotal.setScale(2, BigDecimal.ROUND_HALF_UP);

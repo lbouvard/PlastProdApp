@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.StatParClient;
@@ -176,10 +178,12 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         Calendar calendar = Calendar.getInstance();
 
         // pour les requêtes sql
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
         date_fin = formatter.format(calendar.getTime());
 
-        formatter = new SimpleDateFormat("dd/MM/yyyy");
+        formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
         return formatter.format(calendar.getTime());
     }
 
@@ -189,10 +193,12 @@ public class StatistiqueActivity extends ActionBarActivity implements ChoixDate.
         calendar.add(Calendar.YEAR, -1);
 
         // pour les requêtes sql
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
         date_debut = formatter.format(calendar.getTime());
 
-        formatter = new SimpleDateFormat("dd/MM/yyyy");
+        formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
         return formatter.format(calendar.getTime());
     }
 

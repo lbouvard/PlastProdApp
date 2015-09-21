@@ -58,10 +58,10 @@
             android:name=".BonActivity"
             android:label="@string/title_activity_bon"
             android:launchMode="singleTop"
-            android:parentActivityName=".ChoixClientActivity" >
+            android:parentActivityName=".MenuActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.plastprod.plastprodapp.ChoixClientActivity" />
+                android:value="com.plastprod.plastprodapp.MenuActivity" />
         </activity>
         <activity
             android:name=".SuiviActivity"
@@ -126,6 +126,7 @@
         <activity
             android:name=".AffichageBon"
             android:label="@string/title_activity_affcommande"
+            android:launchMode="singleTop"
             android:parentActivityName=".BonActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

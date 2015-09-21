@@ -51,11 +51,15 @@ public class ChoixClientActivity extends ActionBarActivity implements ChoixClien
     }
 
     @Override
-    public void onDialogChoixClient(int id_societe){
+    public void onDialogChoixClient(int id_societe, String type){
 
         Intent activite = new Intent(this, BonActivity.class);
 
-        activite.putExtra("Type", "CD");
+        if( type.equals("C") )
+            activite.putExtra("Type", "CD");
+        else if( type.equals("P") )
+            activite.putExtra("Type", "DE");
+
         activite.putExtra("Id", id_societe);
 
         startActivity(activite);

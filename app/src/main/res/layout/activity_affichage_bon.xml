@@ -170,7 +170,7 @@
                         android:layout_height="wrap_content"
                         android:text="Total"
                         android:gravity="end"
-                        android:id="@+id/prix_total"
+                        android:id="@+id/prix_total_bon"
                         android:layout_weight="0.4"
                         android:textColor="@color/bleu"/>
 

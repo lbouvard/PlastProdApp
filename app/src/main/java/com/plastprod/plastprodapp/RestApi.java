@@ -566,6 +566,31 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
 
             //pour debug
             Log.d("Retour", retour);
+
+            //si retour non vide alors c'est un ajout
+            if( retour.length() > 1 )
+            {
+                // On récupère l'ojbjet issu de JSON
+                JSONArray jsonRetour = new JSONArray(retour);
+                JSONObject etat;
+
+                for (int i = 0; i < jsonRetour.length(); i++){
+                    etat = jsonRetour.getJSONObject(i);
+
+                    if( etat.getString("Etat").equals("OK")) {
+
+                        // base de corresondance
+                        Synchro correspondance = new Synchro();
+
+                        correspondance.setType(type);
+                        correspondance.setNewId(etat.getInt("NewId"));
+                        correspondance.setOldId(etat.getInt("OldId"));
+
+                        db.ajouterCorrespondance(correspondance);
+                    }
+                }
+            }
+
         }
         catch (Exception ex){
             ex.printStackTrace();

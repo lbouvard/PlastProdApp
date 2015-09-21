@@ -25,6 +25,8 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
     String type;
     int id_societe;
 
+    boolean revientDePause = false;
+
     static final int RETOUR_MAJ = 2000;
 
     @Override
@@ -57,6 +59,22 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
             Button btn_inactif = (Button)findViewById(R.id.button_devis);
             btn_inactif.setBackgroundColor(getResources().getColor(R.color.blanc));
         }
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        if( revientDePause ) {
+            majListe(id_societe);
+        }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        revientDePause = true;
     }
 
     @Override
@@ -116,6 +134,7 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
 
         //on transmet l'objet à  la nouvelle activité
         activite.putExtra("Bon", bon);
+        activite.putExtra("IdtClient", id_societe);
         activite.putExtra("Type", type);
 
         //et on affiche le formulaire
@@ -163,12 +182,13 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
     public void ajouterBon(){
 
         //on recupère l'activité du formulaire client
-        Intent activite = new Intent(this, AffichageBon.class);
+        Intent activite = new Intent(this, FormulaireBon.class);
 
         Bon bon = null;
 
         //on transmert l'objet à la nouvelle activité
         activite.putExtra("Bon", bon);
+        activite.putExtra("IdtClient", id_societe);
         activite.putExtra("Type", type);
 
         //et on affiche le formulaire

@@ -1,11 +1,19 @@
 package com.plastprod.plastprodapp;
 
 import android.content.Context;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.GridLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Laurent on 15/06/2015.
@@ -101,7 +109,8 @@ public class Outils {
     public static Date chaineVersDate(String chaine){
 
         Date date = null;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.FRANCE);
+        format.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
         try {
             date = format.parse(chaine);
@@ -115,7 +124,8 @@ public class Outils {
     public static String DateJourMoisAnnee(Date date){
 
         String datefinale = "";
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+        dateformat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
         datefinale = dateformat.format(date);
 
@@ -125,7 +135,8 @@ public class Outils {
     public static String dateComplete(Date date){
 
         String datefinale = "";
-        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.FRANCE);
+        dateformat.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
         datefinale = dateformat.format(date);
 
@@ -163,5 +174,42 @@ public class Outils {
         retour = Integer.valueOf(jour);
 
         return retour;
+    }
+
+    /**** Method for Setting the Height of the ListView dynamically.
+     **** Hack to fix the issue of not showing all the items of the ListView
+     **** when placed inside a ScrollView  ****/
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null)
+            return;
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        int totalHeight = 0;
+        View view = null;
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            view = listAdapter.getView(i, view, listView);
+            if (i == 0)
+                view.setLayoutParams(new ViewGroup.LayoutParams(desiredWidth, GridLayout.LayoutParams.WRAP_CONTENT));
+
+            view.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += view.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+    }
+
+    public static String dateNow() {
+
+        Calendar calendar = Calendar.getInstance();
+        //calendar.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
+        // pour les requêtes sql
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
+        return formatter.format(calendar.getTime());
     }
 }

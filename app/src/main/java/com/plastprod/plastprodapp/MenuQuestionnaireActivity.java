@@ -17,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.Parametre;
@@ -126,7 +128,9 @@ public class MenuQuestionnaireActivity extends ActionBarActivity implements Adap
     }
 
     private String dateEnCours() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.FRANCE);
+        formatter.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
+
         Calendar calendar = Calendar.getInstance();
         return formatter.format(calendar.getTime());
     }

@@ -47,6 +47,7 @@ public class ArticleDialog extends DialogFragment {
     BigDecimal mTotal = null;
 
     LigneCommande article_en_cours = null;
+    Produit produit_selectionne;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState){
@@ -55,8 +56,8 @@ public class ArticleDialog extends DialogFragment {
         final AlertDialog.Builder constructeur = new AlertDialog.Builder(getActivity());
 
         //on recupère l'article ou null passé en argument
-        article_en_cours =  (LigneCommande)getArguments().getSerializable("article");
-        idtBon = getArguments().getInt("idtBon", -1);
+        article_en_cours =  (LigneCommande)getArguments().getSerializable("Article");
+        idtBon = getArguments().getInt("IdtBon", -1);
 
         // on récupère la vue spécifique
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -160,6 +161,9 @@ public class ArticleDialog extends DialogFragment {
     }
 
     private void remplirFormulaire(Produit produit){
+
+        // produit en cours
+        produit_selectionne = produit;
 
         //variables
         TextView tvGenerique = null;
@@ -398,21 +402,10 @@ public class ArticleDialog extends DialogFragment {
 
             LigneCommande ligne = new LigneCommande();
 
-            // nom
-            TextView generique = (TextView) getDialog().findViewById(R.id.nom_produit);
-            ligne.setNom(generique.getText().toString());
-
-            // code
-            generique = (TextView) getDialog().findViewById(R.id.code_produit);
-            ligne.setCode(generique.getText().toString());
-
-            // description
-            generique = (TextView) getDialog().findViewById(R.id.description_produit);
-            ligne.setDescription(generique.getText().toString());
-
-            // prix unitaire
-            generique = (TextView) getDialog().findViewById(R.id.prix_produit);
-            ligne.setPrixUnitaire(Double.valueOf(generique.getText().toString()));
+            ligne.setNom(produit_selectionne.getNom());
+            ligne.setCode(produit_selectionne.getCode());
+            ligne.setDescription(produit_selectionne.getDescription());
+            ligne.setPrixUnitaire(produit_selectionne.getPrix());
 
             // remise
             EditText ed = (EditText) getDialog().findViewById(R.id.edt_remise);

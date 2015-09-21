@@ -8,11 +8,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-
-import sqlite.helper.Livraison;
 import sqlite.helper.StatisCommentaire;
 
 /**
