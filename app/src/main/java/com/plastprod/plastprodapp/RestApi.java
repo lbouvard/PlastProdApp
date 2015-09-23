@@ -277,6 +277,14 @@ public class RestApi extends AsyncTask<Context, Integer, Integer> {
     protected void onPostExecute(Integer result) {
         //delegue.etatSynchro(result);
         Toast.makeText(context, "Synchronisation terminé avec succès.", Toast.LENGTH_LONG).show();
+
+        db = new DatabaseHelper(context);
+        //recupération du dernier indice des bons
+        Global jeton = (Global) context;
+
+        jeton.setIndice_bon(db.getDernierIndiceBon());
+
+        db.close();
     }
 
     public void alimenterConstantes(){

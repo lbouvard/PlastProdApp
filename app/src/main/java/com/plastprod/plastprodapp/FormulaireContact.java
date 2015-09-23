@@ -155,12 +155,14 @@ public class FormulaireContact extends ActionBarActivity {
         }
         contact.setTel_mobile(((EditText) findViewById(R.id.etMobile)).getText().toString());
 
-        if( !Outils.verifierNumero( ((EditText) findViewById(R.id.etFax)).getText().toString()) ){
-            Toast notification = Toast.makeText(context, "Veuillez entrer un numéro au format international (Ex : +33321457891).", duree);
-            notification.show();
-            return;
+        if( !((EditText) findViewById(R.id.etFax)).getText().toString().equals("") ) {
+            if (!Outils.verifierNumero(((EditText) findViewById(R.id.etFax)).getText().toString())) {
+                Toast notification = Toast.makeText(context, "Veuillez entrer un numéro au format international (Ex : +33321457891).", duree);
+                notification.show();
+                return;
+            }
+            contact.setFax(((EditText) findViewById(R.id.etFax)).getText().toString());
         }
-        contact.setFax(((EditText) findViewById(R.id.etFax)).getText().toString());
 
         if( !Outils.verifierEmail(((EditText) findViewById(R.id.etMail)).getText().toString()) ){
             Toast notification = Toast.makeText(context, "Veuillez entrer une adresse Email valide.", duree);

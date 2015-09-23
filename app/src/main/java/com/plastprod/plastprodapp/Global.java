@@ -18,6 +18,7 @@ public class Global extends Application {
     private String mail_utilisateur;
     private Date date_connexion;
     private Date expiration;
+    private int indice_bon;
 
     public Global() {
         this.nom_utilisateur = "";
@@ -31,10 +32,6 @@ public class Global extends Application {
 
     public void setUtilisateur(Contact utilisateur) {
         this.utilisateur = utilisateur;
-    }
-
-    public Date getDate_connexion() {
-        return date_connexion;
     }
 
     public void setDate_connexion(Date date_connexion) {
@@ -72,5 +69,13 @@ public class Global extends Application {
 
     public void setMail_utilisateur(String mail_utilisateur) {
         this.mail_utilisateur = mail_utilisateur;
+    }
+
+    public int getIndice_bon() {
+        return indice_bon;
+    }
+
+    public void setIndice_bon(int indice_bon) {
+        this.indice_bon = indice_bon;
     }
 }

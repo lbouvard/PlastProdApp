@@ -59,7 +59,7 @@ public class BonAdaptateur extends ArrayAdapter<Bon> {
         TextView tvMontant = (TextView)convertView.findViewById(R.id.id_montant);
 
         //(3) : Renseignement des valeurs
-        tvNumero.setText(liste_bon.get(position).getType() + liste_bon.get(position).getId());
+        tvNumero.setText(liste_bon.get(position).getNumero_commande());
         tvDate.setText( Outils.DateJourMoisAnnee(Outils.chaineVersDate(liste_bon.get(position).getDate_commande())) );
         tvMontant.setText(liste_bon.get(position).calculerPrixTotal().toString() + " €");
 

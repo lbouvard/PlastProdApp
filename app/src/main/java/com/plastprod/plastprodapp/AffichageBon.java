@@ -17,11 +17,13 @@ import sqlite.helper.DatabaseHelper;
 import sqlite.helper.LigneCommande;
 
 /**
- * Created by Michael on 29/07/2015.
+ * Auteur       : Michael Goncalo
+ * Date         : 29/07/2015
+ * Description  : Permet d'afficher un bon (devis ou commande)
  */
 public class AffichageBon extends ActionBarActivity {
 
-    //pour récupérer les composants
+//pour récupérer les composants
     TextView tvGenerique;
     ImageView imEtat;
 
@@ -56,7 +58,7 @@ public class AffichageBon extends ActionBarActivity {
         idtClient = intent.getIntExtra("IdtClient", -1);
         type = intent.getStringExtra("Type");
 
-        setTitle(type + bon_en_cours.getId());
+        setTitle(bon_en_cours.getNumero_commande());
 
         // on rempli les champs
         remplirAffichage();
@@ -70,9 +72,22 @@ public class AffichageBon extends ActionBarActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu){
+
+        getMenuInflater().inflate(R.menu.menu_affichage_bon, menu);
+
+        // si le bon n'est pas un devis à valider (état créé), on cache l'option de validation
+        if( !(type.equals("DE") && bon_en_cours.getEtat_commande().equals("Créé")) ){
+            menu.getItem(0).setVisible(false);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_affichage_bon, menu);
+        //getMenuInflater().inflate(R.menu.menu_affichage_bon, menu);
         return true;
     }
 
@@ -88,51 +103,66 @@ public class AffichageBon extends ActionBarActivity {
 
             case R.id.action_supprime_bon :
 
-                supprimerBon();
-                finish();
+                if( verifierModifPossible(bon_en_cours.getEtat_commande()) ) {
+                    supprimerBon();
+                    finish();
+                }
+                else{
+                    Outils.afficherToast(context, "L'état du bon ne permet pas sa suppression.");
+                }
                 return true;
 
             case R.id.action_modifie_bon :
 
-                afficherFormulaireBon();
-                return true;
+                if( verifierModifPossible(bon_en_cours.getEtat_commande()) ) {
+                    afficherFormulaireBon();
+                    return true;
+                }
+                else{
+                    Outils.afficherToast(context, "L'état du bon ne permet pas sa modification.");
+                }
 
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void verifierEtat(String etat, ImageView iv){
+    public void verifierEtat(String etat, ImageView iv) {
 
-        if( etat.equals("En attente de validation")){
-            iv.setBackgroundResource(R.drawable.status_commande_attvalid);
-        }
-        else if( etat.equals("Validée")){
-            iv.setBackgroundResource(R.drawable.status_commande_valid);
-        }
-        else if( etat.equals("En cours de préparation")){
-            iv.setBackgroundResource(R.drawable.status_commande_prep);
-        }
-        else if( etat.equals("Mise à disposition")){
-            iv.setBackgroundResource(R.drawable.status_commande_dispo);
-        }
-        else if( etat.equals("En cours de livraison")){
-            iv.setBackgroundResource(R.drawable.status_commande_livraison);
-        }
-        else if( etat.equals("Terminée")){
-            iv.setBackgroundResource(R.drawable.status_commande_termine);
-        }
-        else if( etat.equals("Créé")){
-            iv.setBackgroundResource(R.drawable.status_bon_cree);
-        }
-        else if( etat.equals("Fin validité")){
-            iv.setBackgroundResource(R.drawable.status_bon_finvalid);
-        }
-        else if( etat.equals("Validé") ){
-            iv.setBackgroundResource(R.drawable.status_bon_valid);
-        }
-        else if( etat.equals("Annulé")) {
-            iv.setBackgroundResource(R.drawable.status_bon_annule);
+        switch (etat) {
+
+            case "En attente de validation":
+                iv.setBackgroundResource(R.drawable.status_commande_attvalid);
+                break;
+            case "Validée":
+                iv.setBackgroundResource(R.drawable.status_commande_valid);
+                break;
+            case "En cours de préparation":
+                iv.setBackgroundResource(R.drawable.status_commande_prep);
+                break;
+            case "Mise à disposition":
+                iv.setBackgroundResource(R.drawable.status_commande_dispo);
+                break;
+            case "En cours de livraison":
+                iv.setBackgroundResource(R.drawable.status_commande_livraison);
+                break;
+            case "Terminée":
+                iv.setBackgroundResource(R.drawable.status_commande_termine);
+                break;
+            case "Créé":
+                iv.setBackgroundResource(R.drawable.status_bon_cree);
+                break;
+            case "Fin validité":
+                iv.setBackgroundResource(R.drawable.status_bon_finvalid);
+                break;
+            case "Validé":
+                iv.setBackgroundResource(R.drawable.status_bon_valid);
+                break;
+            case "Annulé":
+                iv.setBackgroundResource(R.drawable.status_bon_annule);
+                break;
+            default:
+                break;
         }
     }
 
@@ -154,8 +184,26 @@ public class AffichageBon extends ActionBarActivity {
     private void validerDevis(){
 
         db = new DatabaseHelper(context);
+
+        // génération d'un numéro de commande unique
+        Global jeton = (Global) getApplicationContext();
+        String indice = "CD" + String.valueOf(jeton.getUtilisateur().getId()) + String.valueOf(jeton.getIndice_bon());
+        bon_en_cours.setNumero_commande(indice);
+        bon_en_cours.setCommercial_id(jeton.getUtilisateur().getId());
+        bon_en_cours.setClient_id(idtClient);
+        //incrémente l'indice
+        jeton.setIndice_bon(jeton.getIndice_bon() + 1 );
+
+        // ajout de la commande
         db.ajouterCommande(bon_en_cours, bon_en_cours.getLignesBon(), bon_en_cours.getId());
+        //mise à jour du devis
+        db.majEtatDevis(bon_en_cours);
+
         db.close();
+
+        Outils.afficherToast(context, "Le devis a été validé. La commande " + indice + " a été généré.");
+        // on retourne à la liste des devis
+        finish();
     }
 
     private void supprimerBon(){
@@ -239,6 +287,49 @@ public class AffichageBon extends ActionBarActivity {
 
         tvGenerique = (TextView) findViewById(R.id.prix_total_bon);
         tvGenerique.setText(prixTotal + " €");
+    }
+
+    private boolean verifierModifPossible(String etat){
+
+        boolean actionPossible = false;
+
+        switch( etat ){
+
+            case "En attente de validation":
+                actionPossible = true;
+                break;
+            case "Validée":
+                actionPossible = true;
+                break;
+            case "En cours de préparation":
+                actionPossible = true;
+                break;
+            case "Mise à disposition":
+                actionPossible = false;
+                break;
+            case "En cours de livraison":
+                actionPossible = false;
+                break;
+            case "Terminée":
+                actionPossible = false;
+                break;
+            case "Créé":
+                actionPossible = true;
+                break;
+            case "Fin validité":
+                actionPossible = false;
+                break;
+            case "Validé":
+                actionPossible = false;
+                break;
+            case "Annulé":
+                actionPossible = false;
+                break;
+            default:
+                break;
+        }
+
+        return actionPossible;
     }
 }
 

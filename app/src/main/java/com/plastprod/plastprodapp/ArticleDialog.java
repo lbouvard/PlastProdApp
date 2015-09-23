@@ -3,28 +3,22 @@ package com.plastprod.plastprodapp;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.ActionBarActivity;
+
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
+
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
+
 import android.widget.EditText;
-import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -33,7 +27,6 @@ import java.util.List;
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.LigneCommande;
 import sqlite.helper.Produit;
-
 
 public class ArticleDialog extends DialogFragment {
 
@@ -45,6 +38,7 @@ public class ArticleDialog extends DialogFragment {
     int mQuantite = 1;
     double mPrix = 0;
     BigDecimal mTotal = null;
+    String articleDejaDansLePanier;
 
     LigneCommande article_en_cours = null;
     Produit produit_selectionne;
@@ -58,6 +52,7 @@ public class ArticleDialog extends DialogFragment {
         //on recupère l'article ou null passé en argument
         article_en_cours =  (LigneCommande)getArguments().getSerializable("Article");
         idtBon = getArguments().getInt("IdtBon", -1);
+        articleDejaDansLePanier = getArguments().getString("ArticleDansLePanier");
 
         // on récupère la vue spécifique
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -105,7 +100,7 @@ public class ArticleDialog extends DialogFragment {
             List<Produit> liste_produits = new ArrayList<Produit>();
 
             db = new DatabaseHelper(getActivity().getApplicationContext());
-            liste_produits = db.getProduits();
+            liste_produits = db.getProduits(articleDejaDansLePanier);
 
             // on récupère la liste déroulante
             Spinner spinner = (Spinner) this.getDialog().findViewById(R.id.dropdown_article);

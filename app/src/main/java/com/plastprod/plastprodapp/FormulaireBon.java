@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,7 +20,6 @@ import java.util.List;
 import sqlite.helper.Bon;
 import sqlite.helper.DatabaseHelper;
 import sqlite.helper.LigneCommande;
-import sqlite.helper.Societe;
 
 public class FormulaireBon extends ActionBarActivity implements AdapterView.OnItemClickListener, ArticleDialog.RetourListener  {
 
@@ -41,7 +40,7 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
     String quantiteTotale;
     String prixTotal;
 
-    List<LigneCommande> liste_article = new ArrayList<LigneCommande>();
+    List<LigneCommande> liste_article = new ArrayList<>();
     boolean nouveauBon;
 
     @Override
@@ -63,7 +62,7 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
             nouveauBon = false;
             idtBon = bon_en_cours.getId();
 
-            setTitle("Modifier " + type + bon_en_cours.getId());
+            setTitle("Modifier " + bon_en_cours.getNumero_commande());
 
             tvGenerique = (TextView) findViewById(R.id.nom_societe);
             tvGenerique.setText(bon_en_cours.getClient().getNom());
@@ -98,6 +97,7 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
 
             // Mise en base d'un bon vide
             bon_en_cours = new Bon();
+            bon_en_cours.setNumero_commande(type);
             bon_en_cours.setType(type);
             bon_en_cours.setCommercial_id(jeton.getUtilisateur().getId());
             bon_en_cours.setClient_id(idtClient);
@@ -105,11 +105,12 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
             bon_en_cours.setDate_commande(Outils.dateNow());
             bon_en_cours.setSuivi("");
             bon_en_cours.setTransporteur("");
+            bon_en_cours.setCommentaire("");
 
             db = new DatabaseHelper(context);
 
             if( type.equals("DE")) {
-                bon_en_cours.setEtat_commande("Crée");
+                bon_en_cours.setEtat_commande("Créé");
                 idtBon = (int) db.ajouterDevis(bon_en_cours, null);
             }
             else {
@@ -128,7 +129,36 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
         lvLigneCommande.setOnItemClickListener(this);
         lvLigneCommande.setAdapter(adaptateur);
 
+        registerForContextMenu(lvLigneCommande);
+
         Outils.setListViewHeightBasedOnChildren(lvLigneCommande);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+        if ( v.getId() == R.id.liste_affichage_commande ) {
+
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+
+            menu.setHeaderTitle(liste_article.get(info.position).getCode());
+            menu.add(Menu.NONE, 0, 0, "Supprimer" );
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+
+        if( item.getItemId() == 0) {
+
+            LigneCommande article = liste_article.get(info.position);
+            supprimerArticle(article);
+            majListe();
+
+        }
+        return true;
     }
 
     @Override
@@ -151,6 +181,7 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
             Bundle bundle = new Bundle();
             bundle.putSerializable("Article", null);
             bundle.putInt("IdtBon", idtBon);
+            bundle.putString("ArticleDansLePanier", articleDejaDansLePanier());
 
             DialogFragment ajout_article = new ArticleDialog();
             ajout_article.setArguments(bundle);
@@ -184,6 +215,20 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
 
     public void annuleArticles(DialogFragment diag){
         //Outils.afficherToast(getApplicationContext(), "Annulé");
+    }
+
+    public void supprimerArticle(LigneCommande article){
+
+        db = new DatabaseHelper(context);
+
+        if( nouveauBon ){
+            // dans le cas d'une création de bon, on supprime totalement l'article (pas d'existence sur le serveur)
+            db.supprimerTotalementLigneBon(article.getId());
+        }
+        else{
+            // suppression logique
+            db.supprimerLigneBon(article);
+        }
     }
 
     public void majListe(){
@@ -235,9 +280,16 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
 
         if( nouveauBon ){
 
-            // on supprime les articles du bon
+            db = new DatabaseHelper(context);
 
+            // on supprime les articles du bon
+            for(LigneCommande ligne : liste_article) {
+                db.supprimerTotalementLigneBon(ligne.getId());
+            }
             // on supprime le bon
+            db.supprimerTotalementBon(bon_en_cours.getId());
+
+            db.close();
 
         }
         finish();
@@ -246,15 +298,44 @@ public class FormulaireBon extends ActionBarActivity implements AdapterView.OnIt
     //pour enregistrer les modification
     public void validerModification(View vue){
 
+        String indice;
+
         if( nouveauBon ){
             db = new DatabaseHelper(context);
+
+            //génération du numéro de commande
+            Global jeton = (Global) getApplicationContext();
+
+            indice = bon_en_cours.getNumero_commande() + String.valueOf(jeton.getUtilisateur().getId()) + String.valueOf(jeton.getIndice_bon());
+            //incrémente l'indice
+            jeton.setIndice_bon(jeton.getIndice_bon() + 1 );
+
+            bon_en_cours.setNumero_commande(indice);
             bon_en_cours.setDate_commande(Outils.dateNow());
-            db.majBon(bon_en_cours, liste_article, false, true);
+
+            // mise à jour du bon
+            db.majBon(bon_en_cours, true);
         }
 
         Intent returnIntent = new Intent();
         setResult(RESULT_OK, returnIntent);
 
         finish();
+    }
+
+    private String articleDejaDansLePanier(){
+
+        String sortie = "";
+
+        if( liste_article.size() > 0 ){
+
+            for(LigneCommande ligne : liste_article){
+                sortie +=  "'" + ligne.getCode() + "',";
+            }
+
+            sortie = sortie.substring(0, sortie.length() - 1);
+        }
+
+        return sortie;
     }
 }

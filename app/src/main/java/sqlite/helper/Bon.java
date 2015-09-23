@@ -16,6 +16,7 @@ public class Bon implements Serializable{
     }
 
     private int id;
+    private String numero_commande;
     private String date_commande;
     private String etat_commande;
     private String commentaire;
@@ -186,5 +187,13 @@ public class Bon implements Serializable{
 
     public void setDevis_id(int devis_id) {
         this.devis_id = devis_id;
+    }
+
+    public String getNumero_commande() {
+        return numero_commande;
+    }
+
+    public void setNumero_commande(String numero_commande) {
+        this.numero_commande = numero_commande;
     }
 }

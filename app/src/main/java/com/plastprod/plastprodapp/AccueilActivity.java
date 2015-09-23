@@ -95,7 +95,7 @@ public class AccueilActivity extends ActionBarActivity {
                 Cryptage securite = new Cryptage(motDePasse, salt);
                 String mdpEncode = securite.CrypterDonnees();
 
-                Log.d("Info", mdpEncode);
+                //Log.d("Info", mdpEncode);
 
                 //Vérification des données d'identification
                 Contact commercial = db.verifierIdentifiantCommercial(identifiant, mdpEncode);
@@ -122,6 +122,9 @@ public class AccueilActivity extends ActionBarActivity {
                         startActivity(activite);
                     }
                     else {
+                        // On récupère l'indice du dernier bon pour incrémenter à chaque nouveau bon
+                        jeton.setIndice_bon( db.getDernierIndiceBon() );
+
                         //nouvelle activité
                         Intent activite = new Intent(this, MenuActivity.class);
 

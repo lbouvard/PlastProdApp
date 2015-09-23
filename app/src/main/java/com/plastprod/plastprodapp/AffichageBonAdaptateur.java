@@ -89,6 +89,16 @@ public class AffichageBonAdaptateur extends BaseAdapter {
         if( liste.size() > liste_articles.size() ){
             this.liste_articles.add(liste.get(liste.size() - 1));
         }
+        else if( liste.size() < liste_articles.size()){
+
+            for( LigneCommande ligne : liste_articles){
+                // si l'article n'existe pas, on supprime la ligne dans la liste
+                if( liste.indexOf(ligne) == -1 ){
+                    this.liste_articles.remove(ligne);
+                    break;
+                }
+            }
+        }
         // mise à jour des données seulement
         else {
             this.liste_articles = liste;
