@@ -196,6 +196,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.plastprod.plastprodapp.AffichageBon" />
         </activity>
+        <activity
+            android:name=".OptParametreActivity"
+            android:label="@string/adresse_mail"
+            android:parentActivityName=".MenuQuestionnaireActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.plastprod.plastprodapp.MenuQuestionnaireActivity" />
+        </activity>
     </application>
 
 </manifest>

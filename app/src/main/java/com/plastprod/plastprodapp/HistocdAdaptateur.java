@@ -99,7 +99,7 @@ public class HistocdAdaptateur extends BaseExpandableListAdapter{
         }
 
         TextView txtIdtCommande = (TextView) convertView.findViewById(R.id.id_commande);
-        txtIdtCommande.setText("Commande CD" + commande.getId());
+        txtIdtCommande.setText("Commande " + commande.getNumero_commande());
         //lblListHeader.setTypeface(null, Typeface.BOLD);
         TextView txtMontant = (TextView) convertView.findViewById(R.id.montant);
         txtMontant.setText( String.valueOf(commande.calculerPrixTotal()) + " €" );

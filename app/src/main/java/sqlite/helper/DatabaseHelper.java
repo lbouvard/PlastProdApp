@@ -1345,6 +1345,45 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return liste;
     }
 
+    public List<Parametre> getParamMail(int id_commercial){
+
+        ArrayList<Parametre> liste = new ArrayList<>();
+        String requete;
+
+        // IdtParam, Nom, Type, Libelle, Valeur, IdtCompte
+        requete = "SELECT IdtParam, Nom, Type, Libelle, Valeur\n" +
+                "FROM Parametre\n" +
+                "WHERE Nom IN ('ADRESSE_COMPTE', 'TYPE_COMPTE') AND IdtCompte = " + String.valueOf(id_commercial) + " ORDER BY Nom";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery(requete, null);
+
+        if( c != null) {
+
+            if (c.moveToFirst()) {
+
+                do {
+                    Parametre info = new Parametre();
+
+                    info.setId(c.getInt(c.getColumnIndex("IdtParam")));
+                    info.setNom(c.getString(c.getColumnIndex("Nom")));
+                    info.setType(c.getString(c.getColumnIndex("Type")));
+                    info.setLibelle(c.getString(c.getColumnIndex("Libelle")));
+                    info.setValeur(c.getString(c.getColumnIndex("Valeur")));
+                    info.setId_Compte(id_commercial);
+
+                    //On ajoute le paramètre
+                    liste.add(info);
+
+                } while (c.moveToNext());
+            }
+
+            c.close();
+        }
+
+        return liste;
+    }
+
     public Cursor getCurseurChoix(String type){
 
         String requete;

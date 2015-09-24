@@ -24,7 +24,7 @@
         android:textStyle="bold"/>
 
     <Spinner
-        android:layout_width="wrap_content"
+        android:layout_width="300sp"
         android:layout_height="wrap_content"
         android:id="@+id/dropdown_client"
         android:layout_below="@+id/entete_article_dialog"
@@ -35,7 +35,7 @@
         android:layout_marginBottom="5sp"/>
 
     <Spinner
-        android:layout_width="wrap_content"
+        android:layout_width="300sp"
         android:layout_height="wrap_content"
         android:id="@+id/dropdown_contact"
         android:layout_below="@+id/dropdown_client"

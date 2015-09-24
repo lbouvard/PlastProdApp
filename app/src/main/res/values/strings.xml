@@ -160,4 +160,7 @@
 
     <string name="modifie_bon">Modification du bon</string>
 
+    <string name="adresse_mail">Adresse mail du compte</string>
+    <string name="extension">Domaine du provider</string>
+
 </resources>

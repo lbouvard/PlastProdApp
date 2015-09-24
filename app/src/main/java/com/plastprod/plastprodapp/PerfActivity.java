@@ -1,17 +1,24 @@
 package com.plastprod.plastprodapp;
 
+import android.content.Intent;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import sqlite.helper.DatabaseHelper;
+import sqlite.helper.Satisfaction;
 
-public class PerfActivity extends ActionBarActivity {
+
+public class PerfActivity extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,7 @@ public class PerfActivity extends ActionBarActivity {
 
         // Set the ArrayAdapter as the ListView's adapter.
         menu.setAdapter( adaptateur );
+        menu.setOnItemClickListener(this);
     }
 
     @Override
@@ -42,16 +50,21 @@ public class PerfActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
-            return true;
-        }*/
-
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+        //on récupère l'item séléctionné
+        String valeur = (String)arg0.getItemAtPosition(arg2);
+
+        if( valeur.equals("Statistiques personelles") ) {
+            Outils.afficherToast(getApplicationContext(), "Satistiques personnelles en construction.");
+        }
+        else{
+            Outils.afficherToast(getApplicationContext(), "Objectifs en construction.");
+        }
+
     }
 }

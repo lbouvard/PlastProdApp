@@ -163,6 +163,9 @@ public class FormulaireContact extends ActionBarActivity {
             }
             contact.setFax(((EditText) findViewById(R.id.etFax)).getText().toString());
         }
+        else{
+            contact.setFax("");
+        }
 
         if( !Outils.verifierEmail(((EditText) findViewById(R.id.etMail)).getText().toString()) ){
             Toast notification = Toast.makeText(context, "Veuillez entrer une adresse Email valide.", duree);

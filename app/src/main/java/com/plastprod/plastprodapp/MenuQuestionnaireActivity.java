@@ -40,7 +40,7 @@ public class MenuQuestionnaireActivity extends ActionBarActivity implements Adap
         ListView menu = (ListView) findViewById( R.id.liste_menu_questionnaire );
 
         // Create and populate a List of planet names.
-        String[] options = new String[] { "Envoi manuel", "Paramètres automatique" };
+        String[] options = new String[] { "Envoi manuel", "Paramètres automatique", "Paramètres compte" };
         ArrayList<String> liste_options = new ArrayList<String>();
         liste_options.addAll(Arrays.asList(options));
 
@@ -97,9 +97,14 @@ public class MenuQuestionnaireActivity extends ActionBarActivity implements Adap
             envoiQ.setArguments(bundle);
             envoiQ.show(getSupportFragmentManager(), "envoi_questionnaire_dialog");
         }
-        else{
+        else if ( valeur.equals("Paramètres automatique") ){
 
             Intent activite = new Intent(this, OptQuestionnaireActivity.class);
+            startActivity(activite);
+        }
+        else{
+
+            Intent activite = new Intent(this, OptParametreActivity.class);
             startActivity(activite);
         }
     }

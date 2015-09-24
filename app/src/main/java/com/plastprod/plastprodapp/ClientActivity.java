@@ -26,9 +26,12 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
     String type;
 
     static final int RETOUR_MAJ = 1000;
+    boolean init;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        init = true;
 
         super.onCreate(savedInstanceState);
 
@@ -64,6 +67,18 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         }
         else
             terminerSession();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        if( !init ){
+            majListe();
+        }
+        else{
+            init = false;
+        }
     }
 
     @Override
@@ -158,7 +173,7 @@ public class ClientActivity extends ActionBarActivity implements AdapterView.OnI
         activite.putExtra("Client", client);
 
         //et on affiche le formulaire
-        startActivity(activite);
+        startActivityForResult(activite, RETOUR_MAJ);
     }
 
     public void afficherCommandes(Societe client){

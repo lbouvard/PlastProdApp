@@ -55,9 +55,9 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
 
             //on grise le bouton actif
             Button btn_actif = (Button)findViewById(R.id.button_commandes);
-            btn_actif.setBackgroundColor(getResources().getColor(R.color.gris));
+            btn_actif.setBackgroundColor(getResources().getColor(R.color.blanc));
             Button btn_inactif = (Button)findViewById(R.id.button_devis);
-            btn_inactif.setBackgroundColor(getResources().getColor(R.color.blanc));
+            btn_inactif.setBackgroundColor(getResources().getColor(R.color.gris));
         }
     }
 
@@ -147,9 +147,9 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
 
         //on grise le bouton actif
         Button btn_actif = (Button)findViewById(R.id.button_devis);
-        btn_actif.setBackgroundColor(getResources().getColor(R.color.gris));
+        btn_actif.setBackgroundColor(getResources().getColor(R.color.blanc));
         Button btn_inactif = (Button)findViewById(R.id.button_commandes);
-        btn_inactif.setBackgroundColor(getResources().getColor(R.color.blanc));
+        btn_inactif.setBackgroundColor(getResources().getColor(R.color.gris));
 
         majListe(id_societe);
     }
@@ -160,9 +160,9 @@ public class BonActivity extends ActionBarActivity implements AdapterView.OnItem
 
         //on grise le bouton actif
         Button btn_actif = (Button)findViewById(R.id.button_commandes);
-        btn_actif.setBackgroundColor(getResources().getColor(R.color.gris));
+        btn_actif.setBackgroundColor(getResources().getColor(R.color.blanc));
         Button btn_inactif = (Button)findViewById(R.id.button_devis);
-        btn_inactif.setBackgroundColor(getResources().getColor(R.color.blanc));
+        btn_inactif.setBackgroundColor(getResources().getColor(R.color.gris));
 
         majListe(id_societe);
     }
